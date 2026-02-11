@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "lastModified": "2026-02-11",
+  "checksum": "galeno-prd-v3.3",
+  "projectName": "Galeno (Ecuador-Health 360)",
+  "description": "Plataforma SaaS B2B/B2C que digitaliza la práctica médica en Ecuador con propuesta de valor única: 'La Oficina en la Mochila'. Combina tecnología de vanguardia (IA, blockchain-like security, offline-first) con integración legal nativa ecuatoriana (SRI, firma electrónica).",
+  "features": [
+    "Offline-First Architecture con IndexedDB + Service Workers",
+    "Health Wallet (Patient-Centric) con autorización LOPDP",
+    "IA Copilot Por Etapas (Gemini 1.5 Flash)",
+    "Localización Total Ecuador (XAdES-BES, SRI, SENESCYT)",
+    "Gestión de Consultas Médicas (6 estados)",
+    "Agendamiento Híbrido Inteligente con GPS multi-oficina",
+    "Teleconsulta PiP con Jitsi Meet",
+    "Módulo de Especialidad (Odontología, Oftalmología, Pediatría, etc.)",
+    "Documentos con Caducidad (Recetas 30 días, Exámenes 90 días)",
+    "Buscador Médico con Mapa tipo DocDirect",
+    "Galeno Hub - LinkedIn Médico (FASE 2)",
+    "Sistema de Notificaciones 3-Capas (Push, SSE, Toast)",
+    "PWA Multi-Device (Desktop/Tablet/Celular)",
+    "Row Level Security (RLS) por rol",
+    "Cifrado AES-256 en reposo"
+  ],
+  "techStack": {
+    "frontend": {
+      "framework": "Vue 3.4+ (Composition API, <script setup>)",
+      "uiLibrary": "Vuetify 3.6+ (Material Design 3)",
+      "state": "Pinia 2.2+ con pinia-plugin-persistedstate",
+      "router": "Vue Router 4.4+",
+      "build": "Vite 6.0+",
+      "pwa": "vite-plugin-pwa (workbox)",
+      "language": "TypeScript 5.6+ (strict mode)"
+    },
+    "backend": {
+      "runtime": "Node.js 22 LTS",
+      "framework": "Express 4.19+ (o Fastify 5+)",
+      "orm": "Prisma 6.0+",
+      "validation": "Zod 3.23+",
+      "auth": "JWT (jsonwebtoken + jws)"
+    },
+    "data": {
+      "database": "PostgreSQL 17 (o Supabase)",
+      "cache": "Redis 8+ (StackGeier/Upstash)",
+      "storage": "IndexedDB (Dexie.js wrapper)"
+    },
+    "infrastructure": {
+      "hostingFE": "Vercel (Edge Functions)",
+      "hostingBE": "Railway/Render (o Supabase Edge)",
+      "cicd": "GitHub Actions",
+      "monitoring": "Sentry (errors) + Vercel Analytics"
+    }
+  },
+  "constraints": [
+    "LOPDP compliant - Paciente dueño de su dato médico",
+    "Firma XAdES-BES procesada 100% en cliente (WebCrypto API)",
+    "Clave privada nunca viaja al servidor (memoria volátil)",
+    "Latencia percibida < 150ms",
+    "IA cost target: < $0.005 por consulta",
+    "Offline-first transparente (Last Write Wins por timestamp)",
+    "Onboarding < 5 minutos",
+    "Firma electrónica FREE ilimitada",
+    "Facturación SRI solo para plan PREMIUM+"
+  ],
+  "marketData": {
+    "tam": "$48M USD/año (~40,000 doctores × $10/mes × 12 meses)",
+    "sam": "$12M USD/año (Doctores jóvenes + nativos digitales ~25%)",
+    "som": "$2.4M USD/año (5% de SAM en primeros 3 años = 1,000 doctores)"
+  },
+  "pricing": [
+    {
+      "plan": "FREE",
+      "price": "$0",
+      "doctors": 1,
+      "asistentes": 0,
+      "oficinas": 1
+    },
+    {
+      "plan": "PREMIUM",
+      "price": "$10/mes",
+      "doctors": 1,
+      "asistentes": 1,
+      "oficinas": "Ilimitadas"
+    },
+    {
+      "plan": "CLÍNICA SME",
+      "price": "$45/mes",
+      "doctors": 5,
+      "asistentes": 5,
+      "oficinas": "Ilimitadas"
+    },
+    {
+      "plan": "ENTERPRISE",
+      "price": "$90/mes",
+      "doctors": 10,
+      "asistentes": 10,
+      "oficinas": "Ilimitadas"
+    }
+  ],
+  "architecture": "Monorepo con Turborepo (o Nx)",
+  "roadmap": {
+    "fase0": "Foundation (Semana 1-2)",
+    "fase1": "Auth & Core (Semana 3-5)",
+    "fase2": "Consultation Workflow (Semana 6-9)",
+    "fase3": "IA & Innovation (Semana 10-13)",
+    "fase4": "Agendamiento & Teleconsulta (Semana 14-17)",
+    "fase5": "Health Wallet & Documents (Semana 18-20)",
+    "fase6": "Realtime & Offline (Semana 21-23)",
+    "fase7": "Specialty & Interconsulta (Semana 24-26)",
+    "fase8": "Marketplace & Monetization (Semana 27-29)",
+    "fase9": "Discovery & Community (Semana 30-33)",
+    "fase10": "Testing & Launch (Semana 34-36)"
+  }
+}

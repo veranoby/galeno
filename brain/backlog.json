@@ -1,0 +1,538 @@
+{
+  "version": "1.0.0",
+  "lastModified": "2026-02-11",
+  "checksum": "galeno-backlog-v1.0",
+  "items": [
+    {
+      "id": "TASK-001",
+      "title": "Inicializar Proyecto Vue 3 + Vite + TypeScript",
+      "description": "Setup del proyecto frontend con Vue 3, Vite 6+, TypeScript 5.6+ strict mode, Vuetify 3.6+, y configuración PWA con vite-plugin-pwa.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Foundation",
+      "dependencies": []
+    },
+    {
+      "id": "TASK-002",
+      "title": "Configurar PostgreSQL + Prisma ORM",
+      "description": "Setup del proyecto backend con Node.js 22 LTS, Express 4.19+, Prisma 6.0+, PostgreSQL 17, y schema inicial basado en IMPLEMENTATION_PLAN.md.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Foundation",
+      "dependencies": []
+    },
+    {
+      "id": "TASK-003",
+      "title": "Sistema de Autenticación",
+      "description": "Implementar JWT auth con refresh tokens, registro/login, password recovery, y middleware de autenticación.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-001", "TASK-002"]
+    },
+    {
+      "id": "TASK-004",
+      "title": "Onboarding Flow",
+      "description": "Flujo de onboarding < 5 minutos para registro de médico con validación de email, configuración inicial de perfil.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-005",
+      "title": "Firma Electrónica XAdES-BES",
+      "description": "Implementar firma digital .p12 procesada 100% en cliente usando WebCrypto API, con clave privada en memoria volátil.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-006",
+      "title": "Sistema de Consultas",
+      "description": "Implementar CRUD de consultas con 6 estados: borrador → triaje → pendiente → en_atención → finalizada → interconsulta.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Consultation Workflow",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-007",
+      "title": "Offline-First IndexedDB",
+      "description": "Implementar offline-first con Dexie.js wrapper, sincronización transparente, y estrategia Last Write Wins por timestamp.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-001"]
+    },
+    {
+      "id": "TASK-008",
+      "title": "Health Wallet del Paciente",
+      "description": "Implementar Health Wallet con historial completo, autorización por notificación push LOPDP compliant, y QR de validación.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-009",
+      "title": "IA Copilot Por Etapas",
+      "description": "Integrar Gemini 1.5 Flash API con debounce 3-5s. Etapa 1: Chips AZULES (CIE-10). Etapa 2: VERDES (medicación), AMARILLOS (exámenes), ROJOS (alertas).",
+      "status": "pending",
+      "priority": "high",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-010",
+      "title": "AI Chips UI",
+      "description": "Componente Vue para chips de IA con color coding: blue (diagnóstico), green (medicación), yellow (exámenes), red (alertas).",
+      "status": "pending",
+      "priority": "high",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-009"]
+    },
+    {
+      "id": "TASK-011",
+      "title": "Facturación SRI",
+      "description": "Integración nativa con SRI para generación XML de facturación electrónica desde cliente con validación RUC.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-005"]
+    },
+    {
+      "id": "TASK-012",
+      "title": "Sistema de Triaje",
+      "description": "Triaje colaborativo donde enfermera captura signos y doctor recibe notificación SSE. Panel lateral con contexto.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Consultation Workflow",
+      "dependencies": ["TASK-006", "TASK-025"]
+    },
+    {
+      "id": "TASK-013",
+      "title": "Interconsultas con Custodia",
+      "description": "Sistema de interconsultas 1-a-1 viene-y-va sin límite, con cierre manual y tracking de estado.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Specialty & Interconsulta",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-014",
+      "title": "Sistema de Agendamiento",
+      "description": "Slots de tiempo configurables por doctor, multi-oficina con GPS, y detección de ubicación activa.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-015",
+      "title": "Migración Inteligente",
+      "description": "Módulo de migración Pro con importación masiva de datos + IA para estructuración automática.",
+      "status": "pending",
+      "priority": "low",
+      "fase": "Marketplace & Monetization",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-016",
+      "title": "Marketplace de Módulos",
+      "description": "Marketplace para módulos add-on: WhatsApp Business, WebRTC Pro, Migración Pro.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Marketplace & Monetization",
+      "dependencies": ["TASK-018"]
+    },
+    {
+      "id": "TASK-017",
+      "title": "Row Level Security (RLS)",
+      "description": "Implementar RLS policies por rol (Doctor, Enfermera, Asistente) en PostgreSQL.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Foundation",
+      "dependencies": ["TASK-002"]
+    },
+    {
+      "id": "TASK-018",
+      "title": "Pasarelas de Pago",
+      "description": "Integración con Payphone y Kushki para procesamiento de pagos con split commissions.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Marketplace & Monetization",
+      "dependencies": ["TASK-020"]
+    },
+    {
+      "id": "TASK-019",
+      "title": "Validación QR Farmacias",
+      "description": "Sistema de validación QR para farmacias que verifique autenticidad y vigencia de recetas.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-008"]
+    },
+    {
+      "id": "TASK-020",
+      "title": "Sistema de Planes",
+      "description": "Implementar sistema de suscripción con planes FREE, PREMIUM, CLÍNICA SME, ENTERPRISE.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-021",
+      "title": "Testing Suite (80%+)",
+      "description": "Implementar suite de pruebas unitarias, integración y E2E con 80%+ de cobertura.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Testing & Launch",
+      "dependencies": []
+    },
+    {
+      "id": "TASK-022",
+      "title": "Dashboard Administrativo",
+      "description": "Panel admin para gestión de usuarios, planes, artículos de Galeno Hub, y métricas.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Testing & Launch",
+      "dependencies": ["TASK-003", "TASK-049"]
+    },
+    {
+      "id": "TASK-023",
+      "title": "Cifrado AES-256",
+      "description": "Implementar cifrado AES-256 en reposo para datos sensibles.",
+      "status": "pending",
+      "priority": "critical",
+      "fase": "Foundation",
+      "dependencies": ["TASK-002"]
+    },
+    {
+      "id": "TASK-024",
+      "title": "GPS Dinámico y Geolocalización",
+      "description": "Sistema de GPS dinámico para multi-oficina y búsqueda de doctores cercanos.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Discovery & Community",
+      "dependencies": ["TASK-048"]
+    },
+    {
+      "id": "TASK-025",
+      "title": "SSE Server",
+      "description": "Implementar Server-Sent Events para notificaciones real-time.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-002"]
+    },
+    {
+      "id": "TASK-026",
+      "title": "Documentos con Caducidad",
+      "description": "Sistema de documentos con caducidad automática: recetas 30 días, exámenes 90 días.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-027",
+      "title": "Antecedentes del Paciente",
+      "description": "Módulo de antecedentes: personal, familiar, medicamento, hábito, alergia.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Consultation Workflow",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-028",
+      "title": "IA Brain con Redis",
+      "description": "Implementar IA Brain que aprende preferencias del doctor con Redis cache (TTL 24h) y agregación batch.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-009", "TASK-031"]
+    },
+    {
+      "id": "TASK-029",
+      "title": "Notificaciones Tres-Tipos",
+      "description": "Implementar sistema de notificaciones: Push (app cerrada), SSE (app abierta), Toast (feedback).",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-025"]
+    },
+    {
+      "id": "TASK-030",
+      "title": "Área de Trabajo con Panel Lateral",
+      "description": "Workspace de consulta con panel lateral: última consulta, antecedentes filtrados, alertas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Consultation Workflow",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-031",
+      "title": "Setup Redis",
+      "description": "Configurar Redis 8+ para cache de sesiones SSE, preferencias IA, y tokens de Health Wallet.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Foundation",
+      "dependencies": ["TASK-002"]
+    },
+    {
+      "id": "TASK-032",
+      "title": "Client-Side SSE Handling",
+      "description": "Implementar cliente SSE en Vue 3 con reconnection automática y manejo de eventos.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-025"]
+    },
+    {
+      "id": "TASK-033",
+      "title": "Batch Job Aggregation",
+      "description": "Cron job para agregación de preferencias IA desde Redis a PostgreSQL.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-028"]
+    },
+    {
+      "id": "TASK-034",
+      "title": "Indicador Completitud Antecedentes",
+      "description": "Indicador visual de completitud de antecedentes del paciente.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Specialty & Interconsulta",
+      "dependencies": ["TASK-027"]
+    },
+    {
+      "id": "TASK-035",
+      "title": "Debounce Handler",
+      "description": "Implementar debounce handler 3-5 segundos para activación de IA en campo evolución.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-009"]
+    },
+    {
+      "id": "TASK-036",
+      "title": "Cron Job Caducidad",
+      "description": "Cron job diario para actualización de estado de documentos caducados con marca de agua.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-026"]
+    },
+    {
+      "id": "TASK-037",
+      "title": "UI Marca de Agua",
+      "description": "Componente UI para mostrar marca de agua en documentos caducados.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-036"]
+    },
+    {
+      "id": "TASK-038",
+      "title": "Sala de Espera Virtual",
+      "description": "Sala de espera virtual para teleconsultas con notificación al doctor.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014C"]
+    },
+    {
+      "id": "TASK-039",
+      "title": "Validación Health Wallet",
+      "description": "Validación temporal de Health Wallet para acceso a historial en teleconsulta.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-008", "TASK-038"]
+    },
+    {
+      "id": "TASK-040",
+      "title": "Flujo Completo Teleconsulta",
+      "description": "Implementar flujo completo de teleconsulta con PiP y herramientas de consulta.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014C", "TASK-038"]
+    },
+    {
+      "id": "TASK-041",
+      "title": "Notificaciones PWA Push + WhatsApp",
+      "description": "Implementar notificaciones PWA Push y envío de WhatsApp para recordatorios.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-029"]
+    },
+    {
+      "id": "TASK-042",
+      "title": "Módulo WebRTC Pro",
+      "description": "Módulo add-on para grabación de teleconsultas y branding personalizado.",
+      "status": "pending",
+      "priority": "low",
+      "fase": "Marketplace & Monetization",
+      "dependencies": ["TASK-014C"]
+    },
+    {
+      "id": "TASK-043",
+      "title": "GPS Dinámico Multi-Oficina",
+      "description": "Sistema GPS dinámico para detección de ubicación activa del médico y guía al paciente.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014"]
+    },
+    {
+      "id": "TASK-044",
+      "title": "Módulo Especialidad Dinámico",
+      "description": "Sistema dinámico de módulos de especialidad: Odontología, Oftalmología, Pediatría, Traumatología, Cardiología, Dermatología.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Specialty & Interconsulta",
+      "dependencies": ["TASK-006"]
+    },
+    {
+      "id": "TASK-045",
+      "title": "Protocolo Compartir LOPDP",
+      "description": "Protocolo de compartir historial médico con autorización explícita LOPDP compliant.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-008"]
+    },
+    {
+      "id": "TASK-046",
+      "title": "Interconsulta Simplificada",
+      "description": "Flujo simplificado de interconsultas con tracking y cierre manual.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Specialty & Interconsulta",
+      "dependencies": ["TASK-013"]
+    },
+    {
+      "id": "TASK-047",
+      "title": "Dashboard Paciente",
+      "description": "Dashboard del paciente con Health Wallet, historial, y conexiones.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Health Wallet & Documents",
+      "dependencies": ["TASK-008"]
+    },
+    {
+      "id": "TASK-047A",
+      "title": "Dashboard Doctor",
+      "description": "Dashboard del médico con consultas pendientes, agenda, métricas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Consultation Workflow",
+      "dependencies": ["TASK-003"]
+    },
+    {
+      "id": "TASK-047B",
+      "title": "Sistema de Roles",
+      "description": "Implementar sistema de roles: DOCTOR, ASISTENTE, ENFERMERA con permisos granulares.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Discovery & Community",
+      "dependencies": ["TASK-017"]
+    },
+    {
+      "id": "TASK-047C",
+      "title": "Módulo Agenda",
+      "description": "Módulo de agenda con vista calendario, slots, y gestión de citas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014"]
+    },
+    {
+      "id": "TASK-047D",
+      "title": "PWA Instalable",
+      "description": "Configurar PWA instalable con manifest, service worker, y splash screen.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-001"]
+    },
+    {
+      "id": "TASK-047E",
+      "title": "Estrategia IA 3 Fases",
+      "description": "Implementar estrategia IA en 3 fases: diagnóstico, tratamiento, alertas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "IA & Innovation",
+      "dependencies": ["TASK-009"]
+    },
+    {
+      "id": "TASK-048",
+      "title": "Buscador con Mapa",
+      "description": "Buscador médico con Google Maps API, filtros avanzados, y GPS del paciente.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Discovery & Community",
+      "dependencies": ["TASK-024"]
+    },
+    {
+      "id": "TASK-049",
+      "title": "Galeno Hub (FASE 2)",
+      "description": "LinkedIn médico donde los doctores comparten artículos con sistema de aprobación admin.",
+      "status": "pending",
+      "priority": "low",
+      "fase": "Discovery & Community",
+      "dependencies": ["TASK-047A"]
+    },
+    {
+      "id": "TASK-050",
+      "title": "PWA Responsive",
+      "description": "Adaptación responsive para Desktop/Tablet/Celular con experiencia optimizada por dispositivo.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Realtime & Offline",
+      "dependencies": ["TASK-047D"]
+    },
+    {
+      "id": "TASK-051",
+      "title": "Perfil Público Doctor",
+      "description": "Perfil público del doctor en buscador (sin datos sensibles) con métricas y valoraciones.",
+      "status": "pending",
+      "priority": "medium",
+      "fase": "Discovery & Community",
+      "dependencies": ["TASK-048"]
+    },
+    {
+      "id": "TASK-052",
+      "title": "Integración SRI XML",
+      "description": "Integración completa con SRI para generación, firma y envío de XML de facturación.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Auth & Core",
+      "dependencies": ["TASK-011"]
+    },
+    {
+      "id": "TASK-014B",
+      "title": "Integración Jitsi Meet",
+      "description": "Integración de Jitsi Meet open source para teleconsultas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014"]
+    },
+    {
+      "id": "TASK-014C",
+      "title": "Teleconsulta PiP",
+      "description": "Implementar Picture-in-Picture nativo para videollamada flotante + toma de notas.",
+      "status": "pending",
+      "priority": "high",
+      "fase": "Agendamiento & Teleconsulta",
+      "dependencies": ["TASK-014B"]
+    }
+  ]
+}
