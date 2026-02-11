@@ -73,44 +73,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "UI-001",
-      "title": "Design System Base",
-      "description": "Variables Vuetify personalizadas, componentes base reutilizables, tokens de diseño (colores, espaciado), y guía de estilos.",
-      "status": "pending",
-      "priority": "high",
-      "fase": "Foundation",
-      "dependencies": [
-        "TASK-001"
-      ],
-      "size": "M",
-      "complexity": "medium",
-      "risk": "low",
-      "acceptanceCriteria": [
-        "Variables Vuetify personalizadas definidas",
-        "Componentes base creados (Button, Input, Card, etc.)",
-        "Tokens de diseño documentados",
-        "Guía de estilos implementada"
-      ],
-      "deliverables": [
-        "apps/web/src/assets/styles/variables.scss",
-        "apps/web/src/components/common/*",
-        "packages/ui-components/*"
-      ],
-      "testing": {
-        "unit": false,
-        "integration": false
-      },
-      "definitionOfDone": [
-        "Design system documentado",
-        "Componentes base reutilizables",
-        "Consistencia visual asegurada"
-      ],
-      "estimatedHours": 10,
-      "tags": [
-        "frontend",
-        "ui",
-        "design-system"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T20:47:17Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TEST-001",
