@@ -7,7 +7,7 @@
       "id": "INFRA-001",
       "title": "Monorepo Setup con Turborepo",
       "description": "Configurar Turborepo para apps/web, apps/api, packages/* con shared-types, ui-components, api-client, workspace dependencies, scripts de build y dev coordinados.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Foundation",
       "dependencies": [],
@@ -37,43 +37,15 @@
         "Workspace dependencies resueltas"
       ],
       "estimatedHours": 8,
-      "tags": ["infrastructure", "setup"]
+      "tags": [
+        "infrastructure",
+        "setup"
+      ]
     },
     {
-      "id": "TASK-001",
-      "title": "Inicializar Proyecto Vue 3 + Vite + TypeScript",
-      "description": "Setup del proyecto frontend con Vue 3, Vite 6+, TypeScript 5.6+ strict mode, Vuetify 3.6+, y configuración PWA con vite-plugin-pwa.",
-      "status": "pending",
-      "priority": "critical",
-      "fase": "Foundation",
-      "dependencies": ["INFRA-001"],
-      "size": "M",
-      "complexity": "low",
-      "risk": "low",
-      "acceptanceCriteria": [
-        "Proyecto Vue 3 creado con Vite 6+",
-        "TypeScript 5.6+ en modo strict configurado",
-        "Vuetify 3.6+ instalado y configurado",
-        "PWA configurado con vite-plugin-pwa",
-        "ESLint y Prettier configurados"
-      ],
-      "deliverables": [
-        "apps/web/vite.config.ts",
-        "apps/web/tsconfig.json",
-        "apps/web/src/main.ts",
-        "apps/web/package.json"
-      ],
-      "testing": {
-        "unit": false,
-        "integration": false
-      },
-      "definitionOfDone": [
-        "App Vue corre en desarrollo",
-        "Build de producción funciona",
-        "PWA manifest generado"
-      ],
-      "estimatedHours": 6,
-      "tags": ["frontend", "setup", "vue"]
+      "status": "completed",
+      "completedAt": "2026-02-11T19:10:54Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-002",
@@ -82,7 +54,9 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Foundation",
-      "dependencies": ["INFRA-001"],
+      "dependencies": [
+        "INFRA-001"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -109,7 +83,11 @@
         "Primer migration ejecutada"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "database", "prisma"]
+      "tags": [
+        "backend",
+        "database",
+        "prisma"
+      ]
     },
     {
       "id": "TASK-031",
@@ -118,7 +96,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -142,7 +122,11 @@
         "Reconexión automática funciona"
       ],
       "estimatedHours": 4,
-      "tags": ["backend", "cache", "redis"]
+      "tags": [
+        "backend",
+        "cache",
+        "redis"
+      ]
     },
     {
       "id": "MIG-001",
@@ -151,7 +135,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "medium",
@@ -176,7 +162,10 @@
         "Documentación completa"
       ],
       "estimatedHours": 4,
-      "tags": ["database", "infrastructure"]
+      "tags": [
+        "database",
+        "infrastructure"
+      ]
     },
     {
       "id": "TASK-017",
@@ -185,7 +174,9 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -210,7 +201,11 @@
         "Documentación de seguridad actualizada"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "security", "database"]
+      "tags": [
+        "backend",
+        "security",
+        "database"
+      ]
     },
     {
       "id": "TASK-023",
@@ -219,7 +214,9 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -243,7 +240,11 @@
         "Performance benchmarks aceptables"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "security", "encryption"]
+      "tags": [
+        "backend",
+        "security",
+        "encryption"
+      ]
     },
     {
       "id": "UI-001",
@@ -252,7 +253,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-001"],
+      "dependencies": [
+        "TASK-001"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -277,7 +280,11 @@
         "Consistencia visual asegurada"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "ui", "design-system"]
+      "tags": [
+        "frontend",
+        "ui",
+        "design-system"
+      ]
     },
     {
       "id": "TEST-001",
@@ -286,7 +293,10 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Foundation",
-      "dependencies": ["TASK-001", "TASK-002"],
+      "dependencies": [
+        "TASK-001",
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -313,7 +323,10 @@
         "CI puede ejecutar tests"
       ],
       "estimatedHours": 8,
-      "tags": ["testing", "infrastructure"]
+      "tags": [
+        "testing",
+        "infrastructure"
+      ]
     },
     {
       "id": "INFRA-002",
@@ -322,7 +335,11 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Foundation",
-      "dependencies": ["TASK-001", "TASK-002", "TEST-001"],
+      "dependencies": [
+        "TASK-001",
+        "TASK-002",
+        "TEST-001"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -349,7 +366,11 @@
         "Quality gates enforcing standards"
       ],
       "estimatedHours": 10,
-      "tags": ["infrastructure", "cicd", "devops"]
+      "tags": [
+        "infrastructure",
+        "cicd",
+        "devops"
+      ]
     },
     {
       "id": "SEC-001",
@@ -358,7 +379,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002", "TASK-031"],
+      "dependencies": [
+        "TASK-002",
+        "TASK-031"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "medium",
@@ -382,7 +406,11 @@
         "Documentación de límites"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "security", "api"]
+      "tags": [
+        "backend",
+        "security",
+        "api"
+      ]
     },
     {
       "id": "API-001",
@@ -391,7 +419,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -416,7 +446,11 @@
         "Types generados automáticamente"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "api", "documentation"]
+      "tags": [
+        "backend",
+        "api",
+        "documentation"
+      ]
     },
     {
       "id": "LOG-001",
@@ -425,7 +459,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-001", "TASK-002"],
+      "dependencies": [
+        "TASK-001",
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -450,7 +487,11 @@
         "Dashboards operativos"
       ],
       "estimatedHours": 8,
-      "tags": ["infrastructure", "monitoring", "logging"]
+      "tags": [
+        "infrastructure",
+        "monitoring",
+        "logging"
+      ]
     },
     {
       "id": "EMAIL-INFRA",
@@ -459,7 +500,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -483,7 +526,11 @@
         "Error handling implementado"
       ],
       "estimatedHours": 4,
-      "tags": ["infrastructure", "email", "notifications"]
+      "tags": [
+        "infrastructure",
+        "email",
+        "notifications"
+      ]
     },
     {
       "id": "STORAGE-INFRA",
@@ -492,7 +539,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Foundation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -516,7 +565,11 @@
         "Costos optimizados"
       ],
       "estimatedHours": 6,
-      "tags": ["infrastructure", "storage", "documents"]
+      "tags": [
+        "infrastructure",
+        "storage",
+        "documents"
+      ]
     },
     {
       "id": "TASK-003A",
@@ -525,7 +578,10 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-001", "TASK-002"],
+      "dependencies": [
+        "TASK-001",
+        "TASK-002"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -550,7 +606,11 @@
         "Refresh automático operativo"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "auth", "security"]
+      "tags": [
+        "backend",
+        "auth",
+        "security"
+      ]
     },
     {
       "id": "TASK-003B",
@@ -559,7 +619,9 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-003A"],
+      "dependencies": [
+        "TASK-003A"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "medium",
@@ -586,7 +648,11 @@
         "Validaciones activas"
       ],
       "estimatedHours": 6,
-      "tags": ["backend", "frontend", "auth"]
+      "tags": [
+        "backend",
+        "frontend",
+        "auth"
+      ]
     },
     {
       "id": "TASK-003C",
@@ -595,7 +661,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-003B", "EMAIL-INFRA"],
+      "dependencies": [
+        "TASK-003B",
+        "EMAIL-INFRA"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "medium",
@@ -620,7 +689,11 @@
         "Emails llegan a destino"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "frontend", "auth"]
+      "tags": [
+        "backend",
+        "frontend",
+        "auth"
+      ]
     },
     {
       "id": "TASK-004",
@@ -629,7 +702,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-003B"],
+      "dependencies": [
+        "TASK-003B"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -654,7 +729,11 @@
         "UX optimizada"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "ux", "onboarding"]
+      "tags": [
+        "frontend",
+        "ux",
+        "onboarding"
+      ]
     },
     {
       "id": "TASK-005",
@@ -663,7 +742,10 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-003A", "TASK-001"],
+      "dependencies": [
+        "TASK-003A",
+        "TASK-001"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -687,7 +769,11 @@
         "Security audit pass"
       ],
       "estimatedHours": 20,
-      "tags": ["frontend", "security", "crypto"]
+      "tags": [
+        "frontend",
+        "security",
+        "crypto"
+      ]
     },
     {
       "id": "TASK-011A",
@@ -696,7 +782,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-005"],
+      "dependencies": [
+        "TASK-005"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -720,7 +808,11 @@
         "Documentación SRI seguida"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "sri", "billing"]
+      "tags": [
+        "backend",
+        "sri",
+        "billing"
+      ]
     },
     {
       "id": "TASK-011B",
@@ -729,7 +821,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-011A"],
+      "dependencies": [
+        "TASK-011A"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -753,7 +847,11 @@
         "Retries implementados"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "sri", "billing"]
+      "tags": [
+        "backend",
+        "sri",
+        "billing"
+      ]
     },
     {
       "id": "TASK-052",
@@ -762,7 +860,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-011B"],
+      "dependencies": [
+        "TASK-011B"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -787,7 +887,11 @@
         "UX completa"
       ],
       "estimatedHours": 10,
-      "tags": ["backend", "frontend", "sri"]
+      "tags": [
+        "backend",
+        "frontend",
+        "sri"
+      ]
     },
     {
       "id": "TASK-020A",
@@ -796,7 +900,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -819,7 +925,11 @@
         "Documentación completa"
       ],
       "estimatedHours": 3,
-      "tags": ["backend", "database", "billing"]
+      "tags": [
+        "backend",
+        "database",
+        "billing"
+      ]
     },
     {
       "id": "TASK-020B",
@@ -828,7 +938,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-020A", "TASK-003A"],
+      "dependencies": [
+        "TASK-020A",
+        "TASK-003A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -852,7 +965,11 @@
         "UX de upgrade clara"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "auth", "billing"]
+      "tags": [
+        "backend",
+        "auth",
+        "billing"
+      ]
     },
     {
       "id": "TASK-020C",
@@ -861,7 +978,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-020B"],
+      "dependencies": [
+        "TASK-020B"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "low",
@@ -886,7 +1005,11 @@
         "UX clara"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "frontend", "billing"]
+      "tags": [
+        "backend",
+        "frontend",
+        "billing"
+      ]
     },
     {
       "id": "TASK-047B",
@@ -895,7 +1018,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Auth & Core",
-      "dependencies": ["TASK-017", "TASK-003A"],
+      "dependencies": [
+        "TASK-017",
+        "TASK-003A"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -920,7 +1046,11 @@
         "Tests de seguridad pasan"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "security", "auth"]
+      "tags": [
+        "backend",
+        "security",
+        "auth"
+      ]
     },
     {
       "id": "TASK-006A",
@@ -929,7 +1059,10 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-002", "TASK-003A"],
+      "dependencies": [
+        "TASK-002",
+        "TASK-003A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -954,7 +1087,11 @@
         "Documentación de endpoints"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "consultation"]
+      "tags": [
+        "backend",
+        "frontend",
+        "consultation"
+      ]
     },
     {
       "id": "TASK-006B",
@@ -963,7 +1100,9 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006A"],
+      "dependencies": [
+        "TASK-006A"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "medium",
@@ -987,7 +1126,11 @@
         "Validaciones activas"
       ],
       "estimatedHours": 10,
-      "tags": ["backend", "frontend", "state-machine"]
+      "tags": [
+        "backend",
+        "frontend",
+        "state-machine"
+      ]
     },
     {
       "id": "TASK-006C",
@@ -996,7 +1139,10 @@
       "status": "pending",
       "priority": "critical",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006B", "TASK-005"],
+      "dependencies": [
+        "TASK-006B",
+        "TASK-005"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -1020,7 +1166,12 @@
         "Compliance verificado"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "frontend", "security", "consultation"]
+      "tags": [
+        "backend",
+        "frontend",
+        "security",
+        "consultation"
+      ]
     },
     {
       "id": "TASK-006D",
@@ -1029,7 +1180,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006A"],
+      "dependencies": [
+        "TASK-006A"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -1053,7 +1206,11 @@
         "Performance aceptable"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "frontend", "consultation"]
+      "tags": [
+        "backend",
+        "frontend",
+        "consultation"
+      ]
     },
     {
       "id": "TASK-027A",
@@ -1062,7 +1219,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-002", "TASK-003A"],
+      "dependencies": [
+        "TASK-002",
+        "TASK-003A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1086,7 +1246,11 @@
         "UX validada"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "patient"]
+      "tags": [
+        "backend",
+        "frontend",
+        "patient"
+      ]
     },
     {
       "id": "TASK-027B",
@@ -1095,7 +1259,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-027A"],
+      "dependencies": [
+        "TASK-027A"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -1119,7 +1285,11 @@
         "UX optimizada"
       ],
       "estimatedHours": 4,
-      "tags": ["frontend", "patient", "ux"]
+      "tags": [
+        "frontend",
+        "patient",
+        "ux"
+      ]
     },
     {
       "id": "TASK-027C",
@@ -1128,7 +1298,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-027A"],
+      "dependencies": [
+        "TASK-027A"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "low",
@@ -1152,7 +1324,11 @@
         "UX clara"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "frontend", "patient"]
+      "tags": [
+        "backend",
+        "frontend",
+        "patient"
+      ]
     },
     {
       "id": "TASK-030A",
@@ -1161,7 +1337,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006A", "UI-001"],
+      "dependencies": [
+        "TASK-006A",
+        "UI-001"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1185,7 +1364,11 @@
         "UX validada"
       ],
       "estimatedHours": 8,
-      "tags": ["frontend", "consultation", "ux"]
+      "tags": [
+        "frontend",
+        "consultation",
+        "ux"
+      ]
     },
     {
       "id": "TASK-030B",
@@ -1194,7 +1377,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-030A", "TASK-027A"],
+      "dependencies": [
+        "TASK-030A",
+        "TASK-027A"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "low",
@@ -1219,7 +1405,11 @@
         "UX optimizada"
       ],
       "estimatedHours": 5,
-      "tags": ["frontend", "consultation", "ux"]
+      "tags": [
+        "frontend",
+        "consultation",
+        "ux"
+      ]
     },
     {
       "id": "TASK-012",
@@ -1228,7 +1418,11 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006B", "TASK-047B", "TASK-032"],
+      "dependencies": [
+        "TASK-006B",
+        "TASK-047B",
+        "TASK-032"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "medium",
@@ -1253,7 +1447,12 @@
         "Flujo completo validado"
       ],
       "estimatedHours": 10,
-      "tags": ["backend", "frontend", "consultation", "sse"]
+      "tags": [
+        "backend",
+        "frontend",
+        "consultation",
+        "sse"
+      ]
     },
     {
       "id": "TASK-034",
@@ -1262,7 +1461,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-027A"],
+      "dependencies": [
+        "TASK-027A"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -1286,7 +1487,11 @@
         "UX clara"
       ],
       "estimatedHours": 4,
-      "tags": ["frontend", "patient", "ux"]
+      "tags": [
+        "frontend",
+        "patient",
+        "ux"
+      ]
     },
     {
       "id": "TASK-047A",
@@ -1295,7 +1500,11 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006A", "TASK-030A", "TASK-047C"],
+      "dependencies": [
+        "TASK-006A",
+        "TASK-030A",
+        "TASK-047C"
+      ],
       "size": "L",
       "complexity": "medium",
       "risk": "low",
@@ -1320,7 +1529,11 @@
         "UX optimizada"
       ],
       "estimatedHours": 12,
-      "tags": ["frontend", "backend", "doctor"]
+      "tags": [
+        "frontend",
+        "backend",
+        "doctor"
+      ]
     },
     {
       "id": "TASK-026",
@@ -1329,7 +1542,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Consultation Workflow",
-      "dependencies": ["TASK-006C"],
+      "dependencies": [
+        "TASK-006C"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -1353,7 +1568,11 @@
         "Tests pasan"
       ],
       "estimatedHours": 6,
-      "tags": ["backend", "frontend", "documents"]
+      "tags": [
+        "backend",
+        "frontend",
+        "documents"
+      ]
     },
     {
       "id": "TASK-009A",
@@ -1362,7 +1581,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-002", "SEC-001"],
+      "dependencies": [
+        "TASK-002",
+        "SEC-001"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -1387,7 +1609,11 @@
         "Costos controlados"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "ai", "gemini"]
+      "tags": [
+        "backend",
+        "ai",
+        "gemini"
+      ]
     },
     {
       "id": "TASK-009B",
@@ -1396,7 +1622,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-009A"],
+      "dependencies": [
+        "TASK-009A"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -1420,7 +1648,11 @@
         "UX fluida"
       ],
       "estimatedHours": 3,
-      "tags": ["frontend", "ai", "ux"]
+      "tags": [
+        "frontend",
+        "ai",
+        "ux"
+      ]
     },
     {
       "id": "TASK-009C",
@@ -1429,7 +1661,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-009A"],
+      "dependencies": [
+        "TASK-009A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -1453,7 +1687,11 @@
         "Validaciones activas"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "ai", "frontend"]
+      "tags": [
+        "backend",
+        "ai",
+        "frontend"
+      ]
     },
     {
       "id": "TASK-009D",
@@ -1462,7 +1700,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-009A"],
+      "dependencies": [
+        "TASK-009A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -1486,7 +1726,11 @@
         "Alertas prioritarias"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "ai", "frontend"]
+      "tags": [
+        "backend",
+        "ai",
+        "frontend"
+      ]
     },
     {
       "id": "TASK-009E",
@@ -1495,7 +1739,11 @@
       "status": "pending",
       "priority": "medium",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-009C", "TASK-009D", "TASK-031"],
+      "dependencies": [
+        "TASK-009C",
+        "TASK-009D",
+        "TASK-031"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -1520,7 +1768,11 @@
         "Batch job operativo"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "ai", "redis"]
+      "tags": [
+        "backend",
+        "ai",
+        "redis"
+      ]
     },
     {
       "id": "TASK-010",
@@ -1529,7 +1781,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-009B", "TASK-009C"],
+      "dependencies": [
+        "TASK-009B",
+        "TASK-009C"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1555,7 +1810,11 @@
         "UX intuitiva"
       ],
       "estimatedHours": 6,
-      "tags": ["frontend", "ai", "ux"]
+      "tags": [
+        "frontend",
+        "ai",
+        "ux"
+      ]
     },
     {
       "id": "CRON-INFRA",
@@ -1564,7 +1823,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "IA & Innovation",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -1588,7 +1849,11 @@
         "Logs disponibles"
       ],
       "estimatedHours": 4,
-      "tags": ["backend", "infrastructure", "cron"]
+      "tags": [
+        "backend",
+        "infrastructure",
+        "cron"
+      ]
     },
     {
       "id": "TASK-014A",
@@ -1597,7 +1862,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-002", "TASK-003A"],
+      "dependencies": [
+        "TASK-002",
+        "TASK-003A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1622,7 +1890,11 @@
         "CRUD completo"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "scheduling"]
+      "tags": [
+        "backend",
+        "frontend",
+        "scheduling"
+      ]
     },
     {
       "id": "TASK-014B",
@@ -1631,7 +1903,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-014A"],
+      "dependencies": [
+        "TASK-014A"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -1655,7 +1929,10 @@
         "Race conditions manejadas"
       ],
       "estimatedHours": 10,
-      "tags": ["backend", "scheduling"]
+      "tags": [
+        "backend",
+        "scheduling"
+      ]
     },
     {
       "id": "TASK-014C",
@@ -1664,7 +1941,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-014B"],
+      "dependencies": [
+        "TASK-014B"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "low",
@@ -1688,7 +1967,11 @@
         "Notificaciones operativas"
       ],
       "estimatedHours": 6,
-      "tags": ["backend", "frontend", "scheduling"]
+      "tags": [
+        "backend",
+        "frontend",
+        "scheduling"
+      ]
     },
     {
       "id": "TASK-043",
@@ -1697,7 +1980,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-014A"],
+      "dependencies": [
+        "TASK-014A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -1721,7 +2006,11 @@
         "Privacidad protegida"
       ],
       "estimatedHours": 8,
-      "tags": ["frontend", "gps", "ux"]
+      "tags": [
+        "frontend",
+        "gps",
+        "ux"
+      ]
     },
     {
       "id": "TASK-047C",
@@ -1730,7 +2019,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-014C"],
+      "dependencies": [
+        "TASK-014C"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1754,7 +2045,11 @@
         "UX intuitiva"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "scheduling", "ux"]
+      "tags": [
+        "frontend",
+        "scheduling",
+        "ux"
+      ]
     },
     {
       "id": "TASK-JITSI",
@@ -1763,7 +2058,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-014C"],
+      "dependencies": [
+        "TASK-014C"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -1788,7 +2085,12 @@
         "Seguridad activa"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "frontend", "webrtc", "teleconference"]
+      "tags": [
+        "backend",
+        "frontend",
+        "webrtc",
+        "teleconference"
+      ]
     },
     {
       "id": "TASK-PIP",
@@ -1797,7 +2099,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-JITSI"],
+      "dependencies": [
+        "TASK-JITSI"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -1821,7 +2125,11 @@
         "Browser support verificado"
       ],
       "estimatedHours": 12,
-      "tags": ["frontend", "webrtc", "ux"]
+      "tags": [
+        "frontend",
+        "webrtc",
+        "ux"
+      ]
     },
     {
       "id": "TASK-038",
@@ -1830,7 +2138,10 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-JITSI", "TASK-032"],
+      "dependencies": [
+        "TASK-JITSI",
+        "TASK-032"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -1855,7 +2166,11 @@
         "Flujo completo validado"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "teleconference"]
+      "tags": [
+        "backend",
+        "frontend",
+        "teleconference"
+      ]
     },
     {
       "id": "TASK-039",
@@ -1864,7 +2179,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-008B", "TASK-038"],
+      "dependencies": [
+        "TASK-008B",
+        "TASK-038"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -1888,7 +2206,12 @@
         "LOPDP compliant"
       ],
       "estimatedHours": 10,
-      "tags": ["backend", "frontend", "security", "wallet"]
+      "tags": [
+        "backend",
+        "frontend",
+        "security",
+        "wallet"
+      ]
     },
     {
       "id": "TASK-040",
@@ -1897,7 +2220,11 @@
       "status": "pending",
       "priority": "high",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-PIP", "TASK-038", "TASK-006C"],
+      "dependencies": [
+        "TASK-PIP",
+        "TASK-038",
+        "TASK-006C"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -1922,7 +2249,11 @@
         "UX validada"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "frontend", "teleconference"]
+      "tags": [
+        "backend",
+        "frontend",
+        "teleconference"
+      ]
     },
     {
       "id": "TASK-041",
@@ -1931,7 +2262,10 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Agendamiento & Teleconsulta",
-      "dependencies": ["TASK-029", "TASK-047D"],
+      "dependencies": [
+        "TASK-029",
+        "TASK-047D"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "medium",
@@ -1955,7 +2289,11 @@
         "Recordatorios automáticos"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "notifications", "whatsapp"]
+      "tags": [
+        "backend",
+        "notifications",
+        "whatsapp"
+      ]
     },
     {
       "id": "TASK-042",
@@ -1964,7 +2302,9 @@
       "status": "pending",
       "priority": "low",
       "fase": "Marketplace & Monetization",
-      "dependencies": ["TASK-PIP"],
+      "dependencies": [
+        "TASK-PIP"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "medium",
@@ -1988,7 +2328,12 @@
         "Storage seguro"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "frontend", "webrtc", "marketplace"]
+      "tags": [
+        "backend",
+        "frontend",
+        "webrtc",
+        "marketplace"
+      ]
     },
     {
       "id": "TASK-008A",
@@ -1997,7 +2342,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -2021,7 +2368,11 @@
         "Compliance verificado"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "database", "wallet"]
+      "tags": [
+        "backend",
+        "database",
+        "wallet"
+      ]
     },
     {
       "id": "TASK-008B",
@@ -2030,7 +2381,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-008A"],
+      "dependencies": [
+        "TASK-008A"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -2055,7 +2408,12 @@
         "Audit trail completo"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "frontend", "security", "lopdp"]
+      "tags": [
+        "backend",
+        "frontend",
+        "security",
+        "lopdp"
+      ]
     },
     {
       "id": "TASK-008C",
@@ -2064,7 +2422,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-008A"],
+      "dependencies": [
+        "TASK-008A"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "medium",
@@ -2088,7 +2448,12 @@
         "Vigencia comprobada"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "frontend", "wallet", "qr"]
+      "tags": [
+        "backend",
+        "frontend",
+        "wallet",
+        "qr"
+      ]
     },
     {
       "id": "TASK-008D",
@@ -2097,7 +2462,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-008A"],
+      "dependencies": [
+        "TASK-008A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2122,7 +2489,12 @@
         "UX validada"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "backend", "patient", "wallet"]
+      "tags": [
+        "frontend",
+        "backend",
+        "patient",
+        "wallet"
+      ]
     },
     {
       "id": "TASK-045",
@@ -2131,7 +2503,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-008B"],
+      "dependencies": [
+        "TASK-008B"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "high",
@@ -2156,7 +2530,12 @@
         "LOPDP compliant"
       ],
       "estimatedHours": 12,
-      "tags": ["backend", "frontend", "security", "lopdp"]
+      "tags": [
+        "backend",
+        "frontend",
+        "security",
+        "lopdp"
+      ]
     },
     {
       "id": "TASK-019",
@@ -2165,7 +2544,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-008C"],
+      "dependencies": [
+        "TASK-008C"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -2190,7 +2571,12 @@
         "Farmacia UI operativa"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "pharmacy", "qr"]
+      "tags": [
+        "backend",
+        "frontend",
+        "pharmacy",
+        "qr"
+      ]
     },
     {
       "id": "TASK-036",
@@ -2199,7 +2585,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-026", "CRON-INFRA"],
+      "dependencies": [
+        "TASK-026",
+        "CRON-INFRA"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2222,7 +2611,11 @@
         "Logs operativos"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "cron", "documents"]
+      "tags": [
+        "backend",
+        "cron",
+        "documents"
+      ]
     },
     {
       "id": "TASK-037",
@@ -2231,7 +2624,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Health Wallet & Documents",
-      "dependencies": ["TASK-036"],
+      "dependencies": [
+        "TASK-036"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -2255,7 +2650,11 @@
         "UX intuitiva"
       ],
       "estimatedHours": 3,
-      "tags": ["frontend", "documents", "ux"]
+      "tags": [
+        "frontend",
+        "documents",
+        "ux"
+      ]
     },
     {
       "id": "TASK-025A",
@@ -2264,7 +2663,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "low",
@@ -2288,7 +2689,11 @@
         "Conexiones estables"
       ],
       "estimatedHours": 5,
-      "tags": ["backend", "sse", "realtime"]
+      "tags": [
+        "backend",
+        "sse",
+        "realtime"
+      ]
     },
     {
       "id": "TASK-025B",
@@ -2297,7 +2702,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-025A", "TASK-031"],
+      "dependencies": [
+        "TASK-025A",
+        "TASK-031"
+      ],
       "size": "M",
       "complexity": "high",
       "risk": "medium",
@@ -2321,7 +2729,12 @@
         "Estado visible"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "sse", "realtime"]
+      "tags": [
+        "backend",
+        "frontend",
+        "sse",
+        "realtime"
+      ]
     },
     {
       "id": "TASK-032",
@@ -2330,7 +2743,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-025A"],
+      "dependencies": [
+        "TASK-025A"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -2354,7 +2769,11 @@
         "Memory leaks prevenidos"
       ],
       "estimatedHours": 6,
-      "tags": ["frontend", "sse", "realtime"]
+      "tags": [
+        "frontend",
+        "sse",
+        "realtime"
+      ]
     },
     {
       "id": "TASK-029",
@@ -2363,7 +2782,10 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-025B", "TASK-032"],
+      "dependencies": [
+        "TASK-025B",
+        "TASK-032"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2388,7 +2810,11 @@
         "UX validada"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "notifications"]
+      "tags": [
+        "backend",
+        "frontend",
+        "notifications"
+      ]
     },
     {
       "id": "TASK-007",
@@ -2397,7 +2823,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-001"],
+      "dependencies": [
+        "TASK-001"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -2421,7 +2849,11 @@
         "Conflictos resueltos"
       ],
       "estimatedHours": 16,
-      "tags": ["frontend", "indexeddb", "offline"]
+      "tags": [
+        "frontend",
+        "indexeddb",
+        "offline"
+      ]
     },
     {
       "id": "TASK-047D",
@@ -2430,7 +2862,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-001"],
+      "dependencies": [
+        "TASK-001"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2456,7 +2890,10 @@
         "Lighthouse PWA score >90"
       ],
       "estimatedHours": 6,
-      "tags": ["frontend", "pwa"]
+      "tags": [
+        "frontend",
+        "pwa"
+      ]
     },
     {
       "id": "TASK-050",
@@ -2465,7 +2902,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Realtime & Offline",
-      "dependencies": ["TASK-047D"],
+      "dependencies": [
+        "TASK-047D"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2490,7 +2929,11 @@
         "Cross-browser verificado"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "responsive", "ux"]
+      "tags": [
+        "frontend",
+        "responsive",
+        "ux"
+      ]
     },
     {
       "id": "TASK-044A",
@@ -2499,7 +2942,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Specialty & Interconsulta",
-      "dependencies": ["TASK-002"],
+      "dependencies": [
+        "TASK-002"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -2523,7 +2968,11 @@
         "Documentación completa"
       ],
       "estimatedHours": 4,
-      "tags": ["backend", "database", "specialty"]
+      "tags": [
+        "backend",
+        "database",
+        "specialty"
+      ]
     },
     {
       "id": "TASK-044B",
@@ -2532,7 +2981,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Specialty & Interconsulta",
-      "dependencies": ["TASK-044A"],
+      "dependencies": [
+        "TASK-044A"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -2557,7 +3008,11 @@
         "Arquitectura escalable"
       ],
       "estimatedHours": 20,
-      "tags": ["frontend", "specialty", "modules"]
+      "tags": [
+        "frontend",
+        "specialty",
+        "modules"
+      ]
     },
     {
       "id": "TASK-044C",
@@ -2566,7 +3021,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Specialty & Interconsulta",
-      "dependencies": ["TASK-044A"],
+      "dependencies": [
+        "TASK-044A"
+      ],
       "size": "S",
       "complexity": "medium",
       "risk": "medium",
@@ -2590,7 +3047,12 @@
         "Errores manejados"
       ],
       "estimatedHours": 6,
-      "tags": ["backend", "frontend", "senescyt", "validation"]
+      "tags": [
+        "backend",
+        "frontend",
+        "senescyt",
+        "validation"
+      ]
     },
     {
       "id": "TASK-013",
@@ -2599,7 +3061,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Specialty & Interconsulta",
-      "dependencies": ["TASK-006C"],
+      "dependencies": [
+        "TASK-006C"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -2624,7 +3088,11 @@
         "Tracking completo"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "frontend", "consultation"]
+      "tags": [
+        "backend",
+        "frontend",
+        "consultation"
+      ]
     },
     {
       "id": "TASK-046",
@@ -2633,7 +3101,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Specialty & Interconsulta",
-      "dependencies": ["TASK-013"],
+      "dependencies": [
+        "TASK-013"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2656,7 +3126,11 @@
         "Tracking operativo"
       ],
       "estimatedHours": 8,
-      "tags": ["frontend", "consultation", "ux"]
+      "tags": [
+        "frontend",
+        "consultation",
+        "ux"
+      ]
     },
     {
       "id": "TASK-015",
@@ -2665,7 +3139,10 @@
       "status": "pending",
       "priority": "low",
       "fase": "Marketplace & Monetization",
-      "dependencies": ["TASK-009E", "TASK-027A"],
+      "dependencies": [
+        "TASK-009E",
+        "TASK-027A"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -2690,7 +3167,13 @@
         "Errores manejados"
       ],
       "estimatedHours": 20,
-      "tags": ["backend", "frontend", "ai", "migration", "marketplace"]
+      "tags": [
+        "backend",
+        "frontend",
+        "ai",
+        "migration",
+        "marketplace"
+      ]
     },
     {
       "id": "TASK-016",
@@ -2699,7 +3182,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Marketplace & Monetization",
-      "dependencies": ["TASK-018"],
+      "dependencies": [
+        "TASK-018"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2724,7 +3209,11 @@
         "Pagos procesados"
       ],
       "estimatedHours": 10,
-      "tags": ["frontend", "backend", "marketplace"]
+      "tags": [
+        "frontend",
+        "backend",
+        "marketplace"
+      ]
     },
     {
       "id": "TASK-018",
@@ -2733,7 +3222,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Marketplace & Monetization",
-      "dependencies": ["TASK-020B"],
+      "dependencies": [
+        "TASK-020B"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "high",
@@ -2758,7 +3249,11 @@
         "Webhooks operativos"
       ],
       "estimatedHours": 16,
-      "tags": ["backend", "frontend", "payment"]
+      "tags": [
+        "backend",
+        "frontend",
+        "payment"
+      ]
     },
     {
       "id": "TASK-024",
@@ -2767,7 +3262,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-043"],
+      "dependencies": [
+        "TASK-043"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -2791,7 +3288,11 @@
         "Privacidad protegida"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "gps"]
+      "tags": [
+        "backend",
+        "frontend",
+        "gps"
+      ]
     },
     {
       "id": "TASK-048",
@@ -2800,7 +3301,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-024"],
+      "dependencies": [
+        "TASK-024"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -2825,7 +3328,12 @@
         "Filtros operativos"
       ],
       "estimatedHours": 14,
-      "tags": ["frontend", "backend", "maps", "search"]
+      "tags": [
+        "frontend",
+        "backend",
+        "maps",
+        "search"
+      ]
     },
     {
       "id": "TASK-051",
@@ -2834,7 +3342,10 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-048", "BIZ-002"],
+      "dependencies": [
+        "TASK-048",
+        "BIZ-002"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -2859,7 +3370,12 @@
         "UX validada"
       ],
       "estimatedHours": 8,
-      "tags": ["frontend", "backend", "doctor", "public"]
+      "tags": [
+        "frontend",
+        "backend",
+        "doctor",
+        "public"
+      ]
     },
     {
       "id": "TASK-049",
@@ -2868,7 +3384,9 @@
       "status": "pending",
       "priority": "low",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-047A"],
+      "dependencies": [
+        "TASK-047A"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -2894,7 +3412,12 @@
         "Engagement operativo"
       ],
       "estimatedHours": 20,
-      "tags": ["backend", "frontend", "social", "content"]
+      "tags": [
+        "backend",
+        "frontend",
+        "social",
+        "content"
+      ]
     },
     {
       "id": "BIZ-001",
@@ -2903,7 +3426,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-044C"],
+      "dependencies": [
+        "TASK-044C"
+      ],
       "size": "S",
       "complexity": "low",
       "risk": "low",
@@ -2922,7 +3447,10 @@
         "Error handling"
       ],
       "estimatedHours": 2,
-      "tags": ["backend", "validation"]
+      "tags": [
+        "backend",
+        "validation"
+      ]
     },
     {
       "id": "BIZ-002",
@@ -2931,7 +3459,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-051"],
+      "dependencies": [
+        "TASK-051"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "medium",
@@ -2956,7 +3486,11 @@
         "Moderación activa"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "frontend", "reviews"]
+      "tags": [
+        "backend",
+        "frontend",
+        "reviews"
+      ]
     },
     {
       "id": "BIZ-003",
@@ -2965,7 +3499,9 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Discovery & Community",
-      "dependencies": ["TASK-017"],
+      "dependencies": [
+        "TASK-017"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "high",
@@ -2989,7 +3525,12 @@
         "Consultas operativas"
       ],
       "estimatedHours": 8,
-      "tags": ["backend", "security", "audit", "lopdp"]
+      "tags": [
+        "backend",
+        "security",
+        "audit",
+        "lopdp"
+      ]
     },
     {
       "id": "TASK-021",
@@ -2998,7 +3539,9 @@
       "status": "pending",
       "priority": "high",
       "fase": "Testing & Launch",
-      "dependencies": ["TEST-001"],
+      "dependencies": [
+        "TEST-001"
+      ],
       "size": "L",
       "complexity": "high",
       "risk": "medium",
@@ -3024,7 +3567,10 @@
         "Tests estables"
       ],
       "estimatedHours": 24,
-      "tags": ["testing", "quality"]
+      "tags": [
+        "testing",
+        "quality"
+      ]
     },
     {
       "id": "TASK-022",
@@ -3033,7 +3579,10 @@
       "status": "pending",
       "priority": "medium",
       "fase": "Testing & Launch",
-      "dependencies": ["TASK-003A", "TASK-049"],
+      "dependencies": [
+        "TASK-003A",
+        "TASK-049"
+      ],
       "size": "M",
       "complexity": "medium",
       "risk": "low",
@@ -3058,7 +3607,11 @@
         "Métricas precisas"
       ],
       "estimatedHours": 12,
-      "tags": ["frontend", "backend", "admin"]
+      "tags": [
+        "frontend",
+        "backend",
+        "admin"
+      ]
     }
   ]
 }
