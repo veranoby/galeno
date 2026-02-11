@@ -48,46 +48,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "TASK-002",
-      "title": "Configurar PostgreSQL + Prisma ORM",
-      "description": "Setup del proyecto backend con Node.js 22 LTS, Express 4.19+, Prisma 6.0+, PostgreSQL 17, y schema inicial basado en IMPLEMENTATION_PLAN.md.",
-      "status": "pending",
-      "priority": "critical",
-      "fase": "Foundation",
-      "dependencies": [
-        "INFRA-001"
-      ],
-      "size": "M",
-      "complexity": "medium",
-      "risk": "low",
-      "acceptanceCriteria": [
-        "Express 4.19+ configurado con TypeScript",
-        "Prisma 6.0+ conectado a PostgreSQL 17",
-        "Schema inicial creado según IMPLEMENTATION_PLAN.md",
-        "Migrations funcionando",
-        "Seed data configurado"
-      ],
-      "deliverables": [
-        "apps/api/src/index.ts",
-        "apps/api/prisma/schema.prisma",
-        "apps/api/package.json",
-        ".env.example"
-      ],
-      "testing": {
-        "unit": false,
-        "integration": false
-      },
-      "definitionOfDone": [
-        "API server corre en desarrollo",
-        "Prisma connect funciona",
-        "Primer migration ejecutada"
-      ],
-      "estimatedHours": 8,
-      "tags": [
-        "backend",
-        "database",
-        "prisma"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T19:25:04Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-031",

@@ -1,0 +1,454 @@
+// Prisma Schema - Galeno Ecuador-Health 360
+// PostgreSQL 17 Local
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============= TABLAS PRINCIPALES =============
+
+model Cuenta {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  passwordHash      String   @map("password_hash")
+  nombre            String
+  rol               Rol      @default(DOCTOR)
+  especialidad      String?
+  ruc               String?  @unique
+  sriValidado       Boolean  @default(false) @map("sri_validado")
+  senescytValidado  Boolean  @default(false) @map("senescyt_validado")
+  plan              Plan     @default(FREE)
+  maxDoctores       Int      @default(1) @map("max_doctores")
+  maxAsistentes     Int      @default(0) @map("max_asistentes")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  pacientes         Paciente[]
+  consultas         Consulta[]
+  ubicaciones       Ubicacion[]
+  slots             SlotDisponibilidad[]
+  citas             Cita[]
+  usuariosVinculados UsuarioVinculado[]
+  doctorEspecialidades DoctorEspecialidad[]
+  iaPreferencias    IaPreferencia[]
+  conexionesOrigen  ConexionPaciente[] @relation("ConexionOrigen")
+  conexionesDestino ConexionPaciente[] @relation("ConexionDestino")
+  articulos         Articulo[]
+  consultasSolicitadas Interconsulta[] @relation("Solicitante")
+  consultasRecibidas  Interconsulta[] @relation("Destino")
+
+  @@index([email])
+  @@index([plan])
+  @@index([ruc])
+  @@map("cuentas")
+}
+
+model UsuarioVinculado {
+  id                String   @id @default(uuid())
+  cuentaId          String   @map("cuenta_id")
+  doctorAsignadoId  String   @map("doctor_asignado_id")
+  email             String   @unique
+  passwordHash      String   @map("password_hash")
+  nombre            String
+  rol               RolVinculado
+  permisos          Jsonb?
+  activo            Boolean  @default(true)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  cuenta            Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  doctorAsignado    Cuenta   @relation("DoctorAsignado", fields: [doctorAsignadoId], references: [id], onDelete: Cascade)
+  triajes           Consulta[]
+
+  @@index([cuentaId])
+  @@index([doctorAsignadoId])
+  @@index([email])
+  @@map("usuarios_vinculados")
+}
+
+model Paciente {
+  id                    String   @id @default(uuid())
+  cuentaId              String   @map("cuenta_id")
+  healthWalletId        String   @unique @map("health_wallet_id")
+  nombre                String
+  cedula                String   @unique
+  fechaNacimiento       DateTime @map("fecha_nacimiento")
+  telefono              String?
+  email                 String?
+  antecedentesCompletos Boolean  @default(false) @map("antecedentes_completos")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  cuenta                Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  antecedentes          AntecedentePaciente[]
+  consultas             Consulta[]
+  documentos            Documento[]
+  citas                 Cita[]
+  conexiones            ConexionPaciente[]
+
+  @@index([cuentaId])
+  @@index([cedula])
+  @@index([healthWalletId])
+  @@index([nombre])
+  @@map("pacientes")
+}
+
+model AntecedentePaciente {
+  id              String   @id @default(uuid())
+  pacienteId      String   @map("paciente_id")
+  tipo            TipoAntecedente
+  categoria       String?
+  detalle         String   @db.Text
+  grado           String?
+  fechaRegistro   DateTime @default(now()) @map("fecha_registro")
+  registradoPor   RegistradoPor @map("registrado_por")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  paciente        Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@index([pacienteId])
+  @@index([tipo])
+  @@map("antecedentes_paciente")
+}
+
+model Consulta {
+  id                  String        @id @default(uuid())
+  cuentaId            String        @map("cuenta_id")
+  pacienteId          String        @map("paciente_id")
+  doctorId            String        @map("doctor_id")
+  asistenteId         String?       @map("asistente_id")
+  estado              EstadoConsulta
+  parentId            String?       @map("parent_id")
+  triajeData          Jsonb?        @map("triaje_data")
+  motivoConsulta      String?       @map("motivo_consulta") @db.Text
+  evolucion           String?       @db.Text
+  diagnosticoCie10    Jsonb?        @map("diagnostico_cie10")
+  recetaJson          Jsonb?        @map("receta_json")
+  examenesJson        Jsonb?        @map("examenes_json")
+  firmado             Boolean       @default(false)
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  cuenta              Cuenta        @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  paciente            Paciente      @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  doctor              Cuenta        @relation("DoctorConsulta", fields: [doctorId], references: [id], onDelete: Cascade)
+  asistente           UsuarioVinculado? @relation(fields: [asistenteId], references: [id], onDelete: SetNull)
+  documentos          Documento[]
+  children            Consulta[]    @relation("Interconsulta")
+  parent              Consulta?     @relation("Interconsulta", fields: [parentId], references: [id])
+  interconsultasSolicitadas Interconsulta[] @relation("ConsultaOrigen")
+  interconsultasRecibidas  Interconsulta[] @relation("ConsultaDestino")
+
+  @@index([cuentaId])
+  @@index([pacienteId])
+  @@index([doctorId])
+  @@index([estado])
+  @@index([createdAt])
+  @@index([parentId])
+  @@map("consultas")
+}
+
+model Documento {
+  id              String        @id @default(uuid())
+  consultaId      String        @map("consulta_id")
+  pacienteId      String        @map("paciente_id")
+  tipo            TipoDocumento
+  contenido       Jsonb
+  firmado         Boolean       @default(false)
+  fechaEmision    DateTime      @default(now()) @map("fecha_emision")
+  fechaExpiracion DateTime?     @map("fecha_expiracion")
+  estado          EstadoDocumento @default(activo)
+  marcaAgua       Boolean       @default(false) @map("marca_agua")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  consulta        Consulta      @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+  paciente        Paciente      @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@index([consultaId])
+  @@index([pacienteId])
+  @@index([tipo])
+  @@index([estado])
+  @@index([fechaExpiracion])
+  @@map("documentos")
+}
+
+model IaPreferencia {
+  id                String   @id @default(uuid())
+  doctorId          String   @map("doctor_id")
+  categoria         String
+  itemId            String   @map("item_id")
+  frecuencia        Int
+  ultimaAceptacion  DateTime @map("ultima_aceptacion")
+
+  // Relations
+  doctor            Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, categoria, itemId])
+  @@index([doctorId])
+  @@index([categoria])
+  @@map("ia_preferencias")
+}
+
+model Ubicacion {
+  id          String   @id @default(uuid())
+  doctorId    String   @map("doctor_id")
+  nombre      String
+  direccion   String   @db.Text
+  latitud     Decimal? @db.Decimal(10, 8)
+  longitud    Decimal? @db.Decimal(11, 8)
+  telefono    String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  doctor      Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  slots       SlotDisponibilidad[]
+  citas       Cita[]
+
+  @@index([doctorId])
+  @@map("ubicaciones")
+}
+
+model SlotDisponibilidad {
+  id              String          @id @default(uuid())
+  doctorId        String          @map("doctor_id")
+  ubicacionId     String?         @map("ubicacion_id")
+  diaSemana       Int             @map("dia_semana")
+  horaInicio      String          @map("hora_inicio")
+  horaFin         String          @map("hora_fin")
+  duracionMinutos Int             @map("duracion_minutos")
+  tipo            TipoCita
+  activo          Boolean         @default(true)
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  // Relations
+  doctor          Cuenta          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  ubicacion       Ubicacion?      @relation(fields: [ubicacionId], references: [id], onDelete: Cascade)
+  citas           Cita[]
+
+  @@index([doctorId])
+  @@index([ubicacionId])
+  @@map("slots_disponibilidad")
+}
+
+model Cita {
+  id              String          @id @default(uuid())
+  doctorId        String          @map("doctor_id")
+  pacienteId      String          @map("paciente_id")
+  ubicacionId     String?         @map("ubicacion_id")
+  slotId          String?         @map("slot_id")
+  fechaHora       DateTime        @map("fecha_hora")
+  tipo            TipoCita
+  estado          EstadoCita      @default(programada)
+  linkVideo       String?         @map("link_video")
+  tokenAcceso     String?         @map("token_acceso")
+  notificadaDoctor Boolean        @default(false) @map("notificada_doctor")
+  notificadaPaciente Boolean      @default(false) @map("notificada_paciente")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  // Relations
+  doctor          Cuenta          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  paciente        Paciente        @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  ubicacion       Ubicacion?      @relation(fields: [ubicacionId], references: [id], onDelete: SetNull)
+  slot            SlotDisponibilidad? @relation(fields: [slotId], references: [id], onDelete: SetNull)
+
+  @@index([doctorId])
+  @@index([pacienteId])
+  @@index([fechaHora])
+  @@index([estado])
+  @@map("citas")
+}
+
+model Especialidad {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  nombreCorto String   @unique @map("nombre_corto")
+  herramientas Jsonb
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  doctors     DoctorEspecialidad[]
+
+  @@index([nombre])
+  @@map("especialidades")
+}
+
+model DoctorEspecialidad {
+  id                String   @id @default(uuid())
+  doctorId          String   @map("doctor_id")
+  especialidadId    String   @map("especialidad_id")
+  principal         Boolean  @default(false)
+  senescytValidada  Boolean  @default(false) @map("senescyt_validada")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  // Relations
+  doctor            Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  especialidad      Especialidad @relation(fields: [especialidadId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId])
+  @@index([especialidadId])
+  @@map("doctor_especialidades")
+}
+
+model ConexionPaciente {
+  id                  String   @id @default(uuid())
+  pacienteId          String   @map("paciente_id")
+  doctorId            String   @map("doctor_id")
+  autorizadoPor       AutorizadoPor @map("autorizado_por")
+  fechaAutorizacion   DateTime @default(now()) @map("fecha_autorizacion")
+  estado              EstadoConexion @default(activa)
+  permisos            Jsonb
+  revocadaEn          DateTime? @map("revocada_en")
+
+  // Relations
+  paciente            Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@unique([pacienteId, doctorId])
+  @@index([pacienteId])
+  @@index([doctorId])
+  @@index([estado])
+  @@map("conexiones_pacientes")
+}
+
+model Articulo {
+  id              String   @id @default(uuid())
+  doctorId        String   @map("doctor_id")
+  titulo          String
+  contenido       String   @db.Text
+  resumen         String?  @db.Text
+  estado          EstadoArticulo @default(pendiente)
+  esDestacado     Boolean  @default(false) @map("es_destacado")
+  esPatrocinado   Boolean  @default(false) @map("es_patrocinado")
+  likesCount      Int      @default(0) @map("likes_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([doctorId])
+  @@index([estado])
+  @@index([esDestacado])
+  @@map("articulos")
+}
+
+model Interconsulta {
+  id              String          @id @default(uuid())
+  consultaId      String          @map("consulta_id")
+  solicitante     String          @map("solicitante")
+  destino         String          @map("destino")
+  tipo            TipoInterconsulta
+  estado          EstadoInterconsulta @default(pendiente)
+  mensaje         String?         @db.Text
+  creadoEn        DateTime        @default(now()) @map("creado_en")
+
+  @@index([consultaId])
+  @@index([solicitante])
+  @@index([destino])
+  @@index([estado])
+  @@map("interconsultas")
+}
+
+// ============= ENUMS =============
+
+enum Rol {
+  DOCTOR
+  ADMIN
+}
+
+enum RolVinculado {
+  ASISTENTE
+  ENFERMERA
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+  CLINICA
+  ENTERPRISE
+}
+
+enum TipoAntecedente {
+  personal
+  familiar
+  medicamento
+  habito
+  alergia
+}
+
+enum EstadoConsulta {
+  borrador
+  triaje
+  pendiente
+  en_atencion
+  finalizada
+  interconsulta
+}
+
+enum TipoDocumento {
+  receta
+  examen
+  certificado
+}
+
+enum EstadoDocumento {
+  activo
+  caducado
+  anulado
+}
+
+enum TipoCita {
+  presencial
+  teleconsulta
+}
+
+enum EstadoCita {
+  programada
+  confirmada
+  en_progreso
+  completada
+  cancelada
+  no_presento
+}
+
+enum RegistradoPor {
+  paciente
+  enfermera
+  doctor
+}
+
+enum EstadoConexion {
+  activa
+  revocada
+}
+
+enum AutorizadoPor {
+  paciente
+  representante_legal
+}
+
+enum EstadoArticulo {
+  pendiente
+  aprobado
+  rechazado
+}
+
+enum TipoInterconsulta {
+  basica
+  derivacion_digital
+}
+
+enum EstadoInterconsulta {
+  pendiente
+  aceptada
+  rechazada
+  completada
+}
