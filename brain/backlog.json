@@ -58,43 +58,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "MIG-001",
-      "title": "Database Migration Strategy",
-      "description": "Estrategia de migrations con Prisma, scripts de seed para desarrollo, strategy para data migrations, y rollback plans.",
-      "status": "pending",
-      "priority": "high",
-      "fase": "Foundation",
-      "dependencies": [
-        "TASK-002"
-      ],
-      "size": "S",
-      "complexity": "low",
-      "risk": "medium",
-      "acceptanceCriteria": [
-        "Estrategia de migrations documentada",
-        "Scripts de seed configurados",
-        "Data migration strategy definida",
-        "Rollback procedures documentados"
-      ],
-      "deliverables": [
-        "apps/api/prisma/migrations/README.md",
-        "apps/api/prisma/seed.ts",
-        "docs/migration-strategy.md"
-      ],
-      "testing": {
-        "unit": false,
-        "integration": true
-      },
-      "definitionOfDone": [
-        "Migrations pueden aplicarse y revertirse",
-        "Seed data funciona",
-        "Documentación completa"
-      ],
-      "estimatedHours": 4,
-      "tags": [
-        "database",
-        "infrastructure"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T20:19:44Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-017",
