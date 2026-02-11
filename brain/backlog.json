@@ -68,43 +68,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "TASK-023",
-      "title": "Cifrado AES-256",
-      "description": "Implementar cifrado AES-256 en reposo para datos sensibles.",
-      "status": "pending",
-      "priority": "critical",
-      "fase": "Foundation",
-      "dependencies": [
-        "TASK-002"
-      ],
-      "size": "L",
-      "complexity": "high",
-      "risk": "high",
-      "acceptanceCriteria": [
-        "Datos sensibles cifrados en reposo",
-        "Keys de encripción gestionadas de forma segura",
-        "Performance impact mínimo",
-        "Compliance LOPDP verificado"
-      ],
-      "deliverables": [
-        "apps/api/src/utils/crypto.ts",
-        "apps/api/src/middleware/encryption.ts"
-      ],
-      "testing": {
-        "unit": true,
-        "integration": true
-      },
-      "definitionOfDone": [
-        "Cifrado implementado",
-        "Tests de seguridad pasan",
-        "Performance benchmarks aceptables"
-      ],
-      "estimatedHours": 16,
-      "tags": [
-        "backend",
-        "security",
-        "encryption"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T20:34:47Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "UI-001",
