@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*", "src/**/*.vue"],
+  "references": [
+    { "path": "../shared-types" }
+  ]
+}

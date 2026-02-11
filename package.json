@@ -1,0 +1,55 @@
+{
+  "name": "galeno-monorepo",
+  "version": "1.0.0",
+  "description": "Galeno - Plataforma médica SaaS para Ecuador",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev:web",
+    "dev:api": "turbo run dev:api",
+    "build": "turbo run build",
+    "build:web": "turbo run build:web",
+    "build:api": "turbo run build:api",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:watch": "turbo run test -- --watch",
+    "test:coverage": "turbo run test -- --coverage",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "prepare": "husky install || true",
+    "postinstall": "pnpm -C packages/shared-types build && pnpm -C packages/api-client build"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@turbo/gen": "^2.4.2",
+    "eslint": "^9.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "turbo": "^2.4.2",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "workspace": [
+    "apps/*",
+    "packages/*"
+  ],
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}

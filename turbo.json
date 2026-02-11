@@ -1,0 +1,114 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "name": "galeno-monorepo",
+  "version": "1.0.0",
+  "description": "Plataforma médica SaaS para Ecuador - Monorepo con Turborepo",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": [],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+    },
+    "typecheck": {
+      "dependsOn": [],
+      "outputs": ["node_modules/.cache/tsbuild.txt"]
+    },
+    "clean": {
+      "cache": false
+    }
+  },
+  "tasks": {
+    "dev": {
+      "dependsOn": ["dev:web", "dev:api"],
+      "description": "Ejecutar ambos servidores en desarrollo"
+    },
+    "dev:web": {
+      "cwd": "apps/web",
+      "command": "pnpm run dev",
+      "description": "Servidor de desarrollo Vue 3",
+      "env": {
+        "PORT": "5173"
+      }
+    },
+    "dev:api": {
+      "cwd": "apps/api",
+      "command": "pnpm run dev",
+      "description": "Servidor de desarrollo Node.js API",
+      "env": {
+        "PORT": "3000"
+      }
+    },
+    "build": {
+      "dependsOn": ["build:web", "build:api"],
+      "description": "Construir ambas aplicaciones"
+    },
+    "build:web": {
+      "cwd": "apps/web",
+      "command": "pnpm run build",
+      "description": "Construir Vue 3 para producción"
+    },
+    "build:api": {
+      "cwd": "apps/api",
+      "command": "pnpm run build",
+      "description": "Construir Node.js API para producción"
+    },
+    "lint": {
+      "dependsOn": ["lint:web", "lint:api"],
+      "description": "Ejecutar linter en todas las apps"
+    },
+    "lint:web": {
+      "cwd": "apps/web",
+      "command": "pnpm run lint",
+      "description": "ESLint en frontend"
+    },
+    "lint:api": {
+      "cwd": "apps/api",
+      "command": "pnpm run lint",
+      "description": "ESLint en backend"
+    },
+    "typecheck": {
+      "dependsOn": ["typecheck:web", "typecheck:api"],
+      "description": "Verificar tipos TypeScript en todas las apps"
+    },
+    "typecheck:web": {
+      "cwd": "apps/web",
+      "command": "pnpm run type-check",
+      "description": "TypeScript check en frontend"
+    },
+    "typecheck:api": {
+      "cwd": "apps/api",
+      "command": "pnpm run type-check",
+      "description": "TypeScript check en backend"
+    },
+    "test": {
+      "dependsOn": ["test:web", "test:api"],
+      "description": "Ejecutar tests en todas las apps"
+    },
+    "test:web": {
+      "cwd": "apps/web",
+      "command": "pnpm run test",
+      "description": "Vitest + Playwright en frontend"
+    },
+    "test:api": {
+      "cwd": "apps/api",
+      "command": "pnpm run test",
+      "description": "Vitest en backend"
+    },
+    "clean": {
+      "cache": false,
+      "command": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/.next apps/*/dist apps/*/build",
+      "description": "Limpiar todas las dependencias y builds"
+    }
+  }
+}

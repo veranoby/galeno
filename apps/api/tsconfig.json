@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsbuild.txt",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@galeno/shared-types": ["../../packages/shared-types/src"],
+      "@galeno/api-client": ["../../packages/api-client/src"]
+    },
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../shared-types" },
+    { "path": "../api-client" }
+  ]
+}
