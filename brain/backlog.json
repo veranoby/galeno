@@ -53,43 +53,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "TASK-031",
-      "title": "Setup Redis",
-      "description": "Configurar Redis 8+ para cache de sesiones SSE, preferencias IA, y tokens de Health Wallet.",
-      "status": "pending",
-      "priority": "high",
-      "fase": "Foundation",
-      "dependencies": [
-        "TASK-002"
-      ],
-      "size": "S",
-      "complexity": "low",
-      "risk": "low",
-      "acceptanceCriteria": [
-        "Redis 8+ configurado y conectado",
-        "Helper functions para cache implementadas",
-        "TTL configurado para diferentes tipos de datos",
-        "Error handling para desconexión de Redis"
-      ],
-      "deliverables": [
-        "apps/api/src/services/cache/redis.ts",
-        "apps/api/src/config/redis.ts"
-      ],
-      "testing": {
-        "unit": true,
-        "integration": true
-      },
-      "definitionOfDone": [
-        "Redis conectado",
-        "Cache functions probadas",
-        "Reconexión automática funciona"
-      ],
-      "estimatedHours": 4,
-      "tags": [
-        "backend",
-        "cache",
-        "redis"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T20:10:57Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "MIG-001",

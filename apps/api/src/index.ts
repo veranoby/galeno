@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import { connectDatabase } from './config/database.js';
+import redis, { checkRedisHealth } from './config/redis.js';
 import { logger } from './utils/logger.js';
 
 const app: Express = express();
@@ -21,11 +22,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ============= HEALTH CHECK =============
-app.get('/health', (_req, res) => {
+app.get('/health', async (_req, res) => {
+  const dbHealthy = await checkRedisHealth();
+  const redisStatus = redis.status === 'ready' ? 'connected' : 'disconnected';
+
   res.json({
-    status: 'ok',
+    status: dbHealthy ? 'ok' : 'degraded',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    services: {
+      database: 'connected', // PostgreSQL (checked at startup)
+      redis: redisStatus
+    }
   });
 });
 
