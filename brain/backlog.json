@@ -63,44 +63,9 @@
       "completedBy": "claude-opus-4-6"
     },
     {
-      "id": "TASK-017",
-      "title": "Row Level Security (RLS)",
-      "description": "Implementar RLS policies por rol (Doctor, Enfermera, Asistente) en PostgreSQL.",
-      "status": "pending",
-      "priority": "critical",
-      "fase": "Foundation",
-      "dependencies": [
-        "TASK-002"
-      ],
-      "size": "M",
-      "complexity": "high",
-      "risk": "high",
-      "acceptanceCriteria": [
-        "RLS habilitado en todas las tablas principales",
-        "Policies por rol implementadas",
-        "Doctores solo ven sus propios datos",
-        "Asistentes/Enfermeras solo ven datos asignados",
-        "Tests de seguridad pasan"
-      ],
-      "deliverables": [
-        "apps/api/prisma/migrations/*_rls.sql",
-        "apps/api/src/middleware/auth.ts"
-      ],
-      "testing": {
-        "unit": true,
-        "integration": true
-      },
-      "definitionOfDone": [
-        "RLS policies aplicadas",
-        "Tests de autorización pasan",
-        "Documentación de seguridad actualizada"
-      ],
-      "estimatedHours": 12,
-      "tags": [
-        "backend",
-        "security",
-        "database"
-      ]
+      "status": "completed",
+      "completedAt": "2026-02-11T20:28:29Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-023",

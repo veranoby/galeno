@@ -5,6 +5,7 @@ import compression from 'compression';
 import { connectDatabase } from './config/database.js';
 import redis, { checkRedisHealth } from './config/redis.js';
 import { logger } from './utils/logger.js';
+import { authMiddleware, optionalAuthMiddleware, AuthRequest } from './middleware/auth.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -42,7 +43,108 @@ app.get('/api', (_req, res) => {
   res.json({
     name: 'Galeno API',
     version: '1.0.0',
-    description: 'Ecuador-Health 360 Medical Platform API'
+    description: 'Ecuador-Health 360 Medical Platform API',
+    security: 'Row Level Security (RLS) enabled'
+  });
+});
+
+// ============= AUTH ROUTES (sin protección) =============
+
+// Login endpoint (TODO: Implement with JWT)
+app.post('/api/auth/login', async (req: AuthRequest, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'Email and password required'
+    });
+  }
+
+  // TODO: Implement proper JWT authentication
+  // For development, return a mock token
+  const mockToken = Buffer.from(JSON.stringify({
+    sub: 'dev-user-id',
+    email: email,
+    rol: 'DOCTOR'
+  })).toString('base64');
+
+  res.json({
+    token: mockToken,
+    user: {
+      id: 'dev-user-id',
+      email: email,
+      rol: 'DOCTOR'
+    }
+  });
+});
+
+// ============= PROTECTED ROUTES (con RLS) =============
+
+// Ejemplo: Obtener pacientes del usuario actual
+// RLS filtra automáticamente para mostrar solo los pacientes del usuario
+app.get('/api/pacientes', authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const prisma = (await import('./config/database.js')).default;
+
+    // RLS policy automáticamente filtra:
+    // - DOCTORES: Solo sus pacientes
+    // - ASISTENTES/ENFERMERAS: Pacientes del doctor asignado
+    // - ADMIN: Todos los pacientes
+    const pacientes = await prisma.paciente.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50
+    });
+
+    res.json({
+      count: pacientes.length,
+      data: pacientes
+    });
+  } catch (error) {
+    logger.error('Error fetching pacientes', { error });
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to fetch pacientes'
+    });
+  }
+});
+
+// Ejemplo: Obtener consultas del usuario actual
+app.get('/api/consultas', authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    const prisma = (await import('./config/database.js')).default;
+
+    const consultas = await prisma.consulta.findMany({
+      include: {
+        paciente: {
+          select: {
+            id: true,
+            nombre: true,
+            cedula: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50
+    });
+
+    res.json({
+      count: consultas.length,
+      data: consultas
+    });
+  } catch (error) {
+    logger.error('Error fetching consultas', { error });
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to fetch consultas'
+    });
+  }
+});
+
+// Ejemplo: Verificar contexto de autenticación
+app.get('/api/auth/me', authMiddleware, async (req: AuthRequest, res) => {
+  res.json({
+    user: req.user
   });
 });
 
