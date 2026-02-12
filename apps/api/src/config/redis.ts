@@ -27,7 +27,7 @@ redis.on('ready', () => {
 });
 
 redis.on('error', (err) => {
-  logger.error('Redis connection error', { error: err.message });
+  logger.error({ error: err }, 'Redis connection error');
 });
 
 redis.on('close', () => {
@@ -44,7 +44,7 @@ export async function checkRedisHealth(): Promise<boolean> {
     const result = await redis.ping();
     return result === 'PONG';
   } catch (error) {
-    logger.error('Redis health check failed', { error });
+    logger.error({ error }, 'Redis health check failed');
     return false;
   }
 }

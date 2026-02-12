@@ -123,7 +123,7 @@
       "id": "INFRA-002",
       "title": "CI/CD Pipeline con GitHub Actions",
       "description": "Pipeline de test automatizado, pipeline de lint y type-check, pipeline de build, deploy automático a Vercel/Railway, y quality gates.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Foundation",
       "dependencies": [
@@ -161,18 +161,19 @@
         "infrastructure",
         "cicd",
         "devops"
-      ]
+      ],
+      "completedAt": "2026-02-12T01:59:19Zs",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "SEC-001",
       "title": "Rate Limiting por Usuario",
       "description": "Implementar rate limiting por usuario, límites específicos para endpoints de IA, Redis-backed rate limiting, y respuestas 429 adecuadas.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Foundation",
       "dependencies": [
-        "TASK-002",
-        "TASK-031"
+        "TASK-002"
       ],
       "size": "S",
       "complexity": "medium",
@@ -184,8 +185,7 @@
         "Respuestas 429 con headers apropiados"
       ],
       "deliverables": [
-        "apps/api/src/middleware/rateLimit.ts",
-        "apps/api/src/utils/rateLimit.ts"
+        "apps/api/src/middleware/rateLimit.ts"
       ],
       "testing": {
         "unit": true,
@@ -201,13 +201,15 @@
         "backend",
         "security",
         "api"
-      ]
+      ],
+      "completedAt": "2026-02-12T14:30:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "API-001",
       "title": "API Versioning y Documentación",
       "description": "Implementar versioning de API (/v1/*), OpenAPI/Swagger documentation, generación de tipos desde OpenAPI, y deprecation warnings.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Foundation",
       "dependencies": [
@@ -241,7 +243,9 @@
         "backend",
         "api",
         "documentation"
-      ]
+      ],
+      "completedAt": "2026-02-12T14:30:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "LOG-001",
@@ -366,7 +370,7 @@
       "id": "TASK-003A",
       "title": "JWT Auth con Refresh Tokens",
       "description": "Implementar autenticación JWT con access tokens (15min) y refresh tokens (7 días), middleware de autenticación, y validación de tokens.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Auth & Core",
       "dependencies": [
@@ -383,9 +387,9 @@
         "Blacklist de tokens para revocación"
       ],
       "deliverables": [
-        "apps/api/src/services/auth/jwt.ts",
+        "apps/api/src/services/auth.service.ts",
         "apps/api/src/middleware/auth.ts",
-        "apps/web/src/composables/useAuth.ts"
+        "apps/api/src/routes/auth.routes.ts"
       ],
       "testing": {
         "unit": true,
@@ -401,13 +405,15 @@
         "backend",
         "auth",
         "security"
-      ]
+      ],
+      "completedAt": "2026-02-12T10:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-003B",
       "title": "Registro/Login con Validación",
       "description": "Implementar registro y login de usuarios con validación de email, password hashing (bcrypt), y manejo de errores.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Auth & Core",
       "dependencies": [
@@ -443,7 +449,9 @@
         "backend",
         "frontend",
         "auth"
-      ]
+      ],
+      "completedAt": "2026-02-12T01:56:03Zs",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-003C",
@@ -490,7 +498,7 @@
       "id": "TASK-004",
       "title": "Onboarding Flow",
       "description": "Flujo de onboarding < 5 minutos para registro de médico con validación de email, configuración inicial de perfil.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Auth & Core",
       "dependencies": [
@@ -507,7 +515,7 @@
       ],
       "deliverables": [
         "apps/web/src/views/onboarding/*",
-        "apps/api/src/routes/onboarding/index.ts"
+        "apps/web/src/components/onboarding/*"
       ],
       "testing": {
         "unit": false,
@@ -524,13 +532,15 @@
         "frontend",
         "ux",
         "onboarding"
-      ]
+      ],
+      "completedAt": "2026-02-12T14:30:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-005",
       "title": "Firma Electrónica XAdES-BES",
       "description": "Implementar firma digital .p12 procesada 100% en cliente usando WebCrypto API, con clave privada en memoria volátil.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Auth & Core",
       "dependencies": [
@@ -547,8 +557,9 @@
         "Validación de firma funcional"
       ],
       "deliverables": [
-        "apps/web/src/services/crypto/webcrypto.ts",
-        "apps/web/src/components/documents/Signature.vue"
+        "apps/web/src/composables/useFirmaElectronica.ts",
+        "apps/web/src/components/firma/FirmaElectronica.vue",
+        "apps/web/src/views/consultas/components/FirmaDialog.vue"
       ],
       "testing": {
         "unit": true,
@@ -564,7 +575,9 @@
         "frontend",
         "security",
         "crypto"
-      ]
+      ],
+      "completedAt": "2026-02-12T14:30:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-011A",
@@ -847,7 +860,7 @@
       "id": "TASK-006A",
       "title": "CRUD Base Consultas",
       "description": "Implementar CRUD base de consultas con schema Prisma y API endpoints básicos.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Consultation Workflow",
       "dependencies": [
@@ -864,9 +877,8 @@
         "Error handling completo"
       ],
       "deliverables": [
-        "apps/api/src/routes/consultation/index.ts",
-        "apps/api/src/services/consultation/crud.ts",
-        "apps/web/src/services/api/consultation.ts"
+        "apps/api/src/routes/consultas.ts",
+        "apps/api/src/services/stateMachine.ts"
       ],
       "testing": {
         "unit": true,
@@ -882,13 +894,15 @@
         "backend",
         "frontend",
         "consultation"
-      ]
+      ],
+      "completedAt": "2026-02-12T10:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-006B",
       "title": "Máquina de Estados Consultas",
       "description": "Implementar máquina de estados con 6 estados: borrador → triaje → pendiente → en_atención → finalizada → interconsulta, con transiciones válidas y validaciones.",
-      "status": "pending",
+      "status": "completed",
       "priority": "critical",
       "fase": "Consultation Workflow",
       "dependencies": [
@@ -904,8 +918,7 @@
         "Transiciones inválidas rechazadas"
       ],
       "deliverables": [
-        "apps/api/src/services/consultation/state-machine.ts",
-        "apps/web/src/composables/useConsultationState.ts"
+        "apps/api/src/services/stateMachine.ts"
       ],
       "testing": {
         "unit": true,
@@ -921,7 +934,9 @@
         "backend",
         "frontend",
         "state-machine"
-      ]
+      ],
+      "completedAt": "2026-02-12T10:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-006C",

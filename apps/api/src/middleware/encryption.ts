@@ -141,7 +141,7 @@ export function maskSensitiveFields<T extends Record<string, unknown>>(data: T):
 
         if (field === 'email') {
           masked = maskEmail(value);
-        } else if (field === 'telefono' || field === 'phone') {
+        } else if (field === 'telefono') {
           masked = maskPhone(value);
         } else {
           masked = maskSensitiveData(value);
@@ -168,13 +168,13 @@ export function loggingMaskMiddleware(req: Request, res: Response, next: NextFun
   // Enmascarar body en logs
   if (req.body) {
     const maskedBody = maskSensitiveFields(req.body);
-    logger.debug('Request body (masked)', { body: maskedBody });
+    logger.debug({ body: maskedBody }, 'Request body (masked)');
   }
 
   // Enmascarar query params
   if (req.query && Object.keys(req.query).length > 0) {
     const maskedQuery = maskSensitiveFields(req.query);
-    logger.debug('Request query (masked)', { query: maskedQuery });
+    logger.debug({ query: maskedQuery }, 'Request query (masked)');
   }
 
   next();

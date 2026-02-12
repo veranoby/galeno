@@ -6,6 +6,9 @@ import { connectDatabase } from './config/database.js';
 import redis, { checkRedisHealth } from './config/redis.js';
 import { logger } from './utils/logger.js';
 import { authMiddleware, optionalAuthMiddleware, AuthRequest } from './middleware/auth.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.js';
+import v1Routes from './routes/v1/index.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +25,58 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ============= HEALTH CHECK =============
+// ============= SWAGGER DOCUMENTATION =============
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'Galeno API Documentation',
+  customCss: '.swagger-ui .topbar { display: none }',
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    docExpansion: 'none',
+    filter: true,
+    showRequestHeaders: true,
+    tryItOutEnabled: true
+  }
+}));
+
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     tags: [Health]
+ *     description: Returns the health status of the API and its dependencies
+ *     responses:
+ *       200:
+ *         description: Health status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   enum: [ok, degraded]
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     database:
+ *                       type: string
+ *                     redis:
+ *                       type: string
+ *             example:
+ *               status: ok
+ *               timestamp: 2024-01-01T00:00:00.000Z
+ *               uptime: 123.456
+ *               services:
+ *                 database: connected
+ *                 redis: connected
+ */
 app.get('/health', async (_req, res) => {
   const dbHealthy = await checkRedisHealth();
   const redisStatus = redis.status === 'ready' ? 'connected' : 'disconnected';
@@ -38,48 +92,72 @@ app.get('/health', async (_req, res) => {
   });
 });
 
-// ============= API ROUTES =============
+/**
+ * @openapi
+ * /api:
+ *   get:
+ *     summary: API Root
+ *     tags: [General]
+ *     description: Returns API information and available versions
+ *     responses:
+ *       200:
+ *         description: API information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 version:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 versions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       version:
+ *                         type: string
+ *                       path:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                 documentation:
+ *                   type: string
+ *             example:
+ *               name: Galeno API
+ *               version: 1.0.0
+ *               description: Ecuador-Health 360 Medical Platform API
+ *               versions:
+ *                 - version: v1
+ *                   path: /api/v1
+ *                   status: current
+ *               documentation: /api-docs
+ */
 app.get('/api', (_req, res) => {
   res.json({
     name: 'Galeno API',
     version: '1.0.0',
     description: 'Ecuador-Health 360 Medical Platform API',
-    security: 'Row Level Security (RLS) enabled'
+    versions: [
+      {
+        version: 'v1',
+        path: '/api/v1',
+        status: 'current'
+      }
+    ],
+    documentation: '/api-docs'
   });
 });
 
-// ============= AUTH ROUTES (sin protección) =============
+// ============= API VERSIONING =============
+// Mount v1 routes
+app.use('/api/v1', v1Routes);
 
-// Login endpoint (TODO: Implement with JWT)
-app.post('/api/auth/login', async (req: AuthRequest, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      error: 'Bad Request',
-      message: 'Email and password required'
-    });
-  }
-
-  // TODO: Implement proper JWT authentication
-  // For development, return a mock token
-  const mockToken = Buffer.from(JSON.stringify({
-    sub: 'dev-user-id',
-    email: email,
-    rol: 'DOCTOR'
-  })).toString('base64');
-
-  res.json({
-    token: mockToken,
-    user: {
-      id: 'dev-user-id',
-      email: email,
-      rol: 'DOCTOR'
-    }
-  });
-});
-
-// ============= PROTECTED ROUTES (con RLS) =============
+// ============= LEGACY ROUTES (for backward compatibility) =============
+// These will be deprecated in future versions
 
 // Ejemplo: Obtener pacientes del usuario actual
 // RLS filtra automáticamente para mostrar solo los pacientes del usuario
@@ -101,7 +179,7 @@ app.get('/api/pacientes', authMiddleware, async (req: AuthRequest, res) => {
       data: pacientes
     });
   } catch (error) {
-    logger.error('Error fetching pacientes', { error });
+    logger.error({ error }, 'Error fetching pacientes');
     res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to fetch pacientes'
@@ -109,48 +187,10 @@ app.get('/api/pacientes', authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
-// Ejemplo: Obtener consultas del usuario actual
-app.get('/api/consultas', authMiddleware, async (req: AuthRequest, res) => {
-  try {
-    const prisma = (await import('./config/database.js')).default;
-
-    const consultas = await prisma.consulta.findMany({
-      include: {
-        paciente: {
-          select: {
-            id: true,
-            nombre: true,
-            cedula: true
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 50
-    });
-
-    res.json({
-      count: consultas.length,
-      data: consultas
-    });
-  } catch (error) {
-    logger.error('Error fetching consultas', { error });
-    res.status(500).json({
-      error: 'Internal server error',
-      message: 'Failed to fetch consultas'
-    });
-  }
-});
-
-// Ejemplo: Verificar contexto de autenticación
-app.get('/api/auth/me', authMiddleware, async (req: AuthRequest, res) => {
-  res.json({
-    user: req.user
-  });
-});
 
 // ============= ERROR HANDLING =============
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  logger.error('Unhandled error', { error: err.message, stack: err.stack });
+  logger.error({ error: err.message, stack: err.stack }, 'Unhandled error');
   res.status(500).json({
     error: 'Internal server error',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -173,9 +213,11 @@ async function startServer() {
       logger.info(`🚀 Server running on http://localhost:${PORT}`);
       logger.info(`📚 Health check: http://localhost:${PORT}/health`);
       logger.info(`🔧 API endpoint: http://localhost:${PORT}/api`);
+      logger.info(`📖 API Documentation: http://localhost:${PORT}/api-docs`);
+      logger.info(`📋 API v1: http://localhost:${PORT}/api/v1`);
     });
   } catch (error) {
-    logger.error('Failed to start server', { error });
+    logger.error({ error }, 'Failed to start server');
     process.exit(1);
   }
 }

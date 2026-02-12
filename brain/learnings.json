@@ -1,6 +1,139 @@
 {
-  "version": "1.0.0",
-  "lastModified": "2026-02-11",
-  "checksum": "galeno-learnings-v1.0",
-  "iterations": []
+  "version": "1.1.0",
+  "lastModified": "2026-02-12",
+  "checksum": "galeno-learnings-v1.1",
+  "iterations": [
+    {
+      "id": "LEARN-001",
+      "date": "2026-02-12",
+      "category": "typescript",
+      "severity": "critical",
+      "title": "Errores masivos de TypeScript en código generado por agentes",
+      "problem": "Los agentes de implementación generaron código con múltiples errores de TypeScript: tipos faltantes de navegador (File, Blob, URL, DOMParser, etc.), tipos exportados inexistentes en shared-types, imports incorrectos de librerías criptográficas, y referencias a paquetes inexistentes en tsconfig.",
+      "rootCause": "Falta de verificación de tipos durante generación de código. Los agentes no ejecutaron type-check antes de considerar el código como completo.",
+      "solution": "Implementar verificación obligatoria de type-check antes de marcar tareas como completadas. Ejecutar `pnpm type-check` en cada paquete modificado.",
+      "prevention": [
+        "Siempre ejecutar type-check antes de considerar código listo",
+        "Usar --strict mode en tsconfig para detectar más errores",
+        "Verificar imports de librerías externas contra @types disponibles",
+        "No hacer commit si type-check falla"
+      ]
+    },
+    {
+      "id": "LEARN-002",
+      "date": "2026-02-12",
+      "category": "agent-orchestration",
+      "severity": "high",
+      "title": "Agents híbridos generaron código sin validación",
+      "problem": "Los agentes (general-purpose) fueron lanzados en paralelo sin mecanismo de validación integrada. Cada agente generó código independiente sin verificar compatibilidad con el código existente ni tipado correcto.",
+      "rootCause": "Falta de integración entre el sistema de tareas y los agentes. Los agentes reportaron 'éxito' basado en sintaxis básica, no en corrección de tipos.",
+      "solution": "Implementar modo de validación obligatoria post-agente: type-check + lint + build antes de aceptar archivos generados.",
+      "prevention": [
+        "Usar flag --dry-run en agents para validar primero",
+        "Implementar checkpoint de validación entre agente y commit",
+        "Ejecutar uc:validate automáticamente después de uc:implement",
+        "Mantener registro de agentes fallidos en brain/coordination.json"
+      ]
+    },
+    {
+      "id": "LEARN-003",
+      "date": "2026-02-12",
+      "category": "dependencies",
+      "severity": "medium",
+      "title": "Dependencias de paquetes inexistentes en tsconfig",
+      "problem": "Los tsconfig de apps/api y apps/web tenían referencias a paquetes @galeno/ui-components y @galeno/api-client que no existen en el monorepo.",
+      "rootCause": "Código generado basado en plantillas que asumían una estructura de monorepo más completa.",
+      "solution": "Verificar existencia de paquetes antes de agregar referencias. Usar solo shared-types que es el único paquete compartido existente.",
+      "prevention": [
+        "Validar estructura de monorepo antes de generar código",
+        "Usar rutas relativas correctas para paquetes existentes",
+        "No asumir estructura de directorios sin verificar"
+      ]
+    },
+    {
+      "id": "LEARN-004",
+      "date": "2026-02-12",
+      "category": "webcrypto",
+      "severity": "high",
+      "title": "Uso incorrecto de APIs de navegador en código de firma",
+      "problem": "El composable useFirmaDigital.ts usó tipos CryptoKey, RsaHashedImportParams, etc. que no existen en el entorno de navegador sin tipos explícitos. También usó API de File (file.separator) que no existe.",
+      "rootCause": "Uso de APIs de Node.js (crypto) en código que debe ejecutarse en navegador, mezclando entornos.",
+      "solution": "Para código de navegador, usar @types/webcrypto o tipos específicos. Para backend, usar @types/node. No mezclar APIs de browser con Node.js.",
+      "prevention": [
+        "Separar claramente código de frontend vs backend",
+        "Usar tipos específicos del entorno (browser vs node)",
+        "Verificar existencia de tipos antes de usar APIs",
+        "Usar env detection con types guards"
+      ]
+    },
+    {
+      "id": "LEARN-005",
+      "date": "2026-02-12",
+      "category": "tooling",
+      "severity": "medium",
+      "title": "Migración incompleta de ESLint 9.x",
+      "problem": "El proyecto tenía archivos .eslintrc.json obsoletos que causaban conflictos con ESLint 9.x. La eliminación de estos archivos dejó configuraciones incompletas.",
+      "rootCause": "ESLint 9.x requiere eslint.config.js (flat config) en lugar de .eslintrc.*. La migración no se completó correctamente.",
+      "solution": "Usar exclusively flat config (eslint.config.js) y eliminar todos los .eslintrc.*. Seguir guía de migración oficial de ESLint.",
+      "prevention": [
+        "Mantener solo un formato de configuración de ESLint",
+        "Documentar formato preferido en CLAUDE.md del proyecto",
+        "Verificar compatibilidad de versiones de ESLint antes de actualizar",
+        "No mezclar formatos de configuración"
+      ]
+    },
+    {
+      "id": "LEARN-006",
+      "date": "2026-02-12",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Falta de tipos compartidos centralizados",
+      "problem": "Los tipos OnboardingStep, ProfileSetupData y otros se usaban en código pero no estaban exportados en shared-types. Esto causaba errores de compilación.",
+      "rootCause": "Código generado definió tipos que nunca fueron agregados al paquete de tipos compartidos. No hubo validación de que los tipos existen.",
+      "solution": "Agregar tipos faltantes a shared-types antes de usarlos. Crear índice barato de exportaciones para evitar errores.",
+      "prevention": [
+        "Siempre que el tipo exista en shared-types antes de usarlo",
+        "Usar --strict mode en tsconfig para detectar tipos faltantes",
+        "Ejecutar type-check:all para verificar todos los paquetes",
+        "Documentar tipos disponibles en README del paquete"
+      ]
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "ACTION-001",
+      "status": "pending",
+      "title": "Implementar type-check obligatorio en UC system",
+      "description": "Modificar flujo de uc:implement para ejecutar type-check automáticamente antes de marcar tareas como completadas.",
+      "priority": "critical"
+    },
+    {
+      "id": "ACTION-002",
+      "status": "pending",
+      "title": "Crear guía de uso de agentes con validación",
+      "description": "Documentar proceso correcto para usar agentes: 1) dry-run, 2) verify, 3) commit. Evitar uso directo de uc:implement.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-003",
+      "status": "pending",
+      "title": "Agregar @types webcrypto a apps/web",
+      "description": "Instalar tipos de WebCrypto API para corregir errores de TypeScript en código de firma.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-004",
+      "status": "pending",
+      "title": "Eliminar archivos de onboarding problemáticos",
+      "description": "Los archivos de onboarding tienen demasiados errores. Evaluar si deben eliminarse o reescribirse completamente con types correctos.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-005",
+      "status": "pending",
+      "title": "Configurar ESLint flat config correctamente",
+      "description": "Asegurar que solo exista eslint.config.js y que no haya archivos .eslintrc.* residuales.",
+      "priority": "medium"
+    }
+  ]
 }

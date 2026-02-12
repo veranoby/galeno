@@ -31,18 +31,19 @@ model Cuenta {
 
   // Relations
   pacientes         Paciente[]
-  consultas         Consulta[]
+  consultas         Consulta[]        @relation("CuentaConsultas")
+  doctorConsultas   Consulta[]        @relation("DoctorConsultas")
   ubicaciones       Ubicacion[]
   slots             SlotDisponibilidad[]
   citas             Cita[]
   usuariosVinculados UsuarioVinculado[]
+  usuariosAsignados UsuarioVinculado[] @relation("DoctorAsignado")
   doctorEspecialidades DoctorEspecialidad[]
   iaPreferencias    IaPreferencia[]
-  conexionesOrigen  ConexionPaciente[] @relation("ConexionOrigen")
-  conexionesDestino ConexionPaciente[] @relation("ConexionDestino")
+  conexiones        ConexionPaciente[] @relation("ConexionOrigen")
   articulos         Articulo[]
-  consultasSolicitadas Interconsulta[] @relation("Solicitante")
-  consultasRecibidas  Interconsulta[] @relation("Destino")
+  interconsultasSolicitadas Interconsulta[] @relation("Solicitante")
+  interconsultasRecibidas  Interconsulta[] @relation("Destino")
 
   @@index([email])
   @@index([plan])
@@ -58,7 +59,7 @@ model UsuarioVinculado {
   passwordHash      String   @map("password_hash")
   nombre            String
   rol               RolVinculado
-  permisos          Jsonb?
+  permisos          Json?
   activo            Boolean  @default(true)
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
@@ -66,7 +67,7 @@ model UsuarioVinculado {
   // Relations
   cuenta            Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
   doctorAsignado    Cuenta   @relation("DoctorAsignado", fields: [doctorAsignadoId], references: [id], onDelete: Cascade)
-  triajes           Consulta[]
+  consultas         Consulta[] @relation("AsistenteConsultas")
 
   @@index([cuentaId])
   @@index([doctorAsignadoId])
@@ -129,26 +130,25 @@ model Consulta {
   asistenteId         String?       @map("asistente_id")
   estado              EstadoConsulta
   parentId            String?       @map("parent_id")
-  triajeData          Jsonb?        @map("triaje_data")
+  triajeData          Json?        @map("triaje_data")
   motivoConsulta      String?       @map("motivo_consulta") @db.Text
   evolucion           String?       @db.Text
-  diagnosticoCie10    Jsonb?        @map("diagnostico_cie10")
-  recetaJson          Jsonb?        @map("receta_json")
-  examenesJson        Jsonb?        @map("examenes_json")
+  diagnosticoCie10    Json?        @map("diagnostico_cie10")
+  recetaJson          Json?        @map("receta_json")
+  examenesJson        Json?        @map("examenes_json")
   firmado             Boolean       @default(false)
   createdAt           DateTime      @default(now()) @map("created_at")
   updatedAt           DateTime      @updatedAt @map("updated_at")
 
   // Relations
-  cuenta              Cuenta        @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  cuenta              Cuenta        @relation("CuentaConsultas", fields: [cuentaId], references: [id], onDelete: Cascade)
   paciente            Paciente      @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
-  doctor              Cuenta        @relation("DoctorConsulta", fields: [doctorId], references: [id], onDelete: Cascade)
-  asistente           UsuarioVinculado? @relation(fields: [asistenteId], references: [id], onDelete: SetNull)
+  doctor              Cuenta        @relation("DoctorConsultas", fields: [doctorId], references: [id], onDelete: Cascade)
+  asistente           UsuarioVinculado? @relation("AsistenteConsultas", fields: [asistenteId], references: [id], onDelete: SetNull)
   documentos          Documento[]
-  children            Consulta[]    @relation("Interconsulta")
-  parent              Consulta?     @relation("Interconsulta", fields: [parentId], references: [id])
-  interconsultasSolicitadas Interconsulta[] @relation("ConsultaOrigen")
-  interconsultasRecibidas  Interconsulta[] @relation("ConsultaDestino")
+  children            Consulta[]    @relation("SubConsultas")
+  parent              Consulta?     @relation("SubConsultas", fields: [parentId], references: [id])
+  interconsultas      Interconsulta[]
 
   @@index([cuentaId])
   @@index([pacienteId])
@@ -164,7 +164,7 @@ model Documento {
   consultaId      String        @map("consulta_id")
   pacienteId      String        @map("paciente_id")
   tipo            TipoDocumento
-  contenido       Jsonb
+  contenido       Json
   firmado         Boolean       @default(false)
   fechaEmision    DateTime      @default(now()) @map("fecha_emision")
   fechaExpiracion DateTime?     @map("fecha_expiracion")
@@ -275,7 +275,7 @@ model Especialidad {
   id          String   @id @default(uuid())
   nombre      String   @unique
   nombreCorto String   @unique @map("nombre_corto")
-  herramientas Jsonb
+  herramientas Json
   activo      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
 
@@ -309,11 +309,12 @@ model ConexionPaciente {
   autorizadoPor       AutorizadoPor @map("autorizado_por")
   fechaAutorizacion   DateTime @default(now()) @map("fecha_autorizacion")
   estado              EstadoConexion @default(activa)
-  permisos            Jsonb
+  permisos            Json
   revocadaEn          DateTime? @map("revocada_en")
 
   // Relations
   paciente            Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  doctor              Cuenta   @relation("ConexionOrigen", fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@unique([pacienteId, doctorId])
   @@index([pacienteId])
@@ -334,6 +335,9 @@ model Articulo {
   likesCount      Int      @default(0) @map("likes_count")
   createdAt       DateTime @default(now()) @map("created_at")
 
+  // Relations
+  doctor          Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
   @@index([doctorId])
   @@index([estado])
   @@index([esDestacado])
@@ -350,11 +354,34 @@ model Interconsulta {
   mensaje         String?         @db.Text
   creadoEn        DateTime        @default(now()) @map("creado_en")
 
+  // Relations
+  consulta        Consulta        @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+  solicitanteUser Cuenta          @relation("Solicitante", fields: [solicitante], references: [id], onDelete: Cascade)
+  destinoUser     Cuenta          @relation("Destino", fields: [destino], references: [id], onDelete: Cascade)
+
   @@index([consultaId])
   @@index([solicitante])
   @@index([destino])
   @@index([estado])
   @@map("interconsultas")
+}
+
+// ============= AUTH =============
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  token       String   @unique
+  userId      String   @map("user_id")
+  userType    UserType @map("user_type")
+  expiresAt   DateTime @map("expires_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  revokedAt   DateTime? @map("revoked_at")
+  replacedBy  String?  @map("replaced_by")
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
 }
 
 // ============= ENUMS =============
@@ -451,4 +478,9 @@ enum EstadoInterconsulta {
   aceptada
   rechazada
   completada
+}
+
+enum UserType {
+  CUENTA
+  USUARIO_VINCULADO
 }

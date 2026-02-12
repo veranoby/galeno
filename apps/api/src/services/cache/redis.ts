@@ -58,7 +58,7 @@ export class CacheService {
       if (!value) return null;
       return JSON.parse(value) as T;
     } catch (error) {
-      logger.error('Cache get error', { key, error });
+      logger.error({ key, error }, 'Cache get error');
       return null;
     }
   }
@@ -76,7 +76,7 @@ export class CacheService {
       }
       return true;
     } catch (error) {
-      logger.error('Cache set error', { key, error });
+      logger.error({ key, error }, 'Cache set error');
       return false;
     }
   }
@@ -89,7 +89,7 @@ export class CacheService {
       await redis.del(key);
       return true;
     } catch (error) {
-      logger.error('Cache delete error', { key, error });
+      logger.error({ key, error }, 'Cache delete error');
       return false;
     }
   }
@@ -104,7 +104,7 @@ export class CacheService {
       await redis.del(...keys);
       return keys.length;
     } catch (error) {
-      logger.error('Cache delete pattern error', { pattern, error });
+      logger.error({ pattern, error }, 'Cache delete pattern error');
       return 0;
     }
   }
@@ -117,7 +117,7 @@ export class CacheService {
       const result = await redis.exists(key);
       return result === 1;
     } catch (error) {
-      logger.error('Cache exists error', { key, error });
+      logger.error({ key, error }, 'Cache exists error');
       return false;
     }
   }
@@ -129,7 +129,7 @@ export class CacheService {
     try {
       return await redis.incr(key);
     } catch (error) {
-      logger.error('Cache increment error', { key, error });
+      logger.error({ key, error }, 'Cache increment error');
       return 0;
     }
   }
@@ -145,7 +145,7 @@ export class CacheService {
       }
       return value;
     } catch (error) {
-      logger.error('Cache increment expiry error', { key, error });
+      logger.error({ key, error }, 'Cache increment expiry error');
       return 0;
     }
   }
@@ -162,7 +162,7 @@ export class CacheService {
       }
       return result === 'OK';
     } catch (error) {
-      logger.error('Cache setNX error', { key, error });
+      logger.error({ key, error }, 'Cache setNX error');
       return false;
     }
   }
@@ -174,7 +174,7 @@ export class CacheService {
     try {
       return await redis.ttl(key);
     } catch (error) {
-      logger.error('Cache TTL error', { key, error });
+      logger.error({ key, error }, 'Cache TTL error');
       return -1;
     }
   }
@@ -216,10 +216,13 @@ export class IAPreferencesCache {
   }
 
   static async updatePreference(doctorId: string, category: string, itemId: string, frequency: number): Promise<boolean> {
-    const prefs = (await this.getPreferences(doctorId)) || {};
-    if (!prefs[category]) prefs[category] = {};
-    prefs[category][itemId] = frequency;
-    return this.setPreferences(doctorId, prefs);
+    const prefs = (await IAPreferencesCache.getPreferences(doctorId)) || {};
+    const categoryData = prefs[category] as Record<string, number> | undefined;
+    if (!categoryData) {
+      (prefs as Record<string, Record<string, number>>)[category] = {};
+    }
+    (prefs as Record<string, Record<string, number>>)[category][itemId] = frequency;
+    return IAPreferencesCache.setPreferences(doctorId, prefs);
   }
 }
 
@@ -268,15 +271,15 @@ export class APICache {
   private static prefix = KEY_PREFIXES.API_CACHE;
 
   static get(requestKey: string): Promise<unknown> {
-    return CacheService.get(`${this.prefix}${requestKey}`);
+    return CacheService.get(`${APICache.prefix}${requestKey}`);
   }
 
-  set(requestKey: string, response: unknown, ttl: number = CacheTTL.API_RESPONSE): Promise<boolean> {
-    return CacheService.set(`${this.prefix}${requestKey}`, response, ttl);
+  static set(requestKey: string, response: unknown, ttl: number = CacheTTL.API_RESPONSE): Promise<boolean> {
+    return CacheService.set(`${APICache.prefix}${requestKey}`, response, ttl);
   }
 
-  invalidate(pattern: string): Promise<number> {
-    return CacheService.delPattern(`${this.prefix}${pattern}`);
+  static invalidate(pattern: string): Promise<number> {
+    return CacheService.delPattern(`${APICache.prefix}${pattern}`);
   }
 }
 
@@ -284,19 +287,19 @@ export class PatientCache {
   private static prefix = KEY_PREFIXES.PATIENT;
 
   static get(patientId: string): Promise<unknown> {
-    return CacheService.get(`${this.prefix}${patientId}`);
+    return CacheService.get(`${PatientCache.prefix}${patientId}`);
   }
 
-  set(patientId: string, data: unknown): Promise<boolean> {
-    return CacheService.set(`${this.prefix}${patientId}`, data, CacheTTL.PATIENT_DATA);
+  static set(patientId: string, data: unknown): Promise<boolean> {
+    return CacheService.set(`${PatientCache.prefix}${patientId}`, data, CacheTTL.PATIENT_DATA);
   }
 
-  invalidate(patientId: string): Promise<boolean> {
-    return CacheService.del(`${this.prefix}${patientId}`);
+  static invalidate(patientId: string): Promise<boolean> {
+    return CacheService.del(`${PatientCache.prefix}${patientId}`);
   }
 
-  invalidateAll(): Promise<number> {
-    return CacheService.delPattern(`${this.prefix}*`);
+  static invalidateAll(): Promise<number> {
+    return CacheService.delPattern(`${PatientCache.prefix}*`);
   }
 }
 
@@ -304,15 +307,15 @@ export class AvailabilityCache {
   private static prefix = KEY_PREFIXES.AVAILABILITY;
 
   static get(doctorId: string, date: string): Promise<unknown> {
-    return CacheService.get(`${this.prefix}${doctorId}:${date}`);
+    return CacheService.get(`${AvailabilityCache.prefix}${doctorId}:${date}`);
   }
 
-  set(doctorId: string, date: string, slots: unknown): Promise<boolean> {
-    return CacheService.set(`${this.prefix}${doctorId}:${date}`, slots, CacheTTL.AVAILABILITY);
+  static set(doctorId: string, date: string, slots: unknown): Promise<boolean> {
+    return CacheService.set(`${AvailabilityCache.prefix}${doctorId}:${date}`, slots, CacheTTL.AVAILABILITY);
   }
 
-  invalidate(doctorId: string): Promise<number> {
-    return CacheService.delPattern(`${this.prefix}${doctorId}:*`);
+  static invalidate(doctorId: string): Promise<number> {
+    return CacheService.delPattern(`${AvailabilityCache.prefix}${doctorId}:*`);
   }
 }
 

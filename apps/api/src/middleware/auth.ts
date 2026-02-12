@@ -1,17 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 import prisma from '../config/database.js';
-
-/**
- * JWT Payload Interface
- */
-export interface JWTPayload {
-  sub: string; // user_id
-  email: string;
-  rol: 'DOCTOR' | 'ADMIN' | 'ASISTENTE' | 'ENFERMERA';
-  iat?: number;
-  exp?: number;
-}
+import { verifyAccessToken, type JWTPayload } from '../services/auth.service.js';
 
 /**
  * Extended Request with user context
@@ -29,7 +19,7 @@ export interface AuthRequest extends Request {
  * Auth Middleware - Sets RLS context and validates JWT
  *
  * This middleware:
- * 1. Validates JWT from Authorization header
+ * 1. Validates JWT from Authorization header using jsonwebtoken
  * 2. Sets PostgreSQL RLS context (request.user.id)
  * 3. Attaches user info to request object
  *
@@ -50,34 +40,17 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
 
     const token = authHeader.substring(7); // Remove 'Bearer '
 
-    // Verify JWT (TODO: Implement with jsonwebtoken)
-    // For now, skip verification in development
+    // Verify JWT using jsonwebtoken
     let payload: JWTPayload;
 
     try {
-      // Development: Accept any token as base64 encoded JSON
-      const decoded = Buffer.from(token, 'base64').toString('utf-8');
-      payload = JSON.parse(decoded);
-
-      // Validate required fields
-      if (!payload.sub || !payload.email || !payload.rol) {
-        throw new Error('Invalid token payload');
-      }
+      payload = verifyAccessToken(token);
     } catch (error) {
-      // If not base64 JSON, try JWT verification (TODO)
-      // For development, allow a bypass
-      if (process.env.NODE_ENV === 'development' && token === 'dev-token') {
-        payload = {
-          sub: 'dev-user-id',
-          email: 'dev@galeno.ec',
-          rol: 'DOCTOR'
-        };
-      } else {
-        return res.status(401).json({
-          error: 'Unauthorized',
-          message: 'Invalid token'
-        });
-      }
+      const message = error instanceof Error ? error.message : 'Invalid token';
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message
+      });
     }
 
     // Verify user exists in database
@@ -95,7 +68,8 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
           email: true,
           rol: true,
           cuentaId: true,
-          doctorAsignadoId: true
+          doctorAsignadoId: true,
+          activo: true
         }
       });
 
@@ -118,7 +92,8 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       req.user = {
         id: cuenta.id,
         email: cuenta.email,
-        rol: cuenta.rol as 'DOCTOR' | 'ADMIN'
+        rol: cuenta.rol as 'DOCTOR' | 'ADMIN',
+        cuentaId: payload.cuentaId
       };
     }
 
@@ -129,16 +104,16 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
 
     // Log for debugging (remove in production)
     if (process.env.NODE_ENV === 'development') {
-      logger.debug('User authenticated', {
+      logger.debug({
         id: req.user.id,
         email: req.user.email,
         rol: req.user.rol
-      });
+      }, 'User authenticated');
     }
 
     next();
   } catch (error) {
-    logger.error('Auth middleware error', { error });
+    logger.error({ error }, 'Auth middleware error');
     return res.status(500).json({
       error: 'Internal server error',
       message: 'Authentication failed'
@@ -164,25 +139,24 @@ export async function optionalAuthMiddleware(req: AuthRequest, res: Response, ne
     const token = authHeader.substring(7);
 
     try {
-      const decoded = Buffer.from(token, 'base64').toString('utf-8');
-      const payload: JWTPayload = JSON.parse(decoded);
+      const payload = verifyAccessToken(token);
 
-      if (payload.sub && payload.email && payload.rol) {
-        const cuenta = await prisma.cuenta.findUnique({
-          where: { id: payload.sub },
-          select: { id: true, email: true, rol: true }
-        });
+      // Verify user exists
+      const cuenta = await prisma.cuenta.findUnique({
+        where: { id: payload.sub },
+        select: { id: true, email: true, rol: true }
+      });
 
-        if (cuenta) {
-          req.user = {
-            id: cuenta.id,
-            email: cuenta.email,
-            rol: cuenta.rol as 'DOCTOR' | 'ADMIN'
-          };
+      if (cuenta) {
+        req.user = {
+          id: cuenta.id,
+          email: cuenta.email,
+          rol: cuenta.rol as 'DOCTOR' | 'ADMIN',
+          cuentaId: payload.cuentaId
+        };
 
-          await prisma.$executeRaw`SET LOCAL request.jwt.claim.user_id = ${req.user.id}`;
-          await prisma.$executeRaw`SET LOCAL request.user.id = ${req.user.id}`;
-        }
+        await prisma.$executeRaw`SET LOCAL request.jwt.claim.user_id = ${req.user.id}`;
+        await prisma.$executeRaw`SET LOCAL request.user.id = ${req.user.id}`;
       }
     } catch {
       // Ignore errors, continue without auth
