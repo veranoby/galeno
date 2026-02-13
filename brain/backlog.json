@@ -1,7 +1,7 @@
 {
   "version": "2.0.0",
-  "lastModified": "2026-02-11",
-  "checksum": "galeno-backlog-v2.0",
+  "lastModified": "2026-02-12",
+  "checksum": "galeno-backlog-v2.0-updated",
   "items": [
     {
       "id": "INFRA-001",
@@ -583,7 +583,7 @@
       "id": "TASK-011A",
       "title": "Generación XML SRI",
       "description": "Implementar generación de XML para facturación electrónica SRI con validación RUC y estructura correcta.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Auth & Core",
       "dependencies": [
@@ -616,13 +616,15 @@
         "backend",
         "sri",
         "billing"
-      ]
+      ],
+      "completedAt": "2026-02-12T19:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-011B",
       "title": "Firma y Envío SRI",
       "description": "Implementar firma de XML SRI y envío a los web services del SRI para autorización.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Auth & Core",
       "dependencies": [
@@ -655,7 +657,9 @@
         "backend",
         "sri",
         "billing"
-      ]
+      ],
+      "completedAt": "2026-02-12T19:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-052",
@@ -942,7 +946,9 @@
       "id": "TASK-006C",
       "title": "Consultas con Firma Electrónica",
       "description": "Integrar firma electrónica XAdES-BES en consultas, marcar como firmado, y prevenir ediciones post-firma.",
-      "status": "pending",
+      "status": "completed",
+      "completedAt": "2026-02-13T15:56:00Z",
+      "completedBy": "claude-opus-4-6",
       "priority": "critical",
       "fase": "Consultation Workflow",
       "dependencies": [
