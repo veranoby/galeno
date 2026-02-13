@@ -9,6 +9,7 @@ import {
   validateTransition,
   getStateInfo
 } from '../../services/stateMachine.js';
+import { consultaSignatureService, FirmaConsultaError } from '../../services/consultation/signature.js';
 
 const router: Router = Router();
 
@@ -406,11 +407,17 @@ router.put('/:id', authMiddleware, requireMedical, async (req: AuthRequest, res:
       }
     }
 
-    // Check if update is allowed (only borrador or triaje can be updated)
-    if (existingConsulta.estado !== 'borrador' && existingConsulta.estado !== 'triaje') {
+    // Validar actualización con servicio de firma (previene ediciones post-firma)
+    const validacion = await consultaSignatureService.validarActualizacion(
+      id,
+      { estado },
+      req.user!.id
+    );
+
+    if (!validacion.valida) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: `Cannot update consulta with state '${existingConsulta.estado}'. Only borrador and triaje can be updated.`
+        message: validacion.error
       });
     }
 

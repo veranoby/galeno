@@ -137,6 +137,9 @@ model Consulta {
   recetaJson          Json?        @map("receta_json")
   examenesJson        Json?        @map("examenes_json")
   firmado             Boolean       @default(false)
+  fechaFirma          DateTime?     @map("fecha_firma")
+  firmaXml            String?       @db.Text @map("firma_xml")
+  firmaCertificado    Json?         @map("firma_certificado")
   createdAt           DateTime      @default(now()) @map("created_at")
   updatedAt           DateTime      @updatedAt @map("updated_at")
 
