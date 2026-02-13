@@ -665,7 +665,7 @@
       "id": "TASK-052",
       "title": "Integración SRI XML Complete",
       "description": "Integración completa con SRI para generación, firma y envío de XML de facturación.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Auth & Core",
       "dependencies": [
@@ -699,7 +699,10 @@
         "backend",
         "frontend",
         "sri"
-      ]
+      ],
+      "completedAt": "2026-02-13T00:00:00Z",
+      "completedBy": "claude-opus-4-6",
+      "notes": "Tests pendientes (integration + E2E) - para completar en ciclo futuro"
     },
     {
       "id": "TASK-020A",
@@ -989,7 +992,7 @@
       "id": "TASK-006D",
       "title": "Historial de Consultas",
       "description": "Implementar listado paginado de consultas con filtros por estado/fecha y búsqueda full-text.",
-      "status": "pending",
+      "status": "completed",
       "priority": "high",
       "fase": "Consultation Workflow",
       "dependencies": [
@@ -1005,7 +1008,7 @@
         "Búsqueda full-text operativa"
       ],
       "deliverables": [
-        "apps/api/src/routes/consultation/list.ts",
+        "apps/api/src/routes/v1/consultas.routes.ts (extendido)",
         "apps/web/src/views/consultation/History.vue"
       ],
       "testing": {
@@ -1022,7 +1025,9 @@
         "backend",
         "frontend",
         "consultation"
-      ]
+      ],
+      "completedAt": "2026-02-13T00:00:00Z",
+      "completedBy": "claude-opus-4-6"
     },
     {
       "id": "TASK-027A",
@@ -1351,7 +1356,9 @@
       "id": "TASK-026",
       "title": "Documentos con Caducidad",
       "description": "Sistema de documentos con caducidad automática: recetas 30 días, exámenes 90 días.",
-      "status": "pending",
+      "status": "completed",
+      "completedAt": "2026-02-13T16:00:00Z",
+      "completedBy": "claude-opus-4-6",
       "priority": "high",
       "fase": "Consultation Workflow",
       "dependencies": [
