@@ -34,6 +34,7 @@ export interface IPagoRepository {
 
   /**
    * Busca pagos de un paciente
+   * Nota: El modelo Pago no tiene pacienteId, este método lanza error
    */
   findByPaciente(pacienteId: string, options?: Omit<PagoFindOptions, 'where'>): Promise<Pago[]>;
 
@@ -55,7 +56,7 @@ export interface IPagoRepository {
   /**
    * Actualiza el estado de un pago
    */
-  updateStatus(id: string, estado: string, metadata?: Record<string, unknown>): Promise<Pago>;
+  updateStatus(id: string, status: string, metadata?: Record<string, unknown>): Promise<Pago>;
 
   /**
    * Cuenta pagos por criterios

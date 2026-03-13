@@ -93,22 +93,22 @@ export class PrismaConsultaRepository implements IConsultaRepository {
       if (endDate) where.createdAt.lte = endDate;
     }
 
-    const [total, completadas, canceladas, pendientes] = await Promise.all([
+    const [total, completadas, pendientes] = await Promise.all([
       this.prisma.consulta.count({ where }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'COMPLETADA' as any } }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'CANCELADA' as any } }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'PROGRAMADA' as any } }),
+      this.prisma.consulta.count({ where: { ...where, estado: 'finalizada' } }),
+      this.prisma.consulta.count({ where: { ...where, estado: 'pendiente' } }),
     ]);
 
-    return { total, completadas, canceladas, pendientes };
+    // Nota: canceladas no existe en EstadoConsulta, se retorna 0
+    return { total, completadas, canceladas: 0, pendientes };
   }
 
   async findPendingSignature(doctorId: string): Promise<Consulta[]> {
     return await this.prisma.consulta.findMany({
       where: {
         doctorId,
-        estado: 'COMPLETADA',
-        firmada: false,
+        estado: 'finalizada',
+        firmado: false,
       },
       include: {
         paciente: true,

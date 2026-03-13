@@ -63,7 +63,7 @@ class EnhancedNotificationService {
 
       // Store notification in database using Repository
       const dbNotification = await this.notificationRepo.create({
-        userId,
+        usuario: { connect: { id: userId } },
         titulo: title,
         cuerpo: message,
         tipo: type as any, // Cast from shared-types NotificationType to Prisma TipoNotificacion

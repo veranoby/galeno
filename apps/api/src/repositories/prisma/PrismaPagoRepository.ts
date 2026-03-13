@@ -32,11 +32,10 @@ export class PrismaPagoRepository implements IPagoRepository {
     });
   }
 
-  async findByPaciente(pacienteId: string, options: Omit<PagoFindOptions, 'where'> = {}): Promise<Pago[]> {
-    return this.findMany({
-      ...options,
-      where: { pacienteId },
-    });
+  async findByPaciente(_pacienteId: string, _options: Omit<PagoFindOptions, 'where'> = {}): Promise<Pago[]> {
+    // Nota: El modelo Pago no tiene pacienteId
+    // Si se necesita buscar por paciente, debe hacerse a través de la relación con Cuenta
+    throw new Error('findByPaciente: Método no implementado - Pago no tiene pacienteId');
   }
 
   async findByCuenta(cuentaId: string, options: Omit<PagoFindOptions, 'where'> = {}): Promise<Pago[]> {
@@ -65,12 +64,12 @@ export class PrismaPagoRepository implements IPagoRepository {
     });
   }
 
-  async updateStatus(id: string, estado: string, metadata?: Record<string, unknown>): Promise<Pago> {
+  async updateStatus(id: string, status: string, metadata?: Record<string, unknown>): Promise<Pago> {
     return await this.prisma.pago.update({
       where: { id },
       data: {
-        estado,
-        ...(metadata && { metadata }),
+        status: status as any,
+        ...(metadata && { metadata: metadata as any }),
       },
     });
   }
@@ -96,28 +95,28 @@ export class PrismaPagoRepository implements IPagoRepository {
 
     const [pendiente, completado, fallido, reembolsado] = await Promise.all([
       this.prisma.pago.aggregate({
-        where: { ...where, estado: 'PENDIENTE' },
-        _sum: { monto: true },
+        where: { ...where, status: 'PENDING' },
+        _sum: { amount: true },
       }),
       this.prisma.pago.aggregate({
-        where: { ...where, estado: 'COMPLETADO' },
-        _sum: { monto: true },
+        where: { ...where, status: 'APPROVED' },
+        _sum: { amount: true },
       }),
       this.prisma.pago.aggregate({
-        where: { ...where, estado: 'FALLIDO' },
-        _sum: { monto: true },
+        where: { ...where, status: 'REJECTED' },
+        _sum: { amount: true },
       }),
       this.prisma.pago.aggregate({
-        where: { ...where, estado: 'REEMBOLSADO' },
-        _sum: { monto: true },
+        where: { ...where, status: 'REFUNDED' },
+        _sum: { amount: true },
       }),
     ]);
 
     return {
-      pendiente: pendiente._sum.monto?.toNumber() || 0,
-      completado: completado._sum.monto?.toNumber() || 0,
-      fallido: fallido._sum.monto?.toNumber() || 0,
-      reembolsado: reembolsado._sum.monto?.toNumber() || 0,
+      pendiente: pendiente._sum.amount?.toNumber() || 0,
+      completado: completado._sum.amount?.toNumber() || 0,
+      fallido: fallido._sum.amount?.toNumber() || 0,
+      reembolsado: reembolsado._sum.amount?.toNumber() || 0,
     };
   }
 
@@ -128,8 +127,7 @@ export class PrismaPagoRepository implements IPagoRepository {
 
     return await this.prisma.pago.findMany({
       where: {
-        estado: 'PENDIENTE',
-        reintentos: { lt: 3 },
+        status: 'PENDING',
         updatedAt: { lt: retryWindow },
       },
     });
@@ -159,24 +157,23 @@ export class PrismaPagoRepository implements IPagoRepository {
       this.prisma.pago.aggregate({
         where,
         _count: true,
-        _sum: { monto: true },
+        _sum: { amount: true },
       }),
     ]);
 
     const estadosCount = await this.prisma.pago.groupBy({
-      by: ['estado'],
+      by: ['status'],
       where,
       _count: true,
     });
 
-    const completados = estadosCount.find(e => e.estado === 'COMPLETADO')?._count || 0;
-    const recaudado = sumData._sum.monto?.toNumber() || 0;
-    const pendiente = sumData._sum.monto?.toNumber() || 0;
+    const completados = estadosCount.find(e => e.status === 'APPROVED')?._count || 0;
+    const recaudado = sumData._sum.amount?.toNumber() || 0;
 
     return {
       total,
       recaudado,
-      pendiente,
+      pendiente: 0, // Pendiente no se calcula aquí
       tasaCompletado: total > 0 ? (completados / total) * 100 : 0,
     };
   }

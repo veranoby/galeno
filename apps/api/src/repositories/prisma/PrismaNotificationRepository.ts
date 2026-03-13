@@ -3,7 +3,7 @@
  * Implementación del Repository de Notificaciones con Prisma
  */
 
-import { INotificationRepository, CreateNotificationDTO, UpdateNotificationDTO, NotificationFindOptions } from '../interfaces/INotificationRepository';
+import { INotificationRepository, CreateNotificationDTO, CreateManyNotificationDTO, UpdateNotificationDTO, NotificationFindOptions } from '../interfaces/INotificationRepository';
 import { Notificacion, PrismaClient } from '@prisma/client';
 
 export class PrismaNotificationRepository implements INotificationRepository {
@@ -13,7 +13,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
     return await this.prisma.notificacion.create({ data });
   }
 
-  async createMany(data: CreateNotificationDTO[]): Promise<{ count: number }> {
+  async createMany(data: CreateManyNotificationDTO[]): Promise<{ count: number }> {
     return await this.prisma.notificacion.createMany({ data, skipDuplicates: true });
   }
 

@@ -55,21 +55,14 @@ export class PrismaCuentaRepository implements ICuentaRepository {
     });
   }
 
-  async updateUsageLimits(cuentaId: string, consultasUsadas: number): Promise<Cuenta> {
+  async updateUsageLimits(_cuentaId: string, _consultasUsadas: number): Promise<Cuenta> {
     // Nota: Este método está obsoleto ya que el modelo Cuenta no tiene consultasUsadas
-    // Se mantiene para compatibilidad con la interfaz
-    const cuenta = await this.prisma.cuenta.findUnique({
-      where: { id: cuentaId },
-      select: { maxDoctores: true },
-    });
-
-    if (!cuenta) throw new Error('Cuenta no encontrada');
-
-    // No hay límite de consultas en el modelo actual, así que siempre puede realizar
-    return this.findById(cuentaId);
+    // En el schema actual, no hay límite de consultas, solo maxDoctores y maxAsistentes
+    // Se retorna la cuenta sin cambios
+    throw new Error('updateUsageLimits: Método no implementado - Cuenta no tiene límites de consultas');
   }
 
-  async canPerformConsulta(cuentaId: string): Promise<boolean> {
+  async canPerformConsulta(_cuentaId: string): Promise<boolean> {
     // En el modelo actual, no hay límite de consultas
     // Siempre puede realizar consultas
     return true;
@@ -115,9 +108,6 @@ export class PrismaCuentaRepository implements ICuentaRepository {
         fechaFinSuscripcion: {
           lte: expirationDate,
         },
-      },
-      include: {
-        // No hay relación usuario en el modelo actual
       },
     });
   }

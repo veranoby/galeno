@@ -4,7 +4,7 @@
  */
 
 import { IPacienteRepository, CreatePacienteDTO, UpdatePacienteDTO, PacienteFindOptions } from '../interfaces/IPacienteRepository';
-import { Paciente, PrismaClient } from '@prisma/client';
+import { Paciente, Cuenta, PrismaClient } from '@prisma/client';
 
 export class PrismaPacienteRepository implements IPacienteRepository {
   constructor(private prisma: PrismaClient) {}
@@ -56,14 +56,14 @@ export class PrismaPacienteRepository implements IPacienteRepository {
     return this.findMany({
       ...options,
       where: {
-        conexionesOrigen: {
+        conexiones: {
           some: {
             doctorId,
           },
         },
       },
       include: {
-        conexionesOrigen: {
+        conexiones: {
           where: { doctorId },
           include: {
             doctor: true,
@@ -103,7 +103,6 @@ export class PrismaPacienteRepository implements IPacienteRepository {
       ...options,
       where: {
         healthWallet: {
-          isNotNull: true,
           activo: true,
         },
       },
@@ -113,12 +112,15 @@ export class PrismaPacienteRepository implements IPacienteRepository {
     });
   }
 
-  async findActiveConnections(pacienteId: string): Promise<Paciente[]> {
-    const conexiones = await this.prisma.connexionPaciente.findMany({
+  async findActiveConnections(pacienteId: string): Promise<Cuenta[]> {
+    const conexiones = await this.prisma.conexionPaciente.findMany({
       where: {
-        OR: [{ pacienteId }, { doctorPacienteId: pacienteId }],
-        activa: true,
-        expiresAt: { gt: new Date() },
+        pacienteId,
+        estado: 'activa',
+        OR: [
+          { fechaExpiracion: { gt: new Date() } },
+          { fechaExpiracion: null },
+        ],
       },
       include: {
         doctor: true,
@@ -126,9 +128,9 @@ export class PrismaPacienteRepository implements IPacienteRepository {
       },
     });
 
-    // Retornar los pacientes conectados
+    // Retornar los doctores conectados a este paciente
     return conexiones
-      .map(c => c.doctorPacienteId === pacienteId ? c.doctor as any : c.paciente)
-      .filter(p => p && p.id !== pacienteId);
+      .map(c => c.doctor)
+      .filter((d): d is Cuenta => d != null);
   }
 }

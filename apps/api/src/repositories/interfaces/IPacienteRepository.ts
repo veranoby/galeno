@@ -4,7 +4,7 @@
  * Define las operaciones de persistencia para Paciente
  */
 
-import { Paciente, Prisma } from '@prisma/client';
+import { Paciente, Cuenta, Prisma } from '@prisma/client';
 
 export type CreatePacienteDTO = Prisma.PacienteCreateInput;
 export type UpdatePacienteDTO = Prisma.PacienteUpdateInput;
@@ -74,6 +74,7 @@ export interface IPacienteRepository {
 
   /**
    * Obtiene conexiones activas de un paciente
+   * Nota: Retorna los doctores conectados al paciente (Cuenta[])
    */
-  findActiveConnections(pacienteId: string): Promise<Paciente[]>;
+  findActiveConnections(pacienteId: string): Promise<Cuenta[]>;
 }

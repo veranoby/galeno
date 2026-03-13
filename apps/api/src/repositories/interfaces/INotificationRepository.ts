@@ -7,6 +7,7 @@
 import { Notificacion, Prisma } from '@prisma/client';
 
 export type CreateNotificationDTO = Prisma.NotificacionCreateInput;
+export type CreateManyNotificationDTO = Prisma.NotificacionCreateManyInput;
 export type UpdateNotificationDTO = Prisma.NotificacionUpdateInput;
 export type NotificationFindOptions = {
   where?: Prisma.NotificacionWhereInput;
@@ -25,7 +26,7 @@ export interface INotificationRepository {
   /**
    * Crea múltiples notificaciones en una sola transacción
    */
-  createMany(data: CreateNotificationDTO[]): Promise<Prisma.BatchPayload>;
+  createMany(data: CreateManyNotificationDTO[]): Promise<Prisma.BatchPayload>;
 
   /**
    * Busca notificaciones por criterios
