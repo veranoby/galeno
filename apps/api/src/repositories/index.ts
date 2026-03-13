@@ -9,3 +9,6 @@ export * from './interfaces';
 
 // Implementaciones Prisma
 export * from './prisma';
+
+// Types útiles para DI Container
+export type { Repository } from './interfaces/IRepository.js';

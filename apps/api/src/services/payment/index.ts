@@ -22,9 +22,18 @@ import {
   paymentService as orchestratorSingleton
 } from './PaymentOrchestrator.js';
 
-// Re-exportar todos los tipos y clases para backward compatibility
-export {
-  // Tipos
+// Re-exportar el orchestrator y funciones principales
+export { PaymentOrchestrator, getPaymentOrchestrator };
+export const paymentService = orchestratorSingleton;
+
+// Exportar servicios individuales para uso directo
+export { PaymentGatewayService } from './gateways/PaymentGatewayService.js';
+export { SubscriptionService } from './gateways/SubscriptionService.js';
+export { PaymentWebhookService } from './handlers/PaymentWebhookService.js';
+export { PaymentHistoryService } from './handlers/PaymentHistoryService.js';
+
+// Re-exportar tipos desde base y types
+export type {
   PaymentProvider,
   CustomerData,
   Address,
@@ -33,7 +42,10 @@ export {
   SubscriptionResult,
   CancelResult,
   UpdateResult,
-  InvoiceResult,
+  InvoiceResult
+} from './types.js';
+
+export type {
   PaymentStatus,
   SplitStatus,
   PaymentGatewayType,
@@ -46,32 +58,14 @@ export {
   RefundResponse,
   WebhookPayload,
   WebhookResult,
-  GatewayConfig,
-  CardData,
-  TokenResponse,
+  GatewayConfig
+} from './base.js';
 
-  // Clases y errores
-  PaymentGateway,
-  PaymentError,
-  WebhookSignatureError,
-  KushkiProvider,
-  PayphoneProvider,
+export type { CardData, TokenResponse } from './kushki.provider.js';
 
-  // Orquestador
-  PaymentOrchestrator,
-  getPaymentOrchestrator
-} from './PaymentOrchestrator.js';
+// Exportar clases
+export { PaymentGateway, PaymentError, WebhookSignatureError } from './base.js';
 
-// Exportar servicios individuales para uso directo si se necesita
-export { PaymentGatewayService } from './gateways/PaymentGatewayService.js';
-export { SubscriptionService } from './gateways/SubscriptionService.js';
-export { PaymentWebhookService } from './handlers/PaymentWebhookService.js';
-export { PaymentHistoryService } from './handlers/PaymentHistoryService.js';
-
-// Backward compatibility: paymentService como singleton
-// Nota: Este es el mismo instance que getPaymentOrchestrator()
-export const paymentService = orchestratorSingleton;
-
-// Type exports para uso externo
-export type { PaymentGateway } from './base.js';
-export type { PaymentProvider } from './types.js';
+// KushkiProvider y PayphoneProvider están en sus propios archivos
+export { KushkiProvider } from './kushki.provider.js';
+export { PayphoneProvider } from './payphone.provider.js';
