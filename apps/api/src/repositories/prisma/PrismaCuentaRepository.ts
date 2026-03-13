@@ -34,7 +34,7 @@ export class PrismaCuentaRepository implements ICuentaRepository {
 
   async findByUsuario(usuarioId: string): Promise<Cuenta | null> {
     return await this.prisma.cuenta.findUnique({
-      where: { usuarioId },
+      where: { id: usuarioId },
     });
   }
 
@@ -45,77 +45,64 @@ export class PrismaCuentaRepository implements ICuentaRepository {
     });
   }
 
-  async updatePlan(cuentaId: string, plan: string, limiteConsultas?: number): Promise<Cuenta> {
+  async updatePlan(cuentaId: string, plan: string, maxDoctores?: number): Promise<Cuenta> {
     return await this.prisma.cuenta.update({
       where: { id: cuentaId },
       data: {
-        plan,
-        ...(limiteConsultas !== undefined && { limiteConsultas }),
+        plan: plan as any,
+        ...(maxDoctores !== undefined && { maxDoctores }),
       },
     });
   }
 
   async updateUsageLimits(cuentaId: string, consultasUsadas: number): Promise<Cuenta> {
+    // Nota: Este método está obsoleto ya que el modelo Cuenta no tiene consultasUsadas
+    // Se mantiene para compatibilidad con la interfaz
     const cuenta = await this.prisma.cuenta.findUnique({
       where: { id: cuentaId },
-      select: { limiteConsultas: true },
+      select: { maxDoctores: true },
     });
 
     if (!cuenta) throw new Error('Cuenta no encontrada');
 
-    // Si no hay límite, no actualizamos
-    if (cuenta.limiteConsultas === null) return this.findById(cuentaId);
-
-    return await this.prisma.cuenta.update({
-      where: { id: cuentaId },
-      data: { consultasUsadas },
-    });
+    // No hay límite de consultas en el modelo actual, así que siempre puede realizar
+    return this.findById(cuentaId);
   }
 
   async canPerformConsulta(cuentaId: string): Promise<boolean> {
-    const cuenta = await this.prisma.cuenta.findUnique({
-      where: { id: cuentaId },
-      select: {
-        limiteConsultas: true,
-        consultasUsadas: true,
-        renovacionAt: true,
-      },
-    });
-
-    if (!cuenta) return false;
-
-    // Si no hay límite, puede realizar consultas
-    if (cuenta.limiteConsultas === null) return true;
-
-    // Verificar si no ha excedido el límite
-    return cuenta.consultasUsadas < cuenta.limiteConsultas;
+    // En el modelo actual, no hay límite de consultas
+    // Siempre puede realizar consultas
+    return true;
   }
 
   async getPlanLimits(cuentaId: string): Promise<{
     plan: string;
-    limiteConsultas: number | null;
+    maxDoctores: number;
+    maxAsistentes: number;
     consultasUsadas: number;
     consultasRestantes: number | null;
-    renovacionAt: Date | null;
+    fechaFinSuscripcion: Date | null;
   }> {
     const cuenta = await this.prisma.cuenta.findUnique({
       where: { id: cuentaId },
       select: {
         plan: true,
-        limiteConsultas: true,
-        consultasUsadas: true,
-        renovacionAt: true,
+        maxDoctores: true,
+        maxAsistentes: true,
+        fechaFinSuscripcion: true,
       },
     });
 
     if (!cuenta) throw new Error('Cuenta no encontrada');
 
-    const consultasRestantes =
-      cuenta.limiteConsultas === null ? null : Math.max(0, cuenta.limiteConsultas - cuenta.consultasUsadas);
-
+    // No hay contador de consultas en el modelo actual
     return {
-      ...cuenta,
-      consultasRestantes,
+      plan: cuenta.plan,
+      maxDoctores: cuenta.maxDoctores,
+      maxAsistentes: cuenta.maxAsistentes,
+      consultasUsadas: 0,
+      consultasRestantes: null,
+      fechaFinSuscripcion: cuenta.fechaFinSuscripcion,
     };
   }
 
@@ -125,29 +112,19 @@ export class PrismaCuentaRepository implements ICuentaRepository {
 
     return await this.prisma.cuenta.findMany({
       where: {
-        renovacionAt: {
+        fechaFinSuscripcion: {
           lte: expirationDate,
         },
-        activa: true,
       },
       include: {
-        usuario: {
-          select: {
-            id: true,
-            email: true,
-            nombre: true,
-          },
-        },
+        // No hay relación usuario en el modelo actual
       },
     });
   }
 
   async findByPlan(plan: string): Promise<Cuenta[]> {
     return await this.prisma.cuenta.findMany({
-      where: { plan },
-      include: {
-        usuario: true,
-      },
+      where: { plan: plan as any },
     });
   }
 

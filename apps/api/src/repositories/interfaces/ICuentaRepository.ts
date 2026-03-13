@@ -45,7 +45,7 @@ export interface ICuentaRepository {
   /**
    * Actualiza el plan de una cuenta
    */
-  updatePlan(cuentaId: string, plan: string, limiteConsultas?: number): Promise<Cuenta>;
+  updatePlan(cuentaId: string, plan: string, maxDoctores?: number): Promise<Cuenta>;
 
   /**
    * Actualiza los límites de uso de una cuenta
@@ -62,10 +62,11 @@ export interface ICuentaRepository {
    */
   getPlanLimits(cuentaId: string): Promise<{
     plan: string;
-    limiteConsultas: number | null;
+    maxDoctores: number;
+    maxAsistentes: number;
     consultasUsadas: number;
     consultasRestantes: number | null;
-    renovacionAt: Date | null;
+    fechaFinSuscripcion: Date | null;
   }>;
 
   /**

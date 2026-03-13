@@ -42,7 +42,7 @@ export class PrismaConsultaRepository implements IConsultaRepository {
     return this.findMany({
       ...options,
       where: {
-        fechaHora: {
+        createdAt: {
           gte: startDate,
           lte: endDate,
         },
@@ -88,16 +88,16 @@ export class PrismaConsultaRepository implements IConsultaRepository {
   }> {
     const where: any = { doctorId };
     if (startDate || endDate) {
-      where.fechaHora = {};
-      if (startDate) where.fechaHora.gte = startDate;
-      if (endDate) where.fechaHora.lte = endDate;
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = startDate;
+      if (endDate) where.createdAt.lte = endDate;
     }
 
     const [total, completadas, canceladas, pendientes] = await Promise.all([
       this.prisma.consulta.count({ where }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'COMPLETADA' } }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'CANCELADA' } }),
-      this.prisma.consulta.count({ where: { ...where, estado: 'PROGRAMADA' } }),
+      this.prisma.consulta.count({ where: { ...where, estado: 'COMPLETADA' as any } }),
+      this.prisma.consulta.count({ where: { ...where, estado: 'CANCELADA' as any } }),
+      this.prisma.consulta.count({ where: { ...where, estado: 'PROGRAMADA' as any } }),
     ]);
 
     return { total, completadas, canceladas, pendientes };

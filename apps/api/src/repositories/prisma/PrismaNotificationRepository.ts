@@ -31,52 +31,52 @@ export class PrismaNotificationRepository implements INotificationRepository {
   async findByUser(userId: string, options: Omit<NotificationFindOptions, 'where'> = {}): Promise<Notificacion[]> {
     return this.findMany({
       ...options,
-      where: { usuarioId: userId },
+      where: { userId: userId },
     });
   }
 
   async findUnreadByUser(userId: string, options: Omit<NotificationFindOptions, 'where'> = {}): Promise<Notificacion[]> {
     return this.findMany({
       ...options,
-      where: { usuarioId: userId, leida: false },
+      where: { userId: userId, leido: false },
     });
   }
 
   async countUnreadByUser(userId: string): Promise<number> {
     return await this.prisma.notificacion.count({
-      where: { usuarioId: userId, leida: false },
+      where: { userId: userId, leido: false },
     });
   }
 
   async markAsRead(id: string, userId: string): Promise<Notificacion | null> {
     // Verificar que la notificación pertenece al usuario
     const notification = await this.prisma.notificacion.findFirst({
-      where: { id, usuarioId: userId },
+      where: { id, userId: userId },
     });
 
     if (!notification) return null;
 
     return await this.prisma.notificacion.update({
       where: { id },
-      data: { leida: true, leidaAt: new Date() },
+      data: { leido: true },
     });
   }
 
   async markAllAsRead(userId: string): Promise<{ count: number }> {
     return await this.prisma.notificacion.updateMany({
-      where: { usuarioId: userId, leida: false },
-      data: { leida: true, leidaAt: new Date() },
+      where: { userId: userId, leido: false },
+      data: { leido: true },
     });
   }
 
   async markAllAsReadBefore(userId: string, before: Date): Promise<{ count: number }> {
     return await this.prisma.notificacion.updateMany({
       where: {
-        usuarioId: userId,
-        leida: false,
+        userId: userId,
+        leido: false,
         createdAt: { lt: before },
       },
-      data: { leida: true, leidaAt: new Date() },
+      data: { leido: true },
     });
   }
 
@@ -96,7 +96,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
   async deleteOldNotifications(userId: string, olderThan: Date): Promise<{ count: number }> {
     return await this.prisma.notificacion.deleteMany({
       where: {
-        usuarioId: userId,
+        userId: userId,
         createdAt: { lt: olderThan },
       },
     });
@@ -104,7 +104,7 @@ export class PrismaNotificationRepository implements INotificationRepository {
 
   async deleteAllByUser(userId: string): Promise<{ count: number }> {
     return await this.prisma.notificacion.deleteMany({
-      where: { usuarioId: userId },
+      where: { userId: userId },
     });
   }
 
