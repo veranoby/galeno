@@ -21,53 +21,53 @@
         <!-- Medicamentos sugeridos (verde) -->
         <div v-if="tratamientoSugerido?.medicamentos?.length" class="suggestions-section">
           <h4 class="section-title">
-            <v-icon icon="mdi-pill" color="#43A047" size="small" class="mr-1" />
+            <v-icon :icon="CHIP_ICONS[ChipTipo.VERDE]" :color="CHIP_COLORS[ChipTipo.VERDE]" size="small" class="mr-1" />
             Medicamentos
           </h4>
           <div class="chips-container">
             <IaChip
               v-for="medicamento in tratamientoSugerido.medicamentos"
-              :key="'med-' + medicamento.nombre"
-              tipo="verde"
+              :key="generateChipKey(SugerenciaTipo.MEDICAMENTO, medicamento.nombre)"
+              :tipo="SUGERENCIA_TO_CHIP[SugerenciaTipo.MEDICAMENTO]"
               :text="`${medicamento.nombre} - ${medicamento.dosis}`"
-              :confidence="0.85"
-              @close="removeSuggestion('medicamento', medicamento.nombre)"
+              :confidence="DEFAULT_CONFIDENCE[SugerenciaTipo.MEDICAMENTO]"
+              @close="removeSuggestion(SugerenciaTipo.MEDICAMENTO, medicamento.nombre)"
             />
           </div>
         </div>
-        
+
         <!-- Exámenes sugeridos (amarillo) -->
         <div v-if="tratamientoSugerido?.examenes?.length" class="suggestions-section">
           <h4 class="section-title">
-            <v-icon icon="mdi-test-tube" color="#F57C00" size="small" class="mr-1" />
+            <v-icon :icon="CHIP_ICONS[ChipTipo.AMARILLO]" :color="CHIP_COLORS[ChipTipo.AMARILLO]" size="small" class="mr-1" />
             Exámenes
           </h4>
           <div class="chips-container">
             <IaChip
               v-for="examen in tratamientoSugerido.examenes"
-              :key="'exam-' + examen.nombre"
-              tipo="amarillo"
+              :key="generateChipKey(SugerenciaTipo.EXAMEN, examen.nombre)"
+              :tipo="SUGERENCIA_TO_CHIP[SugerenciaTipo.EXAMEN]"
               :text="examen.nombre"
-              :confidence="0.78"
-              @close="removeSuggestion('examen', examen.nombre)"
+              :confidence="DEFAULT_CONFIDENCE[SugerenciaTipo.EXAMEN]"
+              @close="removeSuggestion(SugerenciaTipo.EXAMEN, examen.nombre)"
             />
           </div>
         </div>
-        
+
         <!-- Alertas (rojo) -->
         <div v-if="tratamientoSugerido?.alertas?.length" class="suggestions-section">
           <h4 class="section-title">
-            <v-icon icon="mdi-alert" color="#C62828" size="small" class="mr-1" />
+            <v-icon :icon="CHIP_ICONS[ChipTipo.ROJO]" :color="CHIP_COLORS[ChipTipo.ROJO]" size="small" class="mr-1" />
             Alertas
           </h4>
           <div class="chips-container">
             <IaChip
               v-for="alerta in tratamientoSugerido.alertas"
-              :key="'alert-' + alerta.mensaje"
-              tipo="rojo"
+              :key="generateChipKey(SugerenciaTipo.ALERTA, alerta.mensaje)"
+              :tipo="SUGERENCIA_TO_CHIP[SugerenciaTipo.ALERTA]"
               :text="alerta.mensaje"
-              :confidence="0.92"
-              @close="removeSuggestion('alerta', alerta.mensaje)"
+              :confidence="DEFAULT_CONFIDENCE[SugerenciaTipo.ALERTA]"
+              @close="removeSuggestion(SugerenciaTipo.ALERTA, alerta.mensaje)"
             />
           </div>
         </div>
@@ -94,6 +94,15 @@
 import { ref, computed } from 'vue';
 import { apiClient } from '@/services/api';
 import IaChip from '@galeno/ui-components/src/IaChip.vue';
+import {
+  ChipTipo,
+  CHIP_COLORS,
+  CHIP_ICONS,
+  SugerenciaTipo,
+  SUGERENCIA_TO_CHIP,
+  DEFAULT_CONFIDENCE,
+  generateChipKey
+} from '@/constants/chip-types';
 
 // Define interfaces to match backend
 interface MedicamentoSugerido {
@@ -132,7 +141,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'tratamiento-sugerido': [tratamiento: TratamientoSugerido];
-  'sugerencia-eliminada': [tipo: string, contenido: string];
+  'sugerencia-eliminada': [tipo: SugerenciaTipo, contenido: string];
 }>();
 
 const expanded = ref(true);
@@ -169,7 +178,7 @@ const loadTreatmentSuggestions = async () => {
   }
 };
 
-const removeSuggestion = (tipo: string, contenido: string) => {
+const removeSuggestion = (tipo: SugerenciaTipo, contenido: string) => {
   emit('sugerencia-eliminada', tipo, contenido);
   // In a real implementation, we might want to update the local state
 };

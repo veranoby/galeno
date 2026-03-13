@@ -317,6 +317,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { useWalletBackup, type EncryptedBackup, type BasicHistory } from '@/composables/useWalletBackup';
 import { useApi } from '@/composables/useApi';
 import { useRole } from '@/composables/useRole';
+import { formatDate, isExpired } from '@/utils/date';
 
 // ============================================================================
 // STATE
@@ -497,22 +498,6 @@ const confirmRestore = async () => {
     console.error('Error restoring backup:', error);
     showConfirmModal.value = false;
   }
-};
-
-// Format date
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('es-EC', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-// Check if expired
-const isExpired = (dateString: string) => {
-  return new Date(dateString) < new Date();
 };
 
 // ============================================================================
