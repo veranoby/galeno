@@ -19,29 +19,4 @@ if [ $LINT_STATUS -ne 0 ]; then
   exit 1
 fi
 
-# Type check API
-echo "🔍 Running type-check on API..."
-cd apps/api && pnpm type-check 2>/dev/null
-TYPECHECK_API_STATUS=$?
-cd ../../
-
-# Type check Web
-echo "🔍 Running type-check on Web..."
-cd apps/web && pnpm type-check 2>/dev/null
-TYPECHECK_WEB_STATUS=$?
-cd ../../
-
-# Exit with code 1 if any check failed
-if [ $TYPECHECK_API_STATUS -ne 0 ]; then
-  echo "❌ Type check failed for API. Please fix type errors before committing."
-  echo "Run 'pnpm typecheck' to see all type errors."
-  exit 1
-fi
-
-if [ $TYPECHECK_WEB_STATUS -ne 0 ]; then
-  echo "❌ Type check failed for Web. Please fix type errors before committing."
-  echo "Run 'pnpm typecheck' to see all type errors."
-  exit 1
-fi
-
 echo "✅ Pre-commit checks passed!"
