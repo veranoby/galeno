@@ -1,0 +1,354 @@
+{
+  "version": "1.1.1",
+  "lastModified": "2026-02-17",
+  "checksum": "galeno-learnings-v1.1.1",
+  "iterations": [
+    {
+      "id": "LEARN-001",
+      "date": "2026-02-12",
+      "category": "typescript",
+      "severity": "critical",
+      "title": "Errores masivos de TypeScript en código generado por agentes",
+      "problem": "Los agentes de implementación generaron código con múltiples errores de TypeScript: tipos faltantes de navegador (File, Blob, URL, DOMParser, etc.), tipos exportados inexistentes en shared-types, imports incorrectos de librerías criptográficas, y referencias a paquetes inexistentes en tsconfig.",
+      "rootCause": "Falta de verificación de tipos durante generación de código. Los agentes no ejecutaron type-check antes de considerar el código como completo.",
+      "solution": "Implementar verificación obligatoria de type-check antes de marcar tareas como completadas. Ejecutar `pnpm type-check` en cada paquete modificado.",
+      "prevention": [
+        "Siempre ejecutar type-check antes de considerar código listo",
+        "Usar --strict mode en tsconfig para detectar más errores",
+        "Verificar imports de librerías externas contra @types disponibles",
+        "No hacer commit si type-check falla"
+      ]
+    },
+    {
+      "id": "LEARN-002",
+      "date": "2026-02-12",
+      "category": "agent-orchestration",
+      "severity": "high",
+      "title": "Agents híbridos generaron código sin validación",
+      "problem": "Los agentes (general-purpose) fueron lanzados en paralelo sin mecanismo de validación integrada. Cada agente generó código independiente sin verificar compatibilidad con el código existente ni tipado correcto.",
+      "rootCause": "Falta de integración entre el sistema de tareas y los agentes. Los agentes reportaron 'éxito' basado en sintaxis básica, no en corrección de tipos.",
+      "solution": "Implementar modo de validación obligatoria post-agente: type-check + lint + build antes de aceptar archivos generados.",
+      "prevention": [
+        "Usar flag --dry-run en agents para validar primero",
+        "Implementar checkpoint de validación entre agente y commit",
+        "Ejecutar uc:validate automáticamente después de uc:implement",
+        "Mantener registro de agentes fallidos en brain/coordination.json"
+      ]
+    },
+    {
+      "id": "LEARN-003",
+      "date": "2026-02-12",
+      "category": "dependencies",
+      "severity": "medium",
+      "title": "Dependencias de paquetes inexistentes en tsconfig",
+      "problem": "Los tsconfig de apps/api y apps/web tenían referencias a paquetes @galeno/ui-components y @galeno/api-client que no existen en el monorepo.",
+      "rootCause": "Código generado basado en plantillas que asumían una estructura de monorepo más completa.",
+      "solution": "Verificar existencia de paquetes antes de agregar referencias. Usar solo shared-types que es el único paquete compartido existente.",
+      "prevention": [
+        "Validar estructura de monorepo antes de generar código",
+        "Usar rutas relativas correctas para paquetes existentes",
+        "No asumir estructura de directorios sin verificar"
+      ]
+    },
+    {
+      "id": "LEARN-004",
+      "date": "2026-02-12",
+      "category": "webcrypto",
+      "severity": "high",
+      "title": "Uso incorrecto de APIs de navegador en código de firma",
+      "problem": "El composable useFirmaDigital.ts usó tipos CryptoKey, RsaHashedImportParams, etc. que no existen en el entorno de navegador sin tipos explícitos. También usó API de File (file.separator) que no existe.",
+      "rootCause": "Uso de APIs de Node.js (crypto) en código que debe ejecutarse en navegador, mezclando entornos.",
+      "solution": "Para código de navegador, usar @types/webcrypto o tipos específicos. Para backend, usar @types/node. No mezclar APIs de browser con Node.js.",
+      "prevention": [
+        "Separar claramente código de frontend vs backend",
+        "Usar tipos específicos del entorno (browser vs node)",
+        "Verificar existencia de tipos antes de usar APIs",
+        "Usar env detection con types guards"
+      ]
+    },
+    {
+      "id": "LEARN-005",
+      "date": "2026-02-12",
+      "category": "tooling",
+      "severity": "medium",
+      "title": "Migración incompleta de ESLint 9.x",
+      "problem": "El proyecto tenía archivos .eslintrc.json obsoletos que causaban conflictos con ESLint 9.x. La eliminación de estos archivos dejó configuraciones incompletas.",
+      "rootCause": "ESLint 9.x requiere eslint.config.js (flat config) en lugar de .eslintrc.*. La migración no se completó correctamente.",
+      "solution": "Usar exclusively flat config (eslint.config.js) y eliminar todos los .eslintrc.*. Seguir guía de migración oficial de ESLint.",
+      "prevention": [
+        "Mantener solo un formato de configuración de ESLint",
+        "Documentar formato preferido en CLAUDE.md del proyecto",
+        "Verificar compatibilidad de versiones de ESLint antes de actualizar",
+        "No mezclar formatos de configuración"
+      ]
+    },
+    {
+      "id": "LEARN-006",
+      "date": "2026-02-12",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Falta de tipos compartidos centralizados",
+      "problem": "Los tipos OnboardingStep, ProfileSetupData y otros se usaban en código pero no estaban exportados en shared-types. Esto causaba errores de compilación.",
+      "rootCause": "Código generado definió tipos que nunca fueron agregados al paquete de tipos compartidos. No hubo validación de que los tipos existen.",
+      "solution": "Agregar tipos faltantes a shared-types antes de usarlos. Crear índice barato de exportaciones para evitar errores.",
+      "prevention": [
+        "Siempre que el tipo exista en shared-types antes de usarlo",
+        "Usar --strict mode en tsconfig para detectar tipos faltantes",
+        "Ejecutar type-check:all para verificar todos los paquetes",
+        "Documentar tipos disponibles en README del paquete"
+      ]
+    },
+    {
+      "id": "LEARN-007",
+      "date": "2026-02-15",
+      "category": "workflow",
+      "severity": "critical",
+      "title": "Entrega incompleta de componentes frontend en tareas marcadas como completadas",
+      "problem": "Las tareas de Autenticación (TASK-003) y Onboarding (TASK-004) fueron marcadas como completadas pero carecían totalmente de vistas en el frontend (LoginView, RegisterView, OnboardingView).",
+      "rootCause": "Definición de Done (DoD) insuficiente. Los agentes consideraron la tarea completa al finalizar el backend, ignorando los requerimientos de UI descritos en el PRD.",
+      "solution": "Restaurar/Crear vistas faltantes y asegurar que el router esté correctamente configurado con guards de navegación.",
+      "prevention": [
+        "Verificar existencia de todos los entregables (frontend + backend) antes de cerrar una TASK",
+        "Validar contra el router de la aplicación para asegurar accesibilidad de las nuevas vistas",
+        "Seguir el PRD estrictamente para cubrir todos los 'user journeys'"
+      ]
+    },
+    {
+      "id": "LEARN-008",
+      "date": "2026-02-15",
+      "category": "dependencies",
+      "severity": "high",
+      "title": "Ghost Imports: Referencia a composables inexistentes",
+      "problem": "Múltiples archivos intentaban importar 'useAxios' o 'useApi' desde rutas que no existían en el repositorio, causando fallos en cascada.",
+      "rootCause": "Uso de plantillas genéricas por parte de los agentes sin verificar la infraestructura real del proyecto.",
+      "solution": "Crear infraestructura base centralizada (useApi.ts) y estandarizar su uso en todos los servicios de red.",
+      "prevention": [
+        "Ejecutar 'ls' o 'find' antes de realizar un import para confirmar existencia",
+        "Centralizar utilidades de red en lugar de permitir implementaciones ad-hoc en cada componente",
+        "Usar alias de rutas (@/*) de forma consistente"
+      ]
+    },
+    {
+      "id": "LEARN-009",
+      "date": "2026-02-15",
+      "category": "typescript",
+      "severity": "medium",
+      "title": "Abuso de 'any' en servicios de base de datos",
+      "problem": "El servicio de firma (TASK-005) y validación de wallet usaban 'any' para objetos complejos de Prisma, perdiendo seguridad de tipos en las rutas.",
+      "rootCause": "Pereza técnica en la definición de interfaces para resultados de queries con 'include' o 'select'.",
+      "solution": "Usar Prisma.CitaGetPayload o tipos generados específicos para asegurar que las relaciones anidadas estén tipadas.",
+      "prevention": [
+        "Prohibir el uso de 'any' en servicios core",
+        "Definir interfaces de retorno para cada método de servicio",
+        "Aprovechar los tipos generados de Prisma para payloads complejos"
+      ]
+    },
+    {
+      "id": "LEARN-010",
+      "date": "2026-02-15",
+      "category": "ux",
+      "severity": "medium",
+      "title": "Falta de Picture-in-Picture (PiP) integrado",
+      "problem": "La teleconsulta requería PiP según el TASK-PIP, pero la implementación estaba fragmentada y no funcionaba en el flujo principal.",
+      "rootCause": "Falta de integración entre el componente de video (Jitsi) y el composable de PiP.",
+      "solution": "Integrar usePiP.ts directamente en JitsiMeet.vue usando la Document PiP API para máxima flexibilidad.",
+      "prevention": [
+        "Diseñar componentes pensando en la multifuncionalidad (video + notas)",
+        "Validar soporte de APIs experimentales con fallbacks robustos"
+      ]
+    },
+    {
+      "id": "LEARN-011",
+      "date": "2026-02-16",
+      "category": "database",
+      "severity": "high",
+      "title": "Desajuste de nombres de modelos Prisma en implementación",
+      "problem": "El código implementado usaba nombres de modelos genéricos (usuario, notification) que no coincidían con los definidos en el schema.prisma (Cuenta, Notificacion), causando cientos de errores de compilación.",
+      "rootCause": "Los agentes asumieron nombres de modelos estándar sin verificar el archivo schema.prisma real del proyecto.",
+      "solution": "Refactorizar globalmente las llamadas a Prisma para usar los nombres exactos del esquema (prisma.cuenta, prisma.notificacion, etc.).",
+      "prevention": [
+        "Siempre verificar el schema.prisma antes de escribir consultas a la base de datos",
+        "Ejecutar prisma generate frecuentemente para actualizar el cliente",
+        "Usar autocompletado de tipos en lugar de escribir nombres de modelos manualmente"
+      ]
+    },
+    {
+      "id": "LEARN-012",
+      "date": "2026-02-16",
+      "category": "typescript",
+      "severity": "medium",
+      "title": "Falta de aumento de tipos (Type Augmentation) para Express Request",
+      "problem": "Múltiples rutas fallaban al intentar acceder a req.user porque la interfaz Request de Express no lo incluye por defecto, y no se estaba usando una interfaz extendida de forma consistente.",
+      "rootCause": "Implementación fragmentada de tipos de autenticación sin una extensión global del espacio de nombres de Express.",
+      "solution": "Crear un archivo de definición global (express.d.ts) para aumentar la interfaz Request con la propiedad user de forma permanente.",
+      "prevention": [
+        "Usar Type Augmentation para extender librerías de terceros de forma global",
+        "Definir una interfaz AuthRequest base y usarla consistentemente en todos los middlewares y rutas"
+      ]
+    },
+    {
+      "id": "LEARN-013",
+      "date": "2026-02-16",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Errores de rutas relativas en directorios anidados de rutas v1",
+      "problem": "Los archivos en src/routes/v1/agenda/ usaban '../../services' (2 niveles arriba) cuando necesitaban '../../../services' (3 niveles arriba), rompiendo los imports.",
+      "rootCause": "Copiar/pegar código de rutas desde niveles superiores sin ajustar las rutas relativas de los imports.",
+      "solution": "Ajustar sistemáticamente los niveles de las rutas relativas en los imports de archivos anidados.",
+      "prevention": [
+        "Preferir alias de rutas (@/) si el bundler lo soporta para evitar conteo manual de niveles",
+        "Verificar la ubicación exacta del archivo antes de definir imports relativos"
+      ]
+    },
+    {
+      "id": "LEARN-014",
+      "date": "2026-02-16",
+      "category": "typescript",
+      "severity": "low",
+      "title": "Inconsistencia en nombrado de variables en bloques catch",
+      "problem": "Uso de catch (_error) o catch (err) pero referenciando 'error' dentro del bloque, causando fallos de 'variable no definida'.",
+      "rootCause": "Falta de atención al detalle en bloques de manejo de errores autogenerados.",
+      "solution": "Estandarizar el uso de catch (error) en todo el backend.",
+      "prevention": [
+        "Configurar reglas de linting para estandarizar nombres de variables de error",
+        "Usar snippets preconfigurados para bloques try/catch"
+      ]
+    },
+    {
+      "id": "LEARN-015",
+      "date": "2026-02-16",
+      "category": "tooling",
+      "severity": "low",
+      "title": "Orden incorrecto de argumentos en logger Pino",
+      "problem": "Uso de logger.info('mensaje', { objeto }) cuando Pino espera logger.info({ objeto }, 'mensaje').",
+      "rootCause": "Confusión con el formato del log estándar de console.log o de otras librerías de logging.",
+      "solution": "Corregir el orden de los argumentos para seguir el patrón (objeto, mensaje) de Pino.",
+      "prevention": [
+        "Verificar la documentación de la librería de logging utilizada",
+        "Definir tipos estrictos para el logger para detectar orden de argumentos incorrecto"
+      ]
+    },
+    {
+      "id": "LEARN-016",
+      "date": "2026-02-17",
+      "category": "tooling",
+      "severity": "critical",
+      "title": "Import paths inconsistentes (.js vs .ts) en Node.js ESM",
+      "problem": "Los archivos TypeScript importaban desde 'auth.js' cuando el archivo real es 'auth.ts', causando error 'Does the file exist?' en vitest/vite. Esto rompió 7 suites de tests completas.",
+      "rootCause": "En Node.js ESM, los imports DEBEN usar la extensión del archivo compilado (.js), pero los archivos fuente son .ts. Los builders (tsup/esbuild) generan .js, pero durante desarrollo los tests usan los archivos .ts directamente.",
+      "solution": "Usar imports con extensión .js en el código fuente (TS) y configurar el bundler para resolver correctamente. O usar 'moduleResolution: bundler' en tsconfig.json.",
+      "prevention": [
+        "Configurar tsconfig.json con 'moduleResolution: bundler' para proyectos ESM",
+        "Usar imports sin extensión cuando sea posible, dejar que el bundler resuelva",
+        "Verificar que las extensiones en los imports coincidan con la configuración del build tool",
+        "Ejecutar tests antes de marcar una tarea como completada"
+      ]
+    },
+    {
+      "id": "LEARN-017",
+      "date": "2026-02-17",
+      "category": "testing",
+      "severity": "high",
+      "title": "Tests bien escritos pero inoperativos por errores de infraestructura",
+      "problem": "Los tests para TASK-044B (módulos), TASK-039 (wallet), TASK-024 (GPS) están bien escritos con TDD, pero fallan 100% por errores de import paths. 133 errores en web, 252 errores en API.",
+      "rootCause": "Los implementadores escribieron tests de calidad pero no verificaron que el proyecto compilara/ejecutaría. Falta de integración CI/CD que prevenga estos errores.",
+      "solution": "Implementar type-check obligatorio antes de aceptar cualquier PR. Corregir extensiones .js/.ts en imports.",
+      "prevention": [
+        "Nunca marcar una tarea como completada sin ejecutar 'npm test' exitosamente",
+        "Configurar pre-commit hook con type-check + test",
+        "Usar GitHub Actions para validar typecheck en cada PR",
+        "Separar fase de 'implementación' de fase de 'validación'"
+      ]
+    },
+    {
+      "id": "LEARN-018",
+      "date": "2026-02-17",
+      "category": "architecture",
+      "severity": "medium",
+      "title": "Componentes frontend implementados sin conexión a router",
+      "problem": "Varios componentes (Senescyt Validation, Interconsulta Simplificada) están implementados pero no conectados al router principal. Usuarios no pueden acceder a estas vistas.",
+      "rootCause": "Implementación bottom-up sin verificar integración top-down. Se crearon componentes sin actualizar las rutas de navegación.",
+      "solution": "Agregar rutas en router/index.ts para cada nueva vista. Verificar accesibilidad completa del user journey.",
+      "prevention": [
+        "Siempre actualizar router.ts al crear nuevas vistas",
+        "Verificar que la vista sea accesible desde la navegación principal",
+        "Incluir pruebas E2E del flujo completo del usuario",
+        "Documentar rutas en un archivo centralizado"
+      ]
+    },
+    {
+      "id": "LEARN-019",
+      "date": "2026-02-17",
+      "category": "workflow",
+      "severity": "high",
+      "title": "Tareas marcadas como completadas sin validar el Definition of Done",
+      "problem": "TASK-044B, TASK-046, TASK-024, TASK-044C fueron entregadas con backend/frontend pero sin validación de integración. 385 errores TS acumulados.",
+      "rootCause": "Falta de disciplina en el DoD. Los implementadores marcaron tareas como 'completed' basándose en funcionalidad aparente, no en validación técnica.",
+      "solution": "Implementar checklist de validación obligatorio antes de marcar tarea como completada: typecheck + tests + build + E2E.",
+      "prevention": [
+        "Crear script de validación automatizado que ejecute todos los checks",
+        "Exigir screenshot de coverage >60% para tareas nuevas",
+        "Implementar code review obligatorio para tareas marcadas como completadas",
+        "Mantener registro de tareas que fallaron validación post-completion"
+      ]
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "ACTION-001",
+      "status": "completed",
+      "title": "Crear infraestructura useApi.ts",
+      "description": "Estandarizar llamadas a API con seguimiento de estado.",
+      "priority": "critical"
+    },
+    {
+      "id": "ACTION-007",
+      "status": "pending",
+      "title": "Corregir extensiones .js/.ts en imports (CRÍTICO)",
+      "description": "385 errores de TypeScript acumulados. Corregir imports que usan .js cuando el archivo es .ts en apps/api y apps/web.",
+      "priority": "critical"
+    },
+    {
+      "id": "ACTION-008",
+      "status": "pending",
+      "title": "Conectar vistas huérfanas al router",
+      "description": "Vistas como Senescyt Validation, Interconsulta Simplificada, GPS no están en router/index.ts. Agregar rutas faltantes.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-006",
+      "status": "pending",
+      "title": "Auditoría de vistas vs PRD",
+      "description": "Verificar qué otras secciones del PRD carecen de frontend a pesar de estar marcadas como completadas.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-002",
+      "status": "pending",
+      "title": "Crear guía de uso de agentes con validación",
+      "description": "Documentar proceso correcto para usar agentes: 1) dry-run, 2) verify, 3) commit. Evitar uso directo de uc:implement.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-003",
+      "status": "pending",
+      "title": "Agregar @types webcrypto a apps/web",
+      "description": "Instalar tipos de WebCrypto API para corregir errores de TypeScript en código de firma.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-004",
+      "status": "pending",
+      "title": "Eliminar archivos de onboarding problemáticos",
+      "description": "Los archivos de onboarding tienen demasiados errores. Evaluar si deben eliminarse o reescribirse completamente con types correctos.",
+      "priority": "high"
+    },
+    {
+      "id": "ACTION-005",
+      "status": "pending",
+      "title": "Configurar ESLint flat config correctamente",
+      "description": "Asegurar que solo exista eslint.config.js y que no haya archivos .eslintrc.* residuales.",
+      "priority": "medium"
+    }
+  ]
+}

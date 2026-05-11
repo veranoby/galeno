@@ -1,0 +1,109 @@
+{
+  "version": "1.0.0",
+  "lastModified": "2026-02-11",
+  "checksum": "galeno-context-v1.0",
+  "architecture": "Monorepo con Turborepo (o Nx). Estructura: apps/web (Vue 3 frontend), apps/api (Node.js backend), packages/* (shared types, UI components, API client, validations).",
+  "patterns": [
+    {
+      "name": "Composition API",
+      "description": "Vue 3 Composition API con <script setup> syntax para todos los componentes.",
+      "category": "frontend"
+    },
+    {
+      "name": "Pinia Stores",
+      "description": "State management con Pinia usando defineStore y setup syntax. Persistencia con pinia-plugin-persistedstate.",
+      "category": "frontend"
+    },
+    {
+      "name": "Repository Pattern",
+      "description": "Servicios backend separados por entidad (consultation, patient, document) con Prisma Client.",
+      "category": "backend"
+    },
+    {
+      "name": "Middleware Chain",
+      "description": "Express middleware para auth, RBAC, validation, y error handling.",
+      "category": "backend"
+    },
+    {
+      "name": "Offline-First",
+      "description": "IndexedDB con Dexie.js wrapper + Service Workers para sincronización transparente. Last Write Wins por timestamp.",
+      "category": "infrastructure"
+    },
+    {
+      "name": "SSE Realtime",
+      "description": "Server-Sent Events para notificaciones real-time con Redis para session management.",
+      "category": "infrastructure"
+    },
+    {
+      "name": "Row Level Security",
+      "description": "PostgreSQL RLS policies por rol (Doctor, Enfermera, Asistente) para隔离 de datos.",
+      "category": "security"
+    },
+    {
+      "name": "Client-Side Crypto",
+      "description": "WebCrypto API para firma XAdES-BES procesada 100% en cliente. Clave privada en memoria volátil.",
+      "category": "security"
+    }
+  ],
+  "conventions": [
+    {
+      "category": "naming",
+      "files": "kebab-case para archivos (ej: consultation-service.ts, use-consultation.ts, AppHeader.vue)",
+      "variables": "camelCase para variables y funciones",
+      "constants": "SCREAMING_SNAKE_CASE para constantes",
+      "types": "PascalCase para types e interfaces",
+      "components": "PascalCase para componentes Vue"
+    },
+    {
+      "category": "database",
+      "tables": "snake_case para nombres de tablas",
+      "columns": "snake_case para nombres de columnas",
+      "enums": "PascalCase para enums (ej: EstadoConsulta)"
+    },
+    {
+      "category": "api",
+      "routes": "kebab-case para rutas (ej: /api/consultations/:id)",
+      "methods": "RESTful verbs (GET, POST, PATCH, DELETE)"
+    },
+    {
+      "category": "git",
+      "commits": "Conventional Commits: <type>(<scope>): <subject>",
+      "types": "feat, fix, docs, style, refactor, perf, test, chore, build, ci"
+    }
+  ],
+  "keyPaths": {
+    "frontend": {
+      "components": "apps/web/src/components/",
+      "composables": "apps/web/src/composables/",
+      "stores": "apps/web/src/stores/",
+      "routes": "apps/web/src/router/routes/",
+      "services": "apps/web/src/services/",
+      "types": "apps/web/src/types/"
+    },
+    "backend": {
+      "routes": "apps/api/src/routes/",
+      "controllers": "apps/api/src/controllers/",
+      "services": "apps/api/src/services/",
+      "middleware": "apps/api/src/middleware/",
+      "jobs": "apps/api/src/jobs/",
+      "prisma": "apps/api/prisma/"
+    },
+    "shared": {
+      "types": "packages/shared-types/src/",
+      "components": "packages/ui-components/src/",
+      "validations": "packages/validations/src/"
+    }
+  },
+  "importantNotes": [
+    "NO enviar historial completo del paciente a la IA - solo texto de evolución",
+    "Firma electrónica FREE ilimitada para todos los planes",
+    "Facturación SRI solo disponible para plan PREMIUM+",
+    "IA Copilot SIEMPRE ACTIVO - no existe toggle",
+    "Latencia target: < 150ms percibida",
+    "IA cost target: < $0.005 por consulta",
+    "Onboarding target: < 5 minutos",
+    "Clave privada .p12 NUNCA viaja al servidor",
+    "Offline-first debe ser transparente - usuario no nota sincronización",
+    "Health Wallet: paciente es dueño de su dato médico (LOPDP)"
+  ]
+}

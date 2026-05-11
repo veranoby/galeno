@@ -50,14 +50,14 @@ coverage/
 .claude/
 .claudeignore
 .mcp.json
-brain/
-apps/api/brain/
-apps/web/brain/
+
 packages/shared-types/brain/
 
 # ============= CREDENTIALS & SENSITIVE FILES =============
 CREDENTIALS.md
 CREDENTIALS_LOCAL.md
+brain/credentials.md
+brain/test_credentials.md
 *.p12
 *.pem
 *.key
@@ -104,8 +104,6 @@ Thumbs.db
 .DS_Store
 
 # ============= GALENO SPECIFIC =============
-brain/secrets/
-brain/infrastructure.json
 *.p12
 *.pem
 *.key

@@ -1,0 +1,29 @@
+{
+  "project": "Galeno",
+  "environment": "local_test",
+  "database": {
+    "provider": "postgresql",
+    "host": "localhost",
+    "port": 5432,
+    "user": "galeno",
+    "db_name": "galeno_db",
+    "schema": "public",
+    "url": "postgresql://galeno:galeno_password@localhost:5432/galeno_db?schema=public",
+    "warnings": [
+      "NO conectarse a otras bases de datos como dental_pro o clinica_xyz",
+      "Asegurarse de que el usuario galeno tenga permisos solo sobre galeno_db"
+    ]
+  },
+  "redis": {
+    "url": "redis://localhost:6379",
+    "usage": ["IA Brain Cache", "SSE Connection State", "Rate Limiting"]
+  },
+  "api": {
+    "base_url": "http://localhost:3000",
+    "port": 3000
+  },
+  "web": {
+    "base_url": "http://localhost:5173",
+    "port": 5173
+  }
+}
