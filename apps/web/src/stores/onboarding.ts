@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type {
-  OnboardingStep,
   OnboardingState,
   EmailVerificationRequest,
   EmailVerificationResponse,
   ProfileSetupData
 } from '@galeno/shared-types';
+import { OnboardingStep } from '@galeno/shared-types';
 import apiClient from '@galeno/api-client';
 
 /**
@@ -201,7 +201,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         state.value.currentStep = OnboardingStep.EMAIL_VERIFICATION;
         return true;
       } else {
-        error.value = response.error?.message || 'Error al enviar código de verificación';
+        error.value = response.error || 'Error al enviar código de verificación';
         return false;
       }
     } catch (err) {
@@ -234,7 +234,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         state.value.currentStep = OnboardingStep.PROFILE_SETUP;
         return true;
       } else {
-        error.value = response.error?.message || 'Error al verificar email';
+        error.value = response.error || 'Error al verificar email';
         return false;
       }
     } catch (err) {
@@ -264,7 +264,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         state.value.currentStep = OnboardingStep.TUTORIAL;
         return true;
       } else {
-        error.value = response.error?.message || 'Error al configurar perfil';
+        error.value = response.error || 'Error al configurar perfil';
         return false;
       }
     } catch (err) {
@@ -302,7 +302,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         state.value.completedAt = new Date();
         return true;
       } else {
-        error.value = response.error?.message || 'Error al completar onboarding';
+        error.value = response.error || 'Error al completar onboarding';
         return false;
       }
     } catch (err) {
@@ -333,7 +333,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         state.value.emailVerified = response.data.emailVerified;
         state.value.profileCompleted = response.data.profileCompleted;
       } else {
-        error.value = response.error?.message || 'Error al obtener estado';
+        error.value = response.error || 'Error al obtener estado';
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Error desconocido';

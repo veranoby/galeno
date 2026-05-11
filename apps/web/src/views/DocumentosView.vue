@@ -231,7 +231,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import FirmaDigital from '@/components/FirmaDigital.vue';
 import type { ResultadoFirma, ResultadoValidacion } from '@/composables/useFirmaDigital';
 
@@ -254,6 +254,7 @@ const documentoXml = ref('');
 const documentoInfo = ref<{ tipo?: string; referencia?: string; emisor?: string } | undefined>();
 const validando = ref(false);
 const resultadoValidacion = ref<ResultadoValidacion | null>(null);
+const cargandoDocumentos = ref(false);
 
 // New document form
 const nuevoDocTipo = ref('factura');
@@ -287,8 +288,47 @@ const documentos = ref<Documento[]>([
   }
 ]);
 
+// Load documents on mount
+onMounted(() => {
+  cargarDocumentos();
+});
+
 // Methods
-const onArchivoCargado = async (archivo: File | null) => {
+const cargarDocumentos = async () => {
+  cargandoDocumentos.value = true;
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/v1/documentos`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al cargar documentos: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    // Mapear datos de la API al formato local
+    documentos.value = result.data.map((d: any) => ({
+      id: d.id,
+      nombre: d.nombre,
+      tipo: d.tipo,
+      fecha: new Date(d.fecha),
+      firmado: d.firmado,
+      contenido: d.contenido
+    }));
+  } catch (error) {
+    console.error('Error al cargar documentos:', error);
+  } finally {
+    cargandoDocumentos.value = false;
+  }
+};
+
+const onArchivoCargado = async (files: File | File[] | null) => {
+  const archivo = Array.isArray(files) ? files[0] : files;
   if (archivo) {
     try {
       const contenido = await archivo.text();
@@ -385,24 +425,49 @@ const validarDocumento = async () => {
   }
 };
 
-const crearDocumento = () => {
+const crearDocumento = async () => {
   if (!nuevoDocNombre.value || !nuevoDocContenido.value) {
     return;
   }
 
-  documentos.value.unshift({
-    id: Date.now().toString(),
-    nombre: nuevoDocNombre.value,
-    tipo: nuevoDocTipo.value,
-    fecha: new Date(),
-    firmado: false,
-    contenido: nuevoDocContenido.value
-  });
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/v1/documentos`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: JSON.stringify({
+        nombre: nuevoDocNombre.value,
+        tipo: nuevoDocTipo.value,
+        contenido: nuevoDocContenido.value
+      })
+    });
 
-  // Reset form
-  nuevoDocNombre.value = '';
-  nuevoDocContenido.value = '';
-  mostrarDialogoNuevo.value = false;
+    if (!response.ok) {
+      throw new Error('Error al crear documento');
+    }
+
+    const result = await response.json();
+
+    // Agregar a la lista localmente
+    documentos.value.unshift({
+      id: result.data.id,
+      nombre: result.data.nombre,
+      tipo: result.data.tipo,
+      fecha: new Date(result.data.fecha),
+      firmado: result.data.firmado,
+      contenido: result.data.contenido
+    });
+
+    // Reset form
+    nuevoDocNombre.value = '';
+    nuevoDocContenido.value = '';
+    mostrarDialogoNuevo.value = false;
+  } catch (error) {
+    console.error('Error al crear documento:', error);
+  }
 };
 
 // Formatting helpers

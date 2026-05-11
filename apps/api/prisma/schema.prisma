@@ -1,49 +1,75 @@
-// Prisma Schema - Galeno Ecuador-Health 360
-// PostgreSQL 17 Local
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextIndex", "fullTextSearchPostgres"]
 }
+
+// generator seed {
+//   provider = "prisma-seed"
+//   output   = "../seed.ts"
+// }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// ============= TABLAS PRINCIPALES =============
-
 model Cuenta {
-  id                String   @id @default(uuid())
-  email             String   @unique
-  passwordHash      String   @map("password_hash")
-  nombre            String
-  rol               Rol      @default(DOCTOR)
-  especialidad      String?
-  ruc               String?  @unique
-  sriValidado       Boolean  @default(false) @map("sri_validado")
-  senescytValidado  Boolean  @default(false) @map("senescyt_validado")
-  plan              Plan     @default(FREE)
-  maxDoctores       Int      @default(1) @map("max_doctores")
-  maxAsistentes     Int      @default(0) @map("max_asistentes")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  pacientes         Paciente[]
-  consultas         Consulta[]        @relation("CuentaConsultas")
-  doctorConsultas   Consulta[]        @relation("DoctorConsultas")
-  ubicaciones       Ubicacion[]
-  slots             SlotDisponibilidad[]
-  citas             Cita[]
-  usuariosVinculados UsuarioVinculado[]
-  usuariosAsignados UsuarioVinculado[] @relation("DoctorAsignado")
-  doctorEspecialidades DoctorEspecialidad[]
-  iaPreferencias    IaPreferencia[]
-  conexiones        ConexionPaciente[] @relation("ConexionOrigen")
-  articulos         Articulo[]
-  interconsultasSolicitadas Interconsulta[] @relation("Solicitante")
-  interconsultasRecibidas  Interconsulta[] @relation("Destino")
+  id                        String                  @id @default(uuid())
+  email                     String                  @unique
+  passwordHash              String                  @map("password_hash")
+  nombre                    String
+  rol                       Rol                     @default(DOCTOR)
+  especialidad              String?
+  ruc                       String?                 @unique
+  sriValidado               Boolean                 @default(false) @map("sri_validado")
+  senescytValidado          Boolean                 @default(false) @map("senescyt_validado")
+  senescytFechaValidacion   DateTime?               @map("senescyt_fecha_validacion")
+  senescytRespuesta         Json?                   @map("senescyt_respuesta")
+  cedula                    String?                 @unique
+  numeroTitulo              String?                 @map("numero_titulo")
+  codigoUniversidad         String?                 @map("codigo_universidad")
+  plan                      Plan                    @default(FREE)
+  maxDoctores               Int                     @default(1) @map("max_doctores")
+  maxAsistentes             Int                     @default(0) @map("max_asistentes")
+  createdAt                 DateTime                @default(now()) @map("created_at")
+  updatedAt                 DateTime                @updatedAt @map("updated_at")
+  customerId                String?                 @map("customer_id")
+  estadoPago                String?                 @map("estado_pago")
+  fechaFinSuscripcion       DateTime?               @map("fecha_fin_suscripcion")
+  fechaInicioSuscripcion    DateTime?               @map("fecha_inicio_suscripcion")
+  metodoPagoId              String?                 @map("metodo_pago_id")
+  subscriptionId            String?                 @map("subscription_id")
+  planLimites               PlanLimites?
+  articulos                 Articulo[]
+  citas                     Cita[]
+  conexiones                ConexionPaciente[]      @relation("ConexionOrigen")
+  consultas                 Consulta[]              @relation("CuentaConsultas")
+  doctorConsultas           Consulta[]              @relation("DoctorConsultas")
+  doctorEspecialidades      DoctorEspecialidad[]
+  facturas                  Factura[]
+  historialPagos            HistorialPago[]
+  iaAcceptances             IaAcceptanceLog[]
+  iaAnalyses                IaBrainAnalysis[]
+  iaPreferencias            IaPreferencia[]
+  interconsultasRecibidas   Interconsulta[]         @relation("Destino")
+  interconsultasSolicitadas Interconsulta[]         @relation("Solicitante")
+  notificaciones            Notificacion[]
+  pacientes                 Paciente[]
+  accountNotifications      PlanLimitNotification[] @relation("AccountNotification")
+  userNotifications         PlanLimitNotification[] @relation("UserNotification")
+  slots                     SlotDisponibilidad[]
+  ubicaciones               Ubicacion[]
+  doctorUbicaciones         DoctorUbicacion[]
+  usuariosVinculados        UsuarioVinculado[]
+  usuariosAsignados         UsuarioVinculado[]      @relation("DoctorAsignado")
+  pagos                     Pago[]
+  paymentSplits             PaymentSplit[]
+  doctorPublicProfile       DoctorPublicProfile?
+  documentosRecibidos       DocumentoCompartido[]   @relation("DestinatarioDocumentos")
+  documentosCompartidos     DocumentoCompartido[]   @relation("SolicitanteDocumentos")
+  consultasRecibidas        ConsultaCompartida[]    @relation("DestinatarioConsultas")
+  consultasCompartidas      ConsultaCompartida[]    @relation("SolicitanteConsultas")
+  moduleActivations         ModuleActivation[]
 
   @@index([email])
   @@index([plan])
@@ -51,23 +77,40 @@ model Cuenta {
   @@map("cuentas")
 }
 
-model UsuarioVinculado {
-  id                String   @id @default(uuid())
-  cuentaId          String   @map("cuenta_id")
-  doctorAsignadoId  String   @map("doctor_asignado_id")
-  email             String   @unique
-  passwordHash      String   @map("password_hash")
-  nombre            String
-  rol               RolVinculado
-  permisos          Json?
-  activo            Boolean  @default(true)
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+model PlanLimites {
+  id                    String   @id @default(uuid())
+  cuentaId              String   @unique
+  maxDoctores           Int      @default(1)
+  maxAsistentes         Int      @default(0)
+  maxAlmacenamientoMB   Int      @default(500)
+  tieneInterconsultas   Boolean  @default(false)
+  tieneTeleconsultas    Boolean  @default(false)
+  tieneHealthWallet     Boolean  @default(false)
+  tieneSRIIntegracion   Boolean  @default(false)
+  tieneIAAsistente      Boolean  @default(false)
+  tieneSoportePrioridad Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  cuenta                Cuenta   @relation(fields: [cuentaId], references: [id])
 
-  // Relations
-  cuenta            Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
-  doctorAsignado    Cuenta   @relation("DoctorAsignado", fields: [doctorAsignadoId], references: [id], onDelete: Cascade)
-  consultas         Consulta[] @relation("AsistenteConsultas")
+  @@index([cuentaId])
+}
+
+model UsuarioVinculado {
+  id               String       @id @default(uuid())
+  cuentaId         String       @map("cuenta_id")
+  doctorAsignadoId String       @map("doctor_asignado_id")
+  email            String       @unique
+  passwordHash     String       @map("password_hash")
+  nombre           String
+  rol              RolVinculado
+  permisos         Json?
+  activo           Boolean      @default(true)
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+  consultas        Consulta[]   @relation("AsistenteConsultas")
+  cuenta           Cuenta       @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  doctorAsignado   Cuenta       @relation("DoctorAsignado", fields: [doctorAsignadoId], references: [id], onDelete: Cascade)
 
   @@index([cuentaId])
   @@index([doctorAsignadoId])
@@ -76,25 +119,25 @@ model UsuarioVinculado {
 }
 
 model Paciente {
-  id                    String   @id @default(uuid())
-  cuentaId              String   @map("cuenta_id")
-  healthWalletId        String   @unique @map("health_wallet_id")
+  id                    String                @id @default(uuid())
+  cuentaId              String                @map("cuenta_id")
+  healthWalletId        String                @unique @map("health_wallet_id")
   nombre                String
-  cedula                String   @unique
-  fechaNacimiento       DateTime @map("fecha_nacimiento")
+  cedula                String                @unique
+  fechaNacimiento       DateTime              @map("fecha_nacimiento")
   telefono              String?
   email                 String?
-  antecedentesCompletos Boolean  @default(false) @map("antecedentes_completos")
-  createdAt             DateTime @default(now()) @map("created_at")
-  updatedAt             DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  cuenta                Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  antecedentesCompletos Boolean               @default(false) @map("antecedentes_completos")
+  createdAt             DateTime              @default(now()) @map("created_at")
+  updatedAt             DateTime              @updatedAt @map("updated_at")
   antecedentes          AntecedentePaciente[]
-  consultas             Consulta[]
-  documentos            Documento[]
   citas                 Cita[]
   conexiones            ConexionPaciente[]
+  consultas             Consulta[]
+  documentos            Documento[]
+  healthWallet          HealthWallet?
+  cuenta                Cuenta                @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+  moduleData            ModuleData[]
 
   @@index([cuentaId])
   @@index([cedula])
@@ -104,18 +147,16 @@ model Paciente {
 }
 
 model AntecedentePaciente {
-  id              String   @id @default(uuid())
-  pacienteId      String   @map("paciente_id")
-  tipo            TipoAntecedente
-  categoria       String?
-  detalle         String   @db.Text
-  grado           String?
-  fechaRegistro   DateTime @default(now()) @map("fecha_registro")
-  registradoPor   RegistradoPor @map("registrado_por")
-  createdAt       DateTime @default(now()) @map("created_at")
-
-  // Relations
-  paciente        Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  id            String          @id @default(uuid())
+  pacienteId    String          @map("paciente_id")
+  tipo          TipoAntecedente
+  categoria     String?
+  detalle       String
+  grado         String?
+  fechaRegistro DateTime        @default(now()) @map("fecha_registro")
+  registradoPor RegistradoPor   @map("registrado_por")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  paciente      Paciente        @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
 
   @@index([pacienteId])
   @@index([tipo])
@@ -123,35 +164,37 @@ model AntecedentePaciente {
 }
 
 model Consulta {
-  id                  String        @id @default(uuid())
-  cuentaId            String        @map("cuenta_id")
-  pacienteId          String        @map("paciente_id")
-  doctorId            String        @map("doctor_id")
-  asistenteId         String?       @map("asistente_id")
-  estado              EstadoConsulta
-  parentId            String?       @map("parent_id")
-  triajeData          Json?        @map("triaje_data")
-  motivoConsulta      String?       @map("motivo_consulta") @db.Text
-  evolucion           String?       @db.Text
-  diagnosticoCie10    Json?        @map("diagnostico_cie10")
-  recetaJson          Json?        @map("receta_json")
-  examenesJson        Json?        @map("examenes_json")
-  firmado             Boolean       @default(false)
-  fechaFirma          DateTime?     @map("fecha_firma")
-  firmaXml            String?       @db.Text @map("firma_xml")
-  firmaCertificado    Json?         @map("firma_certificado")
-  createdAt           DateTime      @default(now()) @map("created_at")
-  updatedAt           DateTime      @updatedAt @map("updated_at")
-
-  // Relations
-  cuenta              Cuenta        @relation("CuentaConsultas", fields: [cuentaId], references: [id], onDelete: Cascade)
-  paciente            Paciente      @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
-  doctor              Cuenta        @relation("DoctorConsultas", fields: [doctorId], references: [id], onDelete: Cascade)
-  asistente           UsuarioVinculado? @relation("AsistenteConsultas", fields: [asistenteId], references: [id], onDelete: SetNull)
-  documentos          Documento[]
-  children            Consulta[]    @relation("SubConsultas")
-  parent              Consulta?     @relation("SubConsultas", fields: [parentId], references: [id])
-  interconsultas      Interconsulta[]
+  id               String            @id @default(uuid())
+  cuentaId         String            @map("cuenta_id")
+  pacienteId       String            @map("paciente_id")
+  doctorId         String            @map("doctor_id")
+  asistenteId      String?           @map("asistente_id")
+  estado           EstadoConsulta
+  parentId         String?           @map("parent_id")
+  triajeData       Json?             @map("triaje_data")
+  motivoConsulta   String?           @map("motivo_consulta")
+  evolucion        String?
+  diagnosticoCie10 Json?             @map("diagnostico_cie10")
+  recetaJson       Json?             @map("receta_json")
+  examenesJson     Json?             @map("examenes_json")
+  firmado          Boolean           @default(false)
+  fechaFirma       DateTime?         @map("fecha_firma")
+  firmaXml         String?           @map("firma_xml")
+  firmaCertificado Json?             @map("firma_certificado")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  asistente        UsuarioVinculado? @relation("AsistenteConsultas", fields: [asistenteId], references: [id])
+  cuenta           Cuenta            @relation("CuentaConsultas", fields: [cuentaId], references: [id], onDelete: Cascade)
+  doctor           Cuenta            @relation("DoctorConsultas", fields: [doctorId], references: [id], onDelete: Cascade)
+  paciente         Paciente          @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  parent           Consulta?         @relation("SubConsultas", fields: [parentId], references: [id])
+  children         Consulta[]        @relation("SubConsultas")
+  documentos       Documento[]
+  interconsultas   Interconsulta[]
+  moduleData       ModuleData[]
+  compartidas      ConsultaCompartida[] @relation("ConsultasCompartidas")
+  oficina          Oficina?       @relation(fields: [oficinaId], references: [id])
+  oficinaId        String?
 
   @@index([cuentaId])
   @@index([pacienteId])
@@ -163,21 +206,25 @@ model Consulta {
 }
 
 model Documento {
-  id              String        @id @default(uuid())
-  consultaId      String        @map("consulta_id")
-  pacienteId      String        @map("paciente_id")
+  id              String          @id @default(uuid())
+  consultaId      String          @map("consulta_id")
+  pacienteId      String          @map("paciente_id")
   tipo            TipoDocumento
   contenido       Json
-  firmado         Boolean       @default(false)
-  fechaEmision    DateTime      @default(now()) @map("fecha_emision")
-  fechaExpiracion DateTime?     @map("fecha_expiracion")
+  firmado         Boolean         @default(false)
+  fechaEmision    DateTime        @default(now()) @map("fecha_emision")
+  fechaExpiracion DateTime?       @map("fecha_expiracion")
   estado          EstadoDocumento @default(activo)
-  marcaAgua       Boolean       @default(false) @map("marca_agua")
-  createdAt       DateTime      @default(now()) @map("created_at")
-
-  // Relations
-  consulta        Consulta      @relation(fields: [consultaId], references: [id], onDelete: Cascade)
-  paciente        Paciente      @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  marcaAgua       Boolean         @default(false) @map("marca_agua")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  archivoMimeType String?         @map("archivo_mime_type")
+  archivoNombre   String?         @map("archivo_nombre")
+  archivoSize     Int?            @map("archivo_size")
+  archivoUrl      String?         @map("archivo_url")
+  hashSha256      String?         @map("hash_sha256")
+  consulta        Consulta        @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+  paciente        Paciente        @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  compartidos     DocumentoCompartido[]
 
   @@index([consultaId])
   @@index([pacienteId])
@@ -188,15 +235,13 @@ model Documento {
 }
 
 model IaPreferencia {
-  id                String   @id @default(uuid())
-  doctorId          String   @map("doctor_id")
-  categoria         String
-  itemId            String   @map("item_id")
-  frecuencia        Int
-  ultimaAceptacion  DateTime @map("ultima_aceptacion")
-
-  // Relations
-  doctor            Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  id               String   @id @default(uuid())
+  doctorId         String   @map("doctor_id")
+  categoria        String
+  itemId           String   @map("item_id")
+  frecuencia       Int
+  ultimaAceptacion DateTime @map("ultima_aceptacion")
+  doctor           Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@unique([doctorId, categoria, itemId])
   @@index([doctorId])
@@ -204,42 +249,66 @@ model IaPreferencia {
   @@map("ia_preferencias")
 }
 
-model Ubicacion {
-  id          String   @id @default(uuid())
-  doctorId    String   @map("doctor_id")
-  nombre      String
-  direccion   String   @db.Text
-  latitud     Decimal? @db.Decimal(10, 8)
-  longitud    Decimal? @db.Decimal(11, 8)
-  telefono    String?
-  activo      Boolean  @default(true)
-  createdAt   DateTime @default(now()) @map("created_at")
+model IaAcceptanceLog {
+  id        String   @id @default(uuid())
+  doctorId  String   @map("doctor_id")
+  category  String
+  itemId    String   @map("item_id")
+  accepted  Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+  doctor    Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
-  // Relations
-  doctor      Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  slots       SlotDisponibilidad[]
-  citas       Cita[]
+  @@index([doctorId])
+  @@index([category])
+  @@index([createdAt])
+  @@map("ia_acceptance_log")
+}
+
+model IaBrainAnalysis {
+  id           String   @id @default(uuid())
+  doctorId     String   @map("doctor_id")
+  analysisDate DateTime @map("analysis_date")
+  patterns     Json
+  createdAt    DateTime @default(now()) @map("created_at")
+  doctor       Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId])
+  @@index([analysisDate])
+  @@map("ia_brain_analysis")
+}
+
+model Ubicacion {
+  id        String               @id @default(uuid())
+  doctorId  String               @map("doctor_id")
+  nombre    String
+  direccion String
+  latitud   Decimal?             @db.Decimal(10, 8)
+  longitud  Decimal?             @db.Decimal(11, 8)
+  telefono  String?
+  activo    Boolean              @default(true)
+  createdAt DateTime             @default(now()) @map("created_at")
+  citas     Cita[]
+  slots     SlotDisponibilidad[]
+  doctor    Cuenta               @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@index([doctorId])
   @@map("ubicaciones")
 }
 
 model SlotDisponibilidad {
-  id              String          @id @default(uuid())
-  doctorId        String          @map("doctor_id")
-  ubicacionId     String?         @map("ubicacion_id")
-  diaSemana       Int             @map("dia_semana")
-  horaInicio      String          @map("hora_inicio")
-  horaFin         String          @map("hora_fin")
-  duracionMinutos Int             @map("duracion_minutos")
+  id              String     @id @default(uuid())
+  doctorId        String     @map("doctor_id")
+  ubicacionId     String?    @map("ubicacion_id")
+  diaSemana       Int        @map("dia_semana")
+  horaInicio      String     @map("hora_inicio")
+  horaFin         String     @map("hora_fin")
+  duracionMinutos Int        @map("duracion_minutos")
   tipo            TipoCita
-  activo          Boolean         @default(true)
-  createdAt       DateTime        @default(now()) @map("created_at")
-
-  // Relations
-  doctor          Cuenta          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  ubicacion       Ubicacion?      @relation(fields: [ubicacionId], references: [id], onDelete: Cascade)
+  activo          Boolean    @default(true)
+  createdAt       DateTime   @default(now()) @map("created_at")
   citas           Cita[]
+  doctor          Cuenta     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  ubicacion       Ubicacion? @relation(fields: [ubicacionId], references: [id], onDelete: Cascade)
 
   @@index([doctorId])
   @@index([ubicacionId])
@@ -247,25 +316,25 @@ model SlotDisponibilidad {
 }
 
 model Cita {
-  id              String          @id @default(uuid())
-  doctorId        String          @map("doctor_id")
-  pacienteId      String          @map("paciente_id")
-  ubicacionId     String?         @map("ubicacion_id")
-  slotId          String?         @map("slot_id")
-  fechaHora       DateTime        @map("fecha_hora")
-  tipo            TipoCita
-  estado          EstadoCita      @default(programada)
-  linkVideo       String?         @map("link_video")
-  tokenAcceso     String?         @map("token_acceso")
-  notificadaDoctor Boolean        @default(false) @map("notificada_doctor")
-  notificadaPaciente Boolean      @default(false) @map("notificada_paciente")
-  createdAt       DateTime        @default(now()) @map("created_at")
-
-  // Relations
-  doctor          Cuenta          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  paciente        Paciente        @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
-  ubicacion       Ubicacion?      @relation(fields: [ubicacionId], references: [id], onDelete: SetNull)
-  slot            SlotDisponibilidad? @relation(fields: [slotId], references: [id], onDelete: SetNull)
+  id                 String              @id @default(uuid())
+  doctorId           String              @map("doctor_id")
+  pacienteId         String              @map("paciente_id")
+  ubicacionId        String?             @map("ubicacion_id")
+  slotId             String?             @map("slot_id")
+  fechaHora          DateTime            @map("fecha_hora")
+  tipo               TipoCita
+  estado             EstadoCita          @default(programada)
+  linkVideo          String?             @map("link_video")
+  tokenAcceso        String?             @map("token_acceso")
+  notificadaDoctor   Boolean             @default(false) @map("notificada_doctor")
+  notificadaPaciente Boolean             @default(false) @map("notificada_paciente")
+  notificadaPaciente1h Boolean           @default(false) @map("notificada_paciente_1h")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  motivoCancelacion  String?             @map("motivo_cancelacion")
+  doctor             Cuenta              @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  paciente           Paciente            @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  slot               SlotDisponibilidad? @relation(fields: [slotId], references: [id])
+  ubicacion          Ubicacion?          @relation(fields: [ubicacionId], references: [id])
 
   @@index([doctorId])
   @@index([pacienteId])
@@ -275,49 +344,159 @@ model Cita {
 }
 
 model Especialidad {
-  id          String   @id @default(uuid())
-  nombre      String   @unique
-  nombreCorto String   @unique @map("nombre_corto")
+  id           String               @id @default(uuid())
+  nombre       String               @unique
+  nombreCorto  String               @unique @map("nombre_corto")
   herramientas Json
-  activo      Boolean  @default(true)
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  doctors     DoctorEspecialidad[]
+  activo       Boolean              @default(true)
+  createdAt    DateTime             @default(now()) @map("created_at")
+  doctors      DoctorEspecialidad[]
 
   @@index([nombre])
   @@map("especialidades")
 }
 
-model DoctorEspecialidad {
-  id                String   @id @default(uuid())
-  doctorId          String   @map("doctor_id")
-  especialidadId    String   @map("especialidad_id")
-  principal         Boolean  @default(false)
-  senescytValidada  Boolean  @default(false) @map("senescyt_validada")
-  createdAt         DateTime @default(now()) @map("created_at")
+model Oficina {
+  id          String   @id @default(cuid())
+  nombre      String
+  direccion   String
+  latitud     Float
+  longitud    Float
+  radio       Float    @default(5)
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  // Relations
-  doctor            Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  especialidad      Especialidad @relation(fields: [especialidadId], references: [id], onDelete: Cascade)
+  doctores    DoctorUbicacion[]
+  consultas   Consulta[]
+
+  @@index([activo])
+  @@map("oficinas")
+}
+
+model DoctorUbicacion {
+  id           String   @id @default(cuid())
+  doctorId     String
+  oficinaId    String
+  diaSemana    String
+  horaInicio   String
+  horaFin      String
+  createdAt    DateTime @default(now())
+
+  doctor       Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  oficina      Oficina  @relation(fields: [oficinaId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, oficinaId, diaSemana])
+  @@index([oficinaId])
+  @@map("doctor_ubica")
+}
+
+model DoctorEspecialidad {
+  id               String       @id @default(uuid())
+  doctorId         String       @map("doctor_id")
+  especialidadId   String       @map("especialidad_id")
+  principal        Boolean      @default(false)
+  senescytValidada Boolean      @default(false) @map("senescyt_validada")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  doctor           Cuenta       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  especialidad     Especialidad @relation(fields: [especialidadId], references: [id], onDelete: Cascade)
 
   @@index([doctorId])
   @@index([especialidadId])
   @@map("doctor_especialidades")
 }
 
-model ConexionPaciente {
-  id                  String   @id @default(uuid())
-  pacienteId          String   @map("paciente_id")
-  doctorId            String   @map("doctor_id")
-  autorizadoPor       AutorizadoPor @map("autorizado_por")
-  fechaAutorizacion   DateTime @default(now()) @map("fecha_autorizacion")
-  estado              EstadoConexion @default(activa)
-  permisos            Json
-  revocadaEn          DateTime? @map("revocada_en")
+// ============= PERFIL PÚBLICO DOCTOR (TASK-051) =============
+model DoctorPublicProfile {
+  id              String         @id @default(uuid())
+  doctorId        String         @unique @map("doctor_id")
+  bio             String?
+  experiencia     Int            @default(0) // Años de experiencia
+  especialidades  String         @db.Text // Array de especialidades en formato JSON
+  educacion       Json?
+  certificaciones Json?
+  idiomas         String         @default("[]") @db.Text // Array de idiomas
+  precioConsulta  Decimal?       @map("precio_consulta") @db.Decimal(10, 2)
+  ubicacion       String?
+  telefonoPublico String?        @map("telefono_publico")
+  emailPublico    String?        @map("email_publico")
+  website         String?
+  linkedin        String?
+  twitter         String?
+  facebook        String?
+  instagram       String?
+  fotoPerfilUrl   String?        @map("foto_perfil_url")
+  fotoPortadaUrl  String?        @map("foto_portada_url")
+  verificado      Boolean        @default(false)
+  destacado       Boolean        @default(false)
+  activo          Boolean        @default(true)
+  vistasPerfil    Int            @default(0) @map("vistas_perfil")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  doctor          Cuenta         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  ratings         DoctorRating[]
 
-  // Relations
-  paciente            Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
-  doctor              Cuenta   @relation("ConexionOrigen", fields: [doctorId], references: [id], onDelete: Cascade)
+  @@index([doctorId])
+  @@index([verificado])
+  @@index([destacado])
+  @@index([activo])
+  @@map("doctor_public_profiles")
+}
+
+// ============= VALORACIONES DOCTOR (BIZ-002) =============
+model DoctorRating {
+  id             String              @id @default(uuid())
+  doctorId       String              @map("doctor_id")
+  pacienteId     String              @map("paciente_id")
+  consultaId     String?             @map("consulta_id")
+  rating         Int // 1-5 estrellas
+  comentario     String?
+  anonimizado    Boolean             @default(false)
+  aprobado       Boolean             @default(false)
+  reportado      Boolean             @default(false)
+  util           Int                 @default(0) // Count de "útil"
+  noUtil         Int                 @default(0) // Count de "no útil"
+  respuesta      String?
+  respuestaFecha DateTime?           @map("respuesta_fecha")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  doctor         DoctorPublicProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId])
+  @@index([pacienteId])
+  @@index([consultaId])
+  @@index([aprobado])
+  @@index([rating])
+  @@map("doctor_ratings")
+}
+
+model HealthWallet {
+  id         String   @id @default(uuid())
+  pacienteId String   @unique @map("paciente_id")
+  walletId   String   @unique
+  version    Int      @default(1)
+  activo     Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  paciente   Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@map("health_wallets")
+}
+
+model ConexionPaciente {
+  id                String         @id @default(uuid())
+  pacienteId        String         @map("paciente_id")
+  doctorId          String         @map("doctor_id")
+  autorizadoPor     AutorizadoPor  @map("autorizado_por")
+  fechaAutorizacion DateTime       @default(now()) @map("fecha_autorizacion")
+  estado            EstadoConexion @default(activa)
+  permisos          Json
+  revocadaEn        DateTime?      @map("revocada_en")
+  fechaExpiracion   DateTime?      @map("fecha_expiracion")
+  tipoAcceso        TipoAcceso     @map("tipo_acceso")
+  doctor            Cuenta         @relation("ConexionOrigen", fields: [doctorId], references: [id], onDelete: Cascade)
+  paciente          Paciente       @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
 
   @@unique([pacienteId, doctorId])
   @@index([pacienteId])
@@ -327,19 +506,17 @@ model ConexionPaciente {
 }
 
 model Articulo {
-  id              String   @id @default(uuid())
-  doctorId        String   @map("doctor_id")
-  titulo          String
-  contenido       String   @db.Text
-  resumen         String?  @db.Text
-  estado          EstadoArticulo @default(pendiente)
-  esDestacado     Boolean  @default(false) @map("es_destacado")
-  esPatrocinado   Boolean  @default(false) @map("es_patrocinado")
-  likesCount      Int      @default(0) @map("likes_count")
-  createdAt       DateTime @default(now()) @map("created_at")
-
-  // Relations
-  doctor          Cuenta   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  id            String         @id @default(uuid())
+  doctorId      String         @map("doctor_id")
+  titulo        String
+  contenido     String
+  resumen       String?
+  estado        EstadoArticulo @default(pendiente)
+  esDestacado   Boolean        @default(false) @map("es_destacado")
+  esPatrocinado Boolean        @default(false) @map("es_patrocinado")
+  likesCount    Int            @default(0) @map("likes_count")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  doctor        Cuenta         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@index([doctorId])
   @@index([estado])
@@ -348,38 +525,94 @@ model Articulo {
 }
 
 model Interconsulta {
-  id              String          @id @default(uuid())
-  consultaId      String          @map("consulta_id")
-  solicitante     String          @map("solicitante")
-  destino         String          @map("destino")
+  id              String              @id @default(uuid())
+  consultaId      String              @map("consulta_id")
+  solicitante     String              @map("solicitante")
+  destino         String              @map("destino")
   tipo            TipoInterconsulta
   estado          EstadoInterconsulta @default(pendiente)
-  mensaje         String?         @db.Text
-  creadoEn        DateTime        @default(now()) @map("creado_en")
-
-  // Relations
-  consulta        Consulta        @relation(fields: [consultaId], references: [id], onDelete: Cascade)
-  solicitanteUser Cuenta          @relation("Solicitante", fields: [solicitante], references: [id], onDelete: Cascade)
-  destinoUser     Cuenta          @relation("Destino", fields: [destino], references: [id], onDelete: Cascade)
+  mensaje         String?
+  creadoEn        DateTime            @default(now()) @map("creado_en")
+  respondidaEn    DateTime?           @map("respondida_en")
+  respuesta       String?
+  consulta        Consulta            @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+  destinoUser     Cuenta              @relation("Destino", fields: [destino], references: [id], onDelete: Cascade)
+  solicitanteUser Cuenta              @relation("Solicitante", fields: [solicitante], references: [id], onDelete: Cascade)
 
   @@index([consultaId])
   @@index([solicitante])
   @@index([destino])
   @@index([estado])
+  @@index([creadoEn])
   @@map("interconsultas")
 }
 
-// ============= AUTH =============
+model DocumentoCompartido {
+  id                 String    @id @default(uuid())
+  documentoId        String    @map("documento_id")
+  destinatarioId     String    @map("destinatario_id")
+  solicitanteId      String    @map("solicitante_id")
+  motivoComparticion String    @map("motivo_comparticion")
+  temporal           Boolean   @default(false)
+  fechaExpiracion    DateTime? @map("fecha_expiracion")
+  fechaComparticion  DateTime  @default(now()) @map("fecha_comparticion")
+
+  documento          Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  destinatario       Cuenta    @relation("DestinatarioDocumentos", fields: [destinatarioId], references: [id], onDelete: Cascade)
+  solicitante        Cuenta    @relation("SolicitanteDocumentos", fields: [solicitanteId], references: [id], onDelete: Cascade)
+
+  @@index([documentoId])
+  @@index([destinatarioId])
+  @@index([solicitanteId])
+  @@index([fechaExpiracion])
+  @@map("documentos_compartidos")
+}
+
+model ConsultaCompartida {
+  id                 String    @id @default(uuid())
+  consultaId         String    @map("consulta_id")
+  destinatarioId     String    @map("destinatario_id")
+  solicitanteId      String    @map("solicitante_id")
+  motivoComparticion String    @map("motivo_comparticion")
+  incluirDocumentos  Boolean   @default(false) @map("incluir_documentos")
+  temporal           Boolean   @default(false)
+  fechaExpiracion    DateTime? @map("fecha_expiracion")
+  fechaComparticion  DateTime  @default(now()) @map("fecha_comparticion")
+
+  consulta           Consulta  @relation("ConsultasCompartidas", fields: [consultaId], references: [id], onDelete: Cascade)
+  destinatario       Cuenta    @relation("DestinatarioConsultas", fields: [destinatarioId], references: [id], onDelete: Cascade)
+  solicitante        Cuenta    @relation("SolicitanteConsultas", fields: [solicitanteId], references: [id], onDelete: Cascade)
+
+  @@index([consultaId])
+  @@index([destinatarioId])
+  @@index([solicitanteId])
+  @@index([fechaExpiracion])
+  @@map("consultas_compartidas")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  usedAt    DateTime? @map("used_at")
+
+  @@index([email])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
 
 model RefreshToken {
-  id          String   @id @default(uuid())
-  token       String   @unique
-  userId      String   @map("user_id")
-  userType    UserType @map("user_type")
-  expiresAt   DateTime @map("expires_at")
-  createdAt   DateTime @default(now()) @map("created_at")
-  revokedAt   DateTime? @map("revoked_at")
-  replacedBy  String?  @map("replaced_by")
+  id         String    @id @default(uuid())
+  token      String    @unique
+  userId     String    @map("user_id")
+  userType   UserType  @map("user_type")
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  revokedAt  DateTime? @map("revoked_at")
+  replacedBy String?   @map("replaced_by")
 
   @@index([userId])
   @@index([token])
@@ -387,11 +620,118 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-// ============= ENUMS =============
+model HistorialPago {
+  id              String     @id @default(uuid())
+  cuentaId        String     @map("cuenta_id")
+  plan            Plan
+  monto           Decimal    @db.Decimal(10, 2)
+  moneda          String     @default("USD")
+  metodoPago      String     @map("metodo_pago")
+  estado          EstadoPago
+  transactionId   String     @unique @map("transaction_id")
+  fechaPago       DateTime   @default(now()) @map("fecha_pago")
+  fechaExpiracion DateTime   @map("fecha_expiracion")
+  facturaUrl      String?    @map("factura_url")
+  metadata        Json?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  cuenta          Cuenta     @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+
+  @@index([cuentaId])
+  @@index([plan])
+  @@index([estado])
+  @@index([fechaPago])
+  @@map("historial_pagos")
+}
+
+model AuditLog {
+  id           String        @id @default(uuid())
+  userId       String        @map("user_id")
+  action       AuditAction   @map("accion")
+  resourceType ResourceType? @map("resource_type")
+  resourceId   String?       @map("resource_id")
+  rolUsuario   String        @map("rol_usuario")
+  ip           String?
+  userAgent    String?       @map("user_agent")
+  metadata     Json?
+  timestamp    DateTime      @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resourceType, resourceId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model PlanLimitNotification {
+  id               String                    @id @default(uuid())
+  userId           String                    @map("user_id")
+  accountId        String                    @map("account_id")
+  notificationType PlanLimitNotificationType @map("notification_type")
+  resourceType     ResourceLimitType         @map("resource_type")
+  currentValue     Float                     @map("current_value")
+  limitValue       Float                     @map("limit_value")
+  percentageUsed   Float                     @map("percentage_used")
+  acknowledged     Boolean                   @default(false)
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  acknowledgedAt   DateTime?                 @map("acknowledged_at")
+  cuenta           Cuenta                    @relation("AccountNotification", fields: [accountId], references: [id], onDelete: Cascade)
+  usuario          Cuenta                    @relation("UserNotification", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([resourceType])
+  @@index([acknowledged])
+  @@index([createdAt])
+  @@map("plan_limit_notifications")
+}
+
+model Notificacion {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  titulo    String
+  cuerpo    String
+  datos     Json?
+  tipo      TipoNotificacion @default(GENERAL)
+  leido     Boolean          @default(false)
+  createdAt DateTime         @default(now()) @map("created_at")
+  usuario   Cuenta           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([leido])
+  @@index([createdAt])
+  @@map("notificaciones")
+}
+
+model Factura {
+  id            String          @id @default(uuid())
+  cuentaId      String          @map("cuenta_id")
+  ruc           String          @map("ruc")
+  razonSocial   String          @map("razon_social")
+  secuencial    String          @map("secuencial")
+  fechaEmision  DateTime        @map("fecha_emision")
+  estado        EstadoFactura   @default(recibida)
+  montoTotal    Decimal         @map("monto_total") @db.Decimal(10, 2)
+  xmlGenerado   String?         @map("xml_generado")
+  xmlAutorizado String?         @map("xml_autorizado")
+  claveAcceso   String?         @map("clave_acceso")
+  ambiente      AmbienteFactura @default(pruebas)
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  cuenta        Cuenta          @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+
+  @@index([cuentaId])
+  @@index([ruc])
+  @@index([secuencial])
+  @@index([estado])
+  @@index([fechaEmision])
+  @@map("facturas")
+}
 
 enum Rol {
   DOCTOR
   ADMIN
+  FARMACIA
 }
 
 enum RolVinculado {
@@ -402,8 +742,7 @@ enum RolVinculado {
 enum Plan {
   FREE
   PREMIUM
-  CLINICA
-  ENTERPRISE
+  CLINICA_SME
 }
 
 enum TipoAntecedente {
@@ -465,6 +804,12 @@ enum AutorizadoPor {
   representante_legal
 }
 
+enum TipoAcceso {
+  COMPLETO
+  LIMITADO
+  EMERGENCIA
+}
+
 enum EstadoArticulo {
   pendiente
   aprobado
@@ -478,12 +823,249 @@ enum TipoInterconsulta {
 
 enum EstadoInterconsulta {
   pendiente
+  en_proceso
   aceptada
   rechazada
   completada
+  cerrada
 }
 
 enum UserType {
   CUENTA
   USUARIO_VINCULADO
+}
+
+enum EstadoPago {
+  pendiente
+  completado
+  fallido
+  reembolsado
+  cancelado
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  RESOURCE_ACCESS
+  RESOURCE_CREATE
+  RESOURCE_UPDATE
+  RESOURCE_DELETE
+  PERMISSION_CHANGE
+  ROLE_CHANGE
+  PLAN_CHANGE
+  PAYMENT_ACTION
+}
+
+enum ResourceType {
+  PACIENTE
+  CONSULTA
+  DOCUMENTO
+  USUARIO
+  PLAN
+  PAGO
+}
+
+enum PlanLimitNotificationType {
+  WARNING_NEAR_LIMIT
+  ALERT_AT_LIMIT
+  BLOCK_EXCEED_LIMIT
+}
+
+enum ResourceLimitType {
+  doctors
+  assistants
+  storage
+}
+
+enum TipoNotificacion {
+  GENERAL
+  CONSENT_REQUEST
+  CONSENT_RESPONSE
+  ACCESS_GRANTED
+  ACCESS_REVOKED
+}
+
+enum EstadoFactura {
+  recibida
+  autorizada
+  rechazada
+  anulada
+}
+
+enum AmbienteFactura {
+  pruebas
+  produccion
+}
+
+// ============= MODELOS PARA PAGOS (TASK-018) =============
+
+model Pago {
+  id            String        @id @default(uuid())
+  cuentaId      String        @map("cuenta_id")
+  gateway       String // 'payphone' | 'kushki' | 'stripe' | 'paymentez'
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  status        PaymentStatus @default(PENDING)
+  transactionId String        @unique @map("transaction_id")
+  externalId    String?       @unique @map("external_id") // Idempotency key
+  description   String?
+  metadata      Json?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  approvedAt    DateTime?     @map("approved_at")
+
+  // Relations
+  splits PaymentSplit[]
+  cuenta Cuenta         @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+
+  @@index([cuentaId])
+  @@index([gateway])
+  @@index([status])
+  @@index([transactionId])
+  @@index([createdAt])
+  @@map("pagos")
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+  CANCELLED
+}
+
+model PaymentSplit {
+  id          String      @id @default(uuid())
+  pagoId      String      @map("pago_id")
+  recipientId String      @map("recipient_id") // cuenta_id del recipiente
+  amount      Decimal     @db.Decimal(10, 2)
+  percentage  Float
+  status      SplitStatus @default(PENDING)
+  description String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  paidAt      DateTime?   @map("paid_at")
+
+  // Relations
+  pago      Pago   @relation(fields: [pagoId], references: [id], onDelete: Cascade)
+  recipient Cuenta @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([pagoId])
+  @@index([recipientId])
+  @@index([status])
+  @@map("payment_splits")
+}
+
+enum SplitStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model PaymentWebhookLog {
+  id            String    @id @default(uuid())
+  gateway       String // 'payphone' | 'kushki'
+  event         String // Tipo de evento
+  transactionId String?   @map("transaction_id")
+  payload       Json
+  signature     String?
+  processed     Boolean   @default(false)
+  processedAt   DateTime? @map("processed_at")
+  error         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([gateway])
+  @@index([event])
+  @@index([transactionId])
+  @@index([createdAt])
+  @@map("payment_webhook_logs")
+}
+
+// ============= MODELOS PARA MÓDULOS DINÁMICOS (TASK-44B) =============
+
+model ModuleData {
+  id         String   @id @default(uuid())
+  moduleId   String   @map("module_id")
+  pacienteId String   @map("paciente_id")
+  consultaId String?  @map("consulta_id")
+  datos      Json
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  paciente Paciente  @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  consulta Consulta? @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+
+  @@index([moduleId])
+  @@index([pacienteId])
+  @@index([consultaId])
+  @@map("module_data")
+}
+
+// ============= MARKETPLACE DE MÓDULOS (TASK-016) =============
+
+model ModuleActivation {
+  id         String   @id @default(uuid())
+  cuentaId   String   @map("cuenta_id")
+  moduleId   String   @map("module_id")
+  activo     Boolean  @default(false)
+  fechaActivacion DateTime? @map("fecha_activacion")
+  fechaDesactivacion DateTime? @map("fecha_desactivacion")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relaciones
+  cuenta     Cuenta   @relation(fields: [cuentaId], references: [id], onDelete: Cascade)
+
+  @@unique([cuentaId, moduleId])
+  @@index([cuentaId])
+  @@index([moduleId])
+  @@index([activo])
+  @@map("module_activations")
+}
+
+// ============= CACHE SENESCYT (BIZ-001) =============
+
+model SenescytCache {
+  id            String   @id @default(uuid())
+  cedula        String   @map("cedula")
+  numeroTitulo  String   @map("numero_titulo")
+  result        Json
+  expiresAt     DateTime @map("expires_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([cedula, numeroTitulo], map: "senescyt_cache_cedula_numeroTitulo")
+  @@index([expiresAt])
+  @@map("senescyt_cache")
+}
+
+// ============= TELEMETRÍA DE TELECONSULTAS (FASE 3) =============
+
+model MetricLog {
+  id        String   @id @default(uuid())
+  sessionId String   @unique @map("session_id")
+  consultaId String? @map("consulta_id")
+  userId    String   @map("user_id")
+  
+  // Métricas de calidad de red
+  jitter    Decimal  @default(0) @db.Decimal(10, 3)
+  latency   Decimal  @default(0) @db.Decimal(10, 3)
+  packetLoss Decimal  @default(0) @db.Decimal(5, 4)
+  
+  // Métricas de calidad de video/audio
+  videoQuality String? @map("video_quality") // 'high', 'medium', 'low'
+  audioQuality String? @map("audio_quality")
+  
+  // Duración en segundos
+  duration  Int      @default(0)
+  
+  // Metadata adicional
+  metadata  Json?
+  
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([sessionId])
+  @@index([consultaId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("metric_logs")
 }

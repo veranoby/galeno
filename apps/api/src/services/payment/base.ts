@@ -150,6 +150,8 @@ export interface WebhookResult {
   success: boolean;
   /** ID de transacción procesada */
   transactionId?: string;
+  /** Status del pago */
+  status?: PaymentStatus;
   /** Mensaje de error si aplica */
   error?: string;
 }

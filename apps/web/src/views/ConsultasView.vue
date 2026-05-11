@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import FirmaDialog from './components/FirmaDialog.vue';
+import FirmaDialog from './consultas/components/FirmaDialog.vue';
 import type { DatosConsulta } from '@/composables/useFirmaElectronica';
 
 // ============= DATOS DE EJEMPLO =============
@@ -193,81 +193,78 @@ onMounted(() => {
 const cargarConsultas = async () => {
   cargando.value = true;
   try {
-    // Simular carga de datos
-    // En producción: const response = await api.get('/api/consultas');
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Datos de ejemplo
-    consultas.value = [
-      {
-        id: '1',
-        pacienteId: 'pac-001',
-        paciente: {
-          id: 'pac-001',
-          nombre: 'Juan Pérez García',
-          cedula: '1712345678'
-        },
-        doctorId: 'doc-001',
-        doctor: {
-          id: 'doc-001',
-          nombre: 'Dr. Carlos Mendoza'
-        },
-        estado: 'finalizada',
-        motivoConsulta: 'Dolor de cabeza persistente',
-        evolucion: 'Paciente refiere dolor de tipo tensional...',
-        diagnostico: 'Cefalea tensional',
-        firmado: false,
-        fechaCreacion: new Date('2024-01-15')
-      },
-      {
-        id: '2',
-        pacienteId: 'pac-002',
-        paciente: {
-          id: 'pac-002',
-          nombre: 'María González López',
-          cedula: '0987654321'
-        },
-        doctorId: 'doc-001',
-        doctor: {
-          id: 'doc-001',
-          nombre: 'Dr. Carlos Mendoza'
-        },
-        estado: 'finalizada',
-        motivoConsulta: 'Control de hipertensión',
-        evolucion: 'Paciente estable con tratamiento actual...',
-        diagnostico: 'Hipertensión arterial esencial',
-        firmado: true,
-        fechaCreacion: new Date('2024-01-14')
-      },
-      {
-        id: '3',
-        pacienteId: 'pac-003',
-        paciente: {
-          id: 'pac-003',
-          nombre: 'Carlos Rodríguez Silva',
-          cedula: '1712345679'
-        },
-        doctorId: 'doc-002',
-        doctor: {
-          id: 'doc-002',
-          nombre: 'Dra. Ana Martínez'
-        },
-        estado: 'en_atencion',
-        motivoConsulta: 'Dolor abdominal',
-        firmado: false,
-        fechaCreacion: new Date()
+    // Cargar datos desde la API
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/v1/consultas`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
       }
-    ];
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al cargar consultas: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    // Mapear datos de la API al formato usado por la vista
+    consultas.value = result.data.map((c: any) => ({
+      id: c.id,
+      pacienteId: c.pacienteId,
+      paciente: {
+        id: c.paciente.id,
+        nombre: c.paciente.nombre,
+        cedula: c.paciente.cedula
+      },
+      doctorId: c.doctorId,
+      doctor: {
+        id: c.doctor.id,
+        nombre: c.doctor.nombre
+      },
+      estado: c.estado,
+      motivoConsulta: c.motivoConsulta || undefined,
+      evolucion: c.evolucion || undefined,
+      diagnostico: c.diagnostico || undefined,
+      firmado: c.firmado || false,
+      fechaCreacion: new Date(c.createdAt)
+    }));
   } catch (error) {
+    console.error('Error al cargar consultas:', error);
     mostrarSnackbar('Error al cargar consultas', 'error');
   } finally {
     cargando.value = false;
   }
 };
 
-const crearNuevaConsulta = () => {
-  // Navegar a vista de creación de consulta
-  console.log('Crear nueva consulta');
+const crearNuevaConsulta = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const response = await fetch(`${apiUrl}/api/v1/consultas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: JSON.stringify({
+        pacienteId: 'default', // En producción, vendría del contexto del usuario
+        motivoConsulta: 'Nueva consulta'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al crear consulta');
+    }
+
+    const result = await response.json();
+    mostrarSnackbar('Consulta creada correctamente', 'success');
+
+    // Recargar lista de consultas
+    await cargarConsultas();
+  } catch (error) {
+    console.error('Error al crear consulta:', error);
+    mostrarSnackbar('Error al crear consulta', 'error');
+  }
 };
 
 const verDetalle = (consulta: Consulta) => {
@@ -298,15 +295,23 @@ const onFirmaCompletada = async (resultado: any, consultaId: string) => {
     consulta.firmado = true;
   }
 
-  // En producción, enviar el XML firmado al servidor
   try {
-    // await api.put(`/api/consultas/${consultaId}/firma`, {
-    //   xmlFirmado: resultado.xmlFirmado,
-    //   firmaBase64: resultado.firmaBase64
-    // });
+    // En producción, enviar el XML firmado al servidor
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    await fetch(`${apiUrl}/api/v1/consultas/${consultaId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: JSON.stringify({
+        firmado: true
+      })
+    });
 
     mostrarSnackbar('Consulta firmada correctamente', 'success');
   } catch (error) {
+    console.error('Error al guardar la firma:', error);
     mostrarSnackbar('Error al guardar la firma', 'error');
   }
 };

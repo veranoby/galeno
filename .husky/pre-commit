@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Running pre-commit checks..."
+
+# Check if we have staged files to check
+if [ -z "$(git diff --cached --name-only)" ]; then
+  echo "No staged files to check."
+  exit 0
+fi
+
+# Lint check (using lint-staged)
+echo "📝 Running lint on staged files..."
+npx lint-staged
+LINT_STATUS=$?
+
+if [ $LINT_STATUS -ne 0 ]; then
+  echo "❌ Lint failed. Please fix the linting errors before committing."
+  echo "Run 'pnpm lint:fix' to auto-fix linting issues."
+  exit 1
+fi
+
+# Type check API
+echo "🔍 Running type-check on API..."
+cd apps/api && pnpm type-check 2>/dev/null
+TYPECHECK_API_STATUS=$?
+cd ../../
+
+# Type check Web
+echo "🔍 Running type-check on Web..."
+cd apps/web && pnpm type-check 2>/dev/null
+TYPECHECK_WEB_STATUS=$?
+cd ../../
+
+# Exit with code 1 if any check failed
+if [ $TYPECHECK_API_STATUS -ne 0 ]; then
+  echo "❌ Type check failed for API. Please fix type errors before committing."
+  echo "Run 'pnpm typecheck' to see all type errors."
+  exit 1
+fi
+
+if [ $TYPECHECK_WEB_STATUS -ne 0 ]; then
+  echo "❌ Type check failed for Web. Please fix type errors before committing."
+  echo "Run 'pnpm typecheck' to see all type errors."
+  exit 1
+fi
+
+echo "✅ Pre-commit checks passed!"

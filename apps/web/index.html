@@ -3,15 +3,44 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Viewport para PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Descripción y tema -->
     <meta name="description" content="Galeno - Plataforma médica integral con IA Copilot y Health Wallet para Ecuador">
-    <meta name="theme-color" content="#1565C0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Galeno">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#1565C0" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0D47A1" media="(prefers-color-scheme: dark)">
+    <meta name="color-scheme" content="light dark">
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.webmanifest">
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Galeno">
+    <link rel="apple-touch-icon" href="/apple-icon-180.png">
+    
+    <!-- Apple Splash Screens -->
+    <link rel="apple-touch-startup-image" href="/apple-splash-2048-2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="/apple-splash-1668-2388.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="/apple-splash-1536-2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="/apple-splash-1170-2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#1565C0">
+    <meta name="msapplication-TileImage" content="/manifest-icon-192.maskable.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    
+    <!-- Título -->
     <title>Galeno - Ecuador-Health 360</title>
   </head>
   <body>

@@ -74,14 +74,13 @@ const {
   updateServiceWorker,
   needRefresh: showUpdateAvailable
 } = useRegisterSW({
-  onRegisteredSW(swUrl, r) {
+  onRegisteredSW(swUrl: string, r: any) {
     if (r) {
       // Check for updates every hour
       setInterval(async () => {
         if (!(!r.installing && navigator)) return;
         if ('connection' in navigator && !navigator.onLine) return;
         const newReg = await r.update();
-        // @ts-expect-error update is not in type definition
         newReg && newReg.addEventListener('updatefound', () => newReg.update());
       }, 60 * 60 * 1000);
     }

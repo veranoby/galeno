@@ -1,14 +1,13 @@
 import prisma from '../../config/database.js';
+import { EstadoInterconsulta, Rol, TipoInterconsulta, AuditAction } from '@prisma/client';
+import { sseManager } from '../sse/manager.js';
+import { AuditService } from '../audit/audit.service.js';
 
 /**
  * Estados para interconsultas 1-a-1
+ * Re-exportamos desde @prisma/client para mantener consistencia
  */
-export const EstadoInterconsulta = {
-  PENDIENTE: 'pendiente',
-  ACEPTADA: 'aceptada',
-  RECHAZADA: 'rechazada',
-  COMPLETADA: 'completada'
-} as const;
+export type { EstadoInterconsulta };
 
 /**
  * Datos para crear interconsulta 1-a-1
@@ -17,6 +16,7 @@ export interface CrearInterconsultaParams {
   consultaId: string;
   mensaje: string;
   destinoCuentaId: string;
+  tipo?: TipoInterconsulta;
 }
 
 /**
@@ -24,7 +24,7 @@ export interface CrearInterconsultaParams {
  */
 export interface ResponderInterconsultaParams {
   interconsultaId: string;
-  estado: typeof EstadoInterconsulta;
+  estado: EstadoInterconsulta;
   respuesta?: string;
 }
 
@@ -33,7 +33,7 @@ export interface ResponderInterconsultaParams {
  */
 export interface CrearResult {
   id: string;
-  estado: typeof EstadoInterconsulta;
+  estado: EstadoInterconsulta;
   mensaje: string;
 }
 
@@ -55,13 +55,13 @@ export class InterconsultaService {
     cuentaIdSolicitante: string,
     params: CrearInterconsultaParams
   ): Promise<CrearResult> {
-    // Verificar que la interconsulta existe
-    const interconsulta = await prisma.interconsulta.findUnique({
+    // Verificar que la consulta existe
+    const consulta = await prisma.consulta.findUnique({
       where: { id: params.consultaId }
     });
 
-    if (!interconsulta) {
-      throw new Error('Interconsulta no encontrada');
+    if (!consulta) {
+      throw new Error('Consulta no encontrada');
     }
 
     // Verificar que el doctor destino existe
@@ -74,7 +74,7 @@ export class InterconsultaService {
     }
 
     // Verificar que destinoCuenta es un doctor (no asistente)
-    if (destinoCuenta.rol === 'ASISTENTE' || destinoCuenta.rol === 'ENFERMERA') {
+    if (destinoCuenta.rol !== Rol.DOCTOR) {
       throw new Error('Solo se puede solicitar interconsulta a doctores');
     }
 
@@ -87,29 +87,59 @@ export class InterconsultaService {
       throw new Error('Cuenta solicitante no encontrada');
     }
 
-    if (solicitante.rol !== 'DOCTOR') {
+    if (solicitante.rol !== Rol.DOCTOR) {
       throw new Error('Solo doctores pueden solicitar interconsultas');
     }
 
     // Verificar que no sea interconsulta a sí mismo
-    if (interconsulta.doctorId === params.destinoCuentaId) {
+    if (consulta.doctorId === params.destinoCuentaId) {
       throw new Error('No se puede solicitar interconsulta al mismo doctor');
     }
 
     // Crear interconsulta
-    const nueva = await prisma.interconsulta.create({
+    const interconsulta = await prisma.interconsulta.create({
       data: {
         consultaId: params.consultaId,
-        solicitanteId: cuentaIdSolicitante,
-        destinoId: params.destinoCuentaId,
-        estado: 'pendiente',
+        solicitante: cuentaIdSolicitante,
+        destino: params.destinoCuentaId,
+        tipo: params.tipo ?? TipoInterconsulta.basica,
+        estado: EstadoInterconsulta.pendiente,
         mensaje: params.mensaje
       }
     });
 
+    // Emitir notificación SSE al doctor destino
+    try {
+      await sseManager.sendEventToUser(params.destinoCuentaId, 'INTERCONSULTA_NUEVA', {
+        interconsultaId: interconsulta.id,
+        estado: interconsulta.estado,
+        mensaje: 'Nueva interconsulta recibida'
+      });
+    } catch (error) {
+      console.error('[InterconsultaService] Error sending SSE notification:', error);
+    }
+
+    // Registrar auditoría
+    try {
+      await AuditService.log({
+        userId: cuentaIdSolicitante,
+        action: AuditAction.RESOURCE_CREATE,
+        resourceType: 'INTERCONSULTA' as any,
+        resourceId: interconsulta.id,
+        rolUsuario: Rol.DOCTOR,
+        metadata: {
+          consultaId: params.consultaId,
+          destinoCuentaId: params.destinoCuentaId,
+          tipo: params.tipo ?? TipoInterconsulta.basica
+        }
+      });
+    } catch (error) {
+      console.error('[InterconsultaService] Error logging audit:', error);
+    }
+
     return {
-      id: nueva.id,
-      estado: nueva.estado,
+      id: interconsulta.id,
+      estado: interconsulta.estado,
       mensaje: 'Interconsulta creada exitosamente'
     };
   }
@@ -133,18 +163,52 @@ export class InterconsultaService {
     }
 
     // Verificar que la interconsulta está pendiente
-    if (interconsulta.estado !== 'pendiente') {
+    if (interconsulta.estado !== EstadoInterconsulta.pendiente) {
       throw new Error('Solo se pueden responder interconsultas pendientes');
     }
+
+    const oldEstado = interconsulta.estado;
 
     // Actualizar estado
     const actualizada = await prisma.interconsulta.update({
       where: { id: params.interconsultaId },
       data: {
         estado: params.estado,
-        respuesta: params.respuesta
+        respuesta: params.respuesta,
+        respondidaEn: new Date()
       }
     });
+
+    // Emitir notificación SSE al solicitante
+    try {
+      await sseManager.sendEventToUser(interconsulta.solicitante, 'INTERCONSULTA_STATUS_CHANGE', {
+        interconsultaId: actualizada.id,
+        oldStatus: oldEstado,
+        newStatus: params.estado,
+        respuesta: params.respuesta,
+        mensaje: 'Interconsulta actualizada'
+      });
+    } catch (error) {
+      console.error('[InterconsultaService] Error sending SSE notification:', error);
+    }
+
+    // Registrar auditoría
+    try {
+      await AuditService.log({
+        userId: interconsulta.destino,
+        action: AuditAction.RESOURCE_UPDATE,
+        resourceType: 'INTERCONSULTA' as any,
+        resourceId: actualizada.id,
+        rolUsuario: Rol.DOCTOR,
+        metadata: {
+          from: oldEstado,
+          to: params.estado,
+          respuesta: params.respuesta
+        }
+      });
+    } catch (error) {
+      console.error('[InterconsultaService] Error logging audit:', error);
+    }
 
     return {
       id: actualizada.id,
@@ -154,16 +218,16 @@ export class InterconsultaService {
   }
 
   /**
-   * Obtener interconsultas de una interconsulta
+   * Obtener interconsultas de una consulta
    *
-   * @param consultaId - ID de la interconsulta
+   * @param consultaId - ID de la consulta
    * @returns Lista de interconsultas
    */
   async obtenerInterconsultas(consultaId: string) {
     const interconsultas = await prisma.interconsulta.findMany({
       where: { consultaId },
       include: {
-        solicitante: {
+        solicitanteUser: {
           select: {
             id: true,
             nombre: true,
@@ -171,7 +235,7 @@ export class InterconsultaService {
             rol: true
           }
         },
-        destino: {
+        destinoUser: {
           select: {
             id: true,
             nombre: true,
@@ -180,7 +244,7 @@ export class InterconsultaService {
           }
         }
       },
-      orderBy: { createdAt: 'desc' as const }
+      orderBy: { creadoEn: 'desc' as const }
     });
 
     return interconsultas;
@@ -195,8 +259,8 @@ export class InterconsultaService {
   async obtenerInterconsultasPendientes(doctorId: string) {
     const interconsultas = await prisma.interconsulta.findMany({
       where: {
-        destinoId: doctorId,
-        estado: 'pendiente'
+        destino: doctorId,
+        estado: EstadoInterconsulta.pendiente
       },
       include: {
         consulta: {
@@ -206,31 +270,22 @@ export class InterconsultaService {
             pacienteId: true
           }
         },
-        solicitante: {
+        solicitanteUser: {
           select: {
             id: true,
             nombre: true,
-            especialidad: true,
-            rol: true
-          }
-        },
-        destino: {
-          select: {
-            id: true,
-            nombre: true,
-            especialidad: true,
-            rol: true
+            especialidad: true
           }
         }
       },
-      orderBy: { createdAt: 'asc' as const }
+      orderBy: { creadoEn: 'asc' as const }
     });
 
     return interconsultas;
   }
 
   /**
-   * Verificar si un doctor puede responder interconsultas
+   * Verificar si un doctor puede responder a interconsultas
    *
    * @param doctorId - ID del doctor
    * @param interconsultaId - ID de la interconsulta
@@ -248,8 +303,8 @@ export class InterconsultaService {
       return false;
     }
 
-    // Verificar que el doctor es el destinatario de la interconsulta
-    return interconsulta.destinoId === doctorId && interconsulta.estado === 'pendiente';
+    // Verificar que el doctor es el destino de la interconsulta
+    return interconsulta.destino === doctorId && interconsulta.estado === EstadoInterconsulta.pendiente;
   }
 }
 

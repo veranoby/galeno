@@ -83,7 +83,7 @@ router.post('/validar', authMiddleware, async (req: AuthRequest, res: Response) 
     }
 
     // Validate signature
-    const resultado = await validarXAdESBES(xmlDoc, signatureElement);
+    const resultado = await validarXAdESBES(xmlDoc as unknown as XMLDocument, signatureElement as unknown as XMLElement);
 
     logger.info({
       userId: req.user?.id,

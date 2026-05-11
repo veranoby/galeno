@@ -204,9 +204,26 @@ app.use((_req, res) => {
 
 // ============= START SERVER =============
 async function startServer() {
+  let diContainer: ReturnType<typeof import('./di-container.js').getDIContainer> | null = null;
+
   try {
     // Connect to database
     await connectDatabase();
+
+    // Inicializar DI Container dentro de startServer (evita module-level pollution)
+    // OPTIMIZACIÓN: Solo inicializar cuando realmente se inicia el servidor
+    const { getDIContainer } = await import('./di-container.js');
+    diContainer = getDIContainer();
+
+    // Log DI Container status solo en desarrollo
+    if (process.env.NODE_ENV === 'development') {
+      const registeredServices = Object.keys(diContainer.registrations);
+      logger.debug({
+        services: registeredServices.length,
+        names: registeredServices.slice(0, 10).join(', ')
+      }, 'DI Container servicios registrados');
+      logger.info(`🔧 DI Container: ${registeredServices.length} servicios registrados`);
+    }
 
     // Start Express server
     app.listen(PORT, () => {
@@ -222,4 +239,13 @@ async function startServer() {
   }
 }
 
-startServer();
+// Solo iniciar servidor si no es un test
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
+
+// Exportar app para tests
+export default app;
+
+// Exportar funciones DI para uso en otros módulos (diContainer NO exportado aquí)
+export { getDIContainer, createScopedContainer, registerService } from './di-container.js';

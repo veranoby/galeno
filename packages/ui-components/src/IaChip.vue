@@ -5,7 +5,7 @@
     :size="size"
     :class="['ia-chip', `ia-chip-${tipo}`]"
     closable
-    @click:close="$emit('close')"
+    @click:close="emit('close')"
   >
     <v-icon :icon="icon" start class="mr-1" />
     <span class="ia-chip-text">{{ text }}</span>
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineProps, withDefaults, defineEmits } from 'vue';
 
 /**
  * IA Copilot Chip Component
@@ -43,9 +43,9 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'default'
 });
 
-defineEmits<{
+const emit = defineEmits<{
   close: [];
-}());
+}>();
 
 const chipColor = computed(() => {
   switch (props.tipo) {

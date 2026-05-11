@@ -102,13 +102,23 @@ export const getEnhancedNotificationService = (
   prismaClient?: PrismaClient,
   notificationRepo?: INotificationRepository
 ): EnhancedNotificationService => {
-  // Usar el singleton del orchestrator si existe
   if (!enhancedNotificationServiceInstance) {
-    const prisma = prismaClient || require('../../config/database.js').default;
-    const repo = notificationRepo || new (require('../../repositories').PrismaNotificationRepository)(prisma);
-    enhancedNotificationServiceInstance = new EnhancedNotificationService(prisma, repo);
+    if (!prismaClient) {
+      throw new Error('PrismaClient is required on first call to getEnhancedNotificationService');
+    }
+    if (!notificationRepo) {
+      throw new Error('INotificationRepository is required on first call to getEnhancedNotificationService');
+    }
+    enhancedNotificationServiceInstance = new EnhancedNotificationService(prismaClient, notificationRepo);
   }
   return enhancedNotificationServiceInstance;
 };
+
+/**
+ * Reset the singleton (useful for tests)
+ */
+export function resetEnhancedNotificationService(): void {
+  enhancedNotificationServiceInstance = null;
+}
 
 export default EnhancedNotificationService;

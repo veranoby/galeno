@@ -16,7 +16,7 @@ vi.mock('../../../../config/database.js', () => ({
 describe('PaymentHistoryService', () => {
   let service: PaymentHistoryService;
   let mockPrisma: any;
-  let mockPagoRepo: IPagoRepository;
+  let mockPagoRepo: any;
 
   beforeEach(() => {
     // Mock prisma client
@@ -27,13 +27,14 @@ describe('PaymentHistoryService', () => {
     };
 
     // Mock PagoRepository
-    mockPagoRepo = {
+    const repo = {
       findMany: vi.fn(),
       getCuentaMetrics: vi.fn(),
       sumByStatus: vi.fn(),
       findByExternalId: vi.fn(),
       findById: vi.fn()
-    } as any;
+    };
+    mockPagoRepo = vi.mocked(repo);
 
     service = new PaymentHistoryService(mockPrisma as any, mockPagoRepo);
   });

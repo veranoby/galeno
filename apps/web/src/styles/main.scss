@@ -4,6 +4,10 @@
   $color-pack: true
 );
 
+// Import responsive styles
+@import '../assets/styles/breakpoints.scss';
+@import '../assets/styles/responsive.scss';
+
 // Global styles
 :root {
   --app-padding: 16px;

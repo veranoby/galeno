@@ -3,9 +3,10 @@
  * Tests para AwilixManager
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { AwilixManager } from '../awilix-manager.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { AwilixManagerClass } from '../awilix-manager.js';
 import type { DIContainer } from '../types.js';
+import { resetDIContainer } from '../../test-utils/di-helpers.js';
 
 // Mock de Prisma
 vi.mock('../../config/database.js', () => ({
@@ -56,23 +57,23 @@ vi.mock('../../services/payment/PaymentOrchestrator.js', () => ({
 }));
 
 describe('AwilixManager', () => {
-  let manager: AwilixManager;
+  let manager: AwilixManagerClass;
 
   beforeEach(() => {
-    // Resetear el singleton antes de cada test
-    (AwilixManager as any).instance = null;
-    manager = AwilixManager.getInstance();
+    // Resetear el singleton antes de cada test (usando helper)
+    resetDIContainer();
+    manager = AwilixManagerClass.getInstance();
   });
 
   afterEach(() => {
     // Limpiar después de los tests
-    (AwilixManager as any).instance = null;
+    resetDIContainer();
   });
 
   describe('getInstance', () => {
     it('should return singleton instance', () => {
-      const instance1 = AwilixManager.getInstance();
-      const instance2 = AwilixManager.getInstance();
+      const instance1 = AwilixManagerClass.getInstance();
+      const instance2 = AwilixManagerClass.getInstance();
 
       expect(instance1).toBe(instance2);
     });
@@ -145,8 +146,9 @@ describe('AwilixManager', () => {
       manager.registerService('testService', mockFactory);
 
       const container = manager.getContainer();
-      // El servicio debería estar registrado
-      expect(container.testService).toBeDefined();
+      const service = container.resolve('testService') as { test: boolean };
+      expect(service).toBeDefined();
+      expect(service.test).toBe(true);
     });
   });
 

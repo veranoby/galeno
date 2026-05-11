@@ -10,6 +10,7 @@ import {
   getStateInfo
 } from '../../services/stateMachine.js';
 import { consultaSignatureService, FirmaConsultaError } from '../../services/consultation/signature.js';
+import consultationAuditService from '../../services/consultation/consultation-audit.service.js';
 
 const router: Router = Router();
 
@@ -643,6 +644,26 @@ router.patch('/:id/estado', authMiddleware, requireMedical, async (req: AuthRequ
         }
       }
     });
+
+    // Log state transition to audit trail
+    try {
+      await consultationAuditService.logStateTransition({
+        consultaId: consulta.id,
+        pacienteId: existingConsulta.pacienteId,
+        previousState: existingConsulta.estado,
+        newState: estado,
+        changedBy: req.user?.id || 'unknown',
+        changedByRole: req.user?.rol || 'UNKNOWN',
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        metadata: {
+          teleconsulta: false
+        }
+      });
+    } catch (auditError) {
+      // Don't fail the request if audit logging fails, but log the error
+      logger.error({ auditError, consultaId: consulta.id }, 'Failed to log state transition audit');
+    }
 
     logger.info({
       consultaId: consulta.id,

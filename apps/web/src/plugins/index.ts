@@ -1,15 +1,12 @@
 // Plugins
-import { registerPlugins } from '@/plugins';
 import { createVuetify } from 'vuetify';
-import * as components from 'vuetify/components';
-import * as directives from 'vuetify/directives';
 import { mdi } from 'vuetify/iconsets/mdi';
 import '@mdi/font/css/materialdesignicons.css';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
 // Vuetify
 const vuetify = createVuetify({
-  components,
-  directives,
   icons: {
     defaultSet: 'mdi',
     sets: {
@@ -54,6 +51,21 @@ const vuetify = createVuetify({
   }
 });
 
+// Toastification
+const toastOptions = {
+  timeout: 5000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideCloseButton: false,
+  toastClassName: 'vue-toastification-custom',
+  icon: true,
+};
+
 export function registerPlugins(app: any) {
   app.use(vuetify);
+  app.use(Toast, toastOptions);
 }

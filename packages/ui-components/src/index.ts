@@ -14,6 +14,7 @@ export { default as AppInput } from './AppInput.vue';
 export { default as AppSelect } from './AppSelect.vue';
 export { default as AppDatePicker } from './AppDatePicker.vue';
 export { default as AppStatusBadge } from './AppStatusBadge.vue';
+export { default as Toast } from './Toast.vue';
 
 // ============================================================================
 // COMPONENTES IA

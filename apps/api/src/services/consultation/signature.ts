@@ -1,7 +1,6 @@
-import { EstadoConsulta } from '@prisma/client';
 import prisma from '../../config/database.js';
 import { logger } from '../../utils/logger.js';
-import { validateTransition, canTransition } from '../stateMachine.js';
+import { Prisma } from '@prisma/client';
 
 /**
  * Información del certificado de firma
@@ -94,7 +93,7 @@ export class ConsultaSignatureService {
     certificado: CertificadoFirma
   ): Promise<FirmaConsultaResult> {
     try {
-      // Obtener consulta con bloqueo pessimistic para evitar race conditions
+      // Obtener consulta
       const consulta = await prisma.consulta.findUnique({
         where: { id: consultaId }
       });
@@ -151,7 +150,7 @@ export class ConsultaSignatureService {
           firmado: true,
           fechaFirma: ahora,
           firmaXml: xmlFirma,
-          firmaCertificado: certificado as any
+          firmaCertificado: certificado as unknown as Prisma.JsonObject
         },
         select: {
           id: true,
@@ -172,8 +171,10 @@ export class ConsultaSignatureService {
         exito: true,
         mensaje: 'Consulta firmada exitosamente',
         consulta: {
-          ...consultaFirmada,
-          firmaCertificado: consultaFirmada.firmaCertificado as CertificadoFirma | null
+          id: consultaFirmada.id,
+          firmado: consultaFirmada.firmado,
+          fechaFirma: consultaFirmada.fechaFirma,
+          firmaCertificado: consultaFirmada.firmaCertificado as unknown as CertificadoFirma | null
         }
       };
     } catch (error) {
@@ -290,7 +291,7 @@ export class ConsultaSignatureService {
     return {
       firmada: true,
       fechaFirma: consulta.fechaFirma,
-      certificado: consulta.firmaCertificado as CertificadoFirma | null
+      certificado: consulta.firmaCertificado as unknown as CertificadoFirma | null
     };
   }
 

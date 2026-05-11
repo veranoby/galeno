@@ -324,6 +324,132 @@ export interface DatosConsulta {
   fecha: Date;
 }
 
+// ============= ALERTAS CLÍNICAS =============
+export interface ClinicalAlert {
+  id: string;
+  type: 'allergy' | 'medication' | 'chronic_condition' | 'vital_risk' | 'drug_interaction' | 'medical_history';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  title: string;
+  description: string;
+  patientId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ============= CITAS =============
+export interface CitaProxima {
+  id: string;
+  paciente: {
+    id: string;
+    nombre: string;
+    cedula: string;
+  };
+  fechaHora: string;
+  tipo: 'presencial' | 'teleconsulta';
+  estado: string;
+  motivo?: string;
+}
+
+// ============= CITAS COMPLETAS =============
+export interface Cita {
+  // Campos base de Prisma
+  id: string;
+  doctorId: string;
+  pacienteId: string;
+  ubicacionId?: string;
+  slotId?: string;
+  fechaHora: Date | string;
+  tipo: TipoCita;
+  estado: EstadoCita;
+  motivoCancelacion?: string;
+  linkVideo?: string;
+  tokenAcceso?: string;
+  notificadaDoctor?: boolean;
+  notificadaPaciente?: boolean;
+  createdAt?: Date | string;
+
+  // Relaciones anidadas
+  paciente?: {
+    id: string;
+    nombre: string;
+    cedula: string;
+  };
+  doctor?: {
+    id: string;
+    nombre: string;
+  };
+  ubicacion?: {
+    id: string;
+    nombre: string;
+  };
+  slot?: {
+    id: string;
+    duracionMinutos: number;
+  };
+
+  // Propiedades planas para compatibilidad con componentes
+  titulo?: string;
+  fecha?: string;
+  horaInicio?: string;
+  horaFin?: string;
+  pacienteNombre?: string;
+  duracion?: number;
+  notas?: string;
+  recordatorioEnviado?: boolean;
+}
+
+// ============= NOTIFICATIONS =============
+export enum NotificationType {
+  INFO = 'info',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  ERROR = 'error',
+  SYSTEM = 'system',
+}
+
+export enum NotificationMethod {
+  PUSH = 'push',
+  SSE = 'sse',
+  TOAST = 'toast',
+  WHATSAPP = 'whatsapp',
+}
+
+export interface NotificationPreferences {
+  pushEnabled: boolean;
+  sseEnabled: boolean;
+  toastEnabled: boolean;
+  whatsappEnabled: boolean;
+  methods: NotificationMethod[];
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  method: NotificationMethod;
+  read: boolean;
+  createdAt: Date;
+  expiresAt?: Date;
+  data?: Record<string, unknown>;
+}
+
+export interface SendNotificationRequest {
+  userId: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  method?: NotificationMethod;
+  data?: Record<string, unknown>;
+}
+
+export interface SendNotificationResponse {
+  success: boolean;
+  notificationId?: string;
+  deliveredMethods: NotificationMethod[];
+}
+
 // ============= RESPONSES API =============
 export interface ApiResponse<T> {
   success: boolean;

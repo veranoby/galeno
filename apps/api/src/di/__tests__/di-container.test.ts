@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { getDIContainer, createScopedContainer, registerService } from '../di-container.js';
-import { AwilixManager } from '../di/awilix-manager.js';
+import { getDIContainer, createScopedContainer, registerService } from '../../di-container';
+import { resetDIContainer } from '../../test-utils/di-helpers';
 
 // Mock de Prisma
 vi.mock('../../config/database.js', () => ({
@@ -66,13 +66,13 @@ vi.mock('../../services/payment/PaymentOrchestrator.ts', () => ({
 
 describe('DI Container', () => {
   beforeEach(() => {
-    // Resetear el singleton antes de cada test
-    (AwilixManager as any).instance = null;
+    // Resetear el singleton antes de cada test (usando helper)
+    resetDIContainer();
   });
 
   afterEach(() => {
     // Limpiar después de los tests
-    (AwilixManager as any).instance = null;
+    resetDIContainer();
   });
 
   describe('getDIContainer', () => {
@@ -160,7 +160,7 @@ describe('DI Container', () => {
       registerService('testService', () => mockService);
 
       const container = getDIContainer();
-      const resolved = container.testService;
+      const resolved = container.resolve('testService') as { test: () => boolean };
 
       expect(resolved).toBeDefined();
     });

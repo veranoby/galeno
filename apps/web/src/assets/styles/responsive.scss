@@ -1,0 +1,467 @@
+// apps/web/src/assets/styles/responsive.scss
+@import './breakpoints.scss';
+
+// ============================================================================
+// CONTAINERS & LAYOUT
+// ============================================================================
+
+.responsive-container {
+  padding: 16px;
+
+  @include desktop {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+.full-width-container {
+  width: 100%;
+  padding: 0;
+
+  @include desktop {
+    padding: 0 24px;
+  }
+}
+
+// ============================================================================
+// TYPOGRAPHY
+// ============================================================================
+
+// Responsive text sizes
+.responsive-text-h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+
+  @include tablet {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  @include desktop {
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+}
+
+.responsive-text-h2 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+
+  @include tablet {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  @include desktop {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+
+.responsive-text-body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  @include desktop {
+    font-size: 1rem;
+    line-height: 1.625;
+  }
+}
+
+// ============================================================================
+// BUTTONS & INTERACTIVE
+// ============================================================================
+
+// Touch-friendly buttons (minimum 48px target size)
+.touch-friendly {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 8px 16px;
+
+  @include touch-device {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+
+  @include not-touch-device {
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Icon buttons
+.icon-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+
+  @include touch-device {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+// ============================================================================
+// CARDS & SURFACES
+// ============================================================================
+
+.responsive-card {
+  border-radius: 8px;
+
+  @include mobile {
+    border-radius: 8px;
+  }
+
+  @include desktop {
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.elevated-card {
+  @include mobile {
+    elevation: 2;
+  }
+
+  @include desktop {
+    elevation: 4;
+  }
+}
+
+// ============================================================================
+// GRIDS & LAYOUTS
+// ============================================================================
+
+.responsive-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+.auto-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+  @include desktop {
+    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+
+.responsive-nav {
+  @include mobile {
+    .nav-text {
+      display: none;
+    }
+
+    .nav-icon {
+      margin: 0;
+    }
+  }
+
+  @include desktop {
+    .nav-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.mobile-drawer {
+  @include mobile {
+    width: 280px !important;
+  }
+
+  @include desktop {
+    width: 320px !important;
+  }
+}
+
+// ============================================================================
+// TABLES
+// ============================================================================
+
+.responsive-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @include mobile {
+    // Transform table rows into cards on mobile
+    table {
+      display: block;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: block;
+    }
+
+    tr {
+      display: block;
+      margin-bottom: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border: none;
+
+      &:before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 16px;
+        color: #666;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// FORMS
+// ============================================================================
+
+.responsive-form {
+  @include mobile {
+    .v-row {
+      flex-direction: column;
+    }
+
+    .v-col {
+      width: 100% !important;
+    }
+  }
+
+  @include desktop {
+    .v-row {
+      flex-direction: row;
+    }
+  }
+}
+
+.form-field {
+  @include mobile {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  @include desktop {
+    margin-bottom: 24px;
+  }
+}
+
+// ============================================================================
+// DIALOGS & MODALS
+// ============================================================================
+
+.responsive-dialog {
+  @include mobile {
+    margin: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0;
+  }
+
+  @include tablet {
+    margin: 24px auto;
+    max-width: 600px !important;
+    border-radius: 12px;
+  }
+
+  @include desktop {
+    max-width: 800px !important;
+  }
+}
+
+.fullscreen-dialog {
+  @include mobile {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+  }
+
+  @include desktop {
+    width: 90vw !important;
+    height: 90vh !important;
+    max-width: 1200px !important;
+    max-height: 800px !important;
+    border-radius: 12px;
+  }
+}
+
+// ============================================================================
+// UTILITIES
+// ============================================================================
+
+// Hide/show based on screen size
+.hide-mobile {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+.hide-tablet {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @include desktop {
+    display: none !important;
+  }
+}
+
+.show-mobile {
+  @include tablet {
+    display: none !important;
+  }
+
+  @include desktop {
+    display: none !important;
+  }
+}
+
+.show-tablet {
+  @include mobile {
+    display: none !important;
+  }
+
+  @include desktop {
+    display: none !important;
+  }
+}
+
+.show-desktop {
+  @include mobile {
+    display: none !important;
+  }
+
+  @include tablet {
+    display: none !important;
+  }
+}
+
+// Spacing utilities
+.responsive-spacing {
+  padding: 16px;
+
+  @include desktop {
+    padding: 32px;
+  }
+}
+
+// ============================================================================
+// IMAGES & MEDIA
+// ============================================================================
+
+.responsive-image {
+  max-width: 100%;
+  height: auto;
+
+  @include desktop {
+    max-height: 600px;
+  }
+}
+
+// ============================================================================
+// LOADING STATES
+// ============================================================================
+
+.loading-overlay {
+  @include mobile {
+    padding: 24px;
+  }
+
+  @include desktop {
+    padding: 48px;
+  }
+}
+
+// ============================================================================
+// ALERTS & NOTIFICATIONS
+// ============================================================================
+
+.responsive-alert {
+  @include mobile {
+    margin: 8px;
+    border-radius: 8px;
+  }
+
+  @include desktop {
+    margin: 16px;
+    border-radius: 12px;
+  }
+}
+
+// ============================================================================
+// PWA SPECIFIC
+// ============================================================================
+
+// Safe area insets for notched devices
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+// Reduce motion for accessibility
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

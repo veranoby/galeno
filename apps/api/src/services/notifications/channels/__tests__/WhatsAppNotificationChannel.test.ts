@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { WhatsAppNotificationChannel } from '../WhatsAppNotificationChannel.js';
 import { PrismaClient } from '@prisma/client';
-import type { INotificationRepository } from '../../../../../repositories/interfaces/INotificationRepository.js';
+import type { INotificationRepository } from '../../../../repositories/interfaces/INotificationRepository.js';
 
 // Mock del WhatsApp provider
 vi.mock('../../../../services/whatsapp/index.js', () => ({

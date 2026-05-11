@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PaymentWebhookService } from '../PaymentWebhookService.js';
 import { PrismaClient } from '@prisma/client';
+import type { WebhookPayload } from '../../base.js';
 
 // Mock de Prisma
 vi.mock('../../../../config/database.js', () => ({
@@ -33,8 +34,16 @@ describe('PaymentWebhookService', () => {
 
   describe('handleWebhook', () => {
     it('should throw error for non-configured gateway', async () => {
+      const mockPayload: WebhookPayload = {
+        event: 'payment.failed',
+        transactionId: 'test_txn',
+        status: 'rejected',
+        timestamp: Date.now(),
+        data: { error: 'Gateway not configured' }
+      };
+
       await expect(
-        service.handleWebhook('nonexistent' as any, {}, 'sig')
+        service.handleWebhook('nonexistent' as any, mockPayload, 'sig')
       ).rejects.toThrow();
     });
 

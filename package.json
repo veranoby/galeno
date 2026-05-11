@@ -30,6 +30,7 @@
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "@turbo/gen": "^2.4.2",
+    "@types/node-cron": "^3.0.11",
     "eslint": "^9.0.0",
     "eslint-plugin-vue": "^10.7.0",
     "husky": "^9.1.7",
@@ -37,7 +38,8 @@
     "prettier": "^3.0.0",
     "turbo": "^2.4.2",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.55.0"
+    "typescript-eslint": "^8.55.0",
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=22.0.0",
@@ -52,5 +54,10 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "@types/multer": "^2.0.0",
+    "multer": "^2.0.2",
+    "node-cron": "^4.2.1"
   }
 }

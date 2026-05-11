@@ -46,6 +46,37 @@ coverage/
 .turbo/
 *.tsbuildinfo
 
+# ============= AI TOOLS =============
+.claude/
+.claudeignore
+.mcp.json
+brain/
+apps/api/brain/
+apps/web/brain/
+packages/shared-types/brain/
+
+# ============= CREDENTIALS & SENSITIVE FILES =============
+CREDENTIALS.md
+CREDENTIALS_LOCAL.md
+*.p12
+*.pem
+*.key
+*.crt
+
+# ============= TEMP & TEST FILES =============
+node-compile-cache/
+test-*.ts
+test-*.js
+test-*.html
+validate-*.ts
+verify-*.js
+verificacion_impl.sh
+
+# ============= BACKUPS & TMP =============
+*.backup
+*.tmp
+__tests__.tmp/
+
 # ============= CREDENTIALS =============
 CREDENTIALS_LOCAL.md
 brain/secrets/
@@ -62,6 +93,11 @@ prisma/migrations/*_*/
 tmp/
 temp/
 .cache/
+
+# ============= STORAGE =============
+storage/
+!storage/.gitkeep
+!storage/**/.gitkeep
 
 # ============= OS =============
 Thumbs.db

@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Running pre-push checks..."
+
+# Build entire project
+echo "🏗️ Running build pipeline..."
+
+# Build API
+echo "  → Building API..."
+cd apps/api && pnpm build 2>/dev/null
+BUILD_API_STATUS=$?
+cd ../../
+
+# Build Web
+echo "  → Building Web..."
+cd apps/web && pnpm build 2>/dev/null
+BUILD_WEB_STATUS=$?
+cd ../../
+
+# Exit with code 1 if build failed
+if [ $BUILD_API_STATUS -ne 0 ]; then
+  echo "❌ API build failed. Please fix build errors before pushing."
+  echo "Run 'pnpm build:api' to see build errors."
+  exit 1
+fi
+
+if [ $BUILD_WEB_STATUS -ne 0 ]; then
+  echo "❌ Web build failed. Please fix build errors before pushing."
+  echo "Run 'pnpm build:web' to see build errors."
+  exit 1
+fi
+
+echo "✅ Pre-push checks passed!"

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recordatorio de Cita - Galeno</title>
+  </head>
+  <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 40px 20px;">
+          <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            <!-- Header -->
+            <tr>
+              <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Galeno</h1>
+                <p style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">Recordatorio de Cita Médica</p>
+              </td>
+            </tr>
+            
+            <!-- Body -->
+            <tr>
+              <td style="padding: 40px 30px;">
+                <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600;">
+                  ¡Hola {{pacienteNombre}}!
+                </h2>
+                
+                <p style="margin: 0 0 24px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+                  Te recordamos que tienes una cita médica programada para mañana:
+                </p>
+                
+                <!-- Cita Details Card -->
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                  <table role="presentation" style="width: 100%;">
+                    <tr>
+                      <td style="padding-bottom: 16px;">
+                        <p style="margin: 0 0 4px 0; color: #059669; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                          📅 Fecha y Hora
+                        </p>
+                        <p style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">
+                          {{fechaHora}}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-bottom: 16px;">
+                        <p style="margin: 0 0 4px 0; color: #059669; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                          👨‍⚕️ Doctor
+                        </p>
+                        <p style="margin: 0; color: #1f2937; font-size: 16px;">
+                          {{doctorNombre}}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-bottom: 16px;">
+                        <p style="margin: 0 0 4px 0; color: #059669; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                          📍 Tipo de Cita
+                        </p>
+                        <p style="margin: 0; color: #1f2937; font-size: 16px;">
+                          {{tipo}}
+                        </p>
+                      </td>
+                    </tr>
+                    {{#if ubicacion}}
+                    <tr>
+                      <td style="padding-bottom: 16px;">
+                        <p style="margin: 0 0 4px 0; color: #059669; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                          🏥 Ubicación
+                        </p>
+                        <p style="margin: 0; color: #1f2937; font-size: 16px;">
+                          {{ubicacion}}
+                        </p>
+                      </td>
+                    </tr>
+                    {{/if}}
+                  </table>
+                </div>
+                
+                {{#if linkVideo}}
+                <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin-bottom: 24px; text-align: center;">
+                  <p style="margin: 0 0 16px 0; color: #1e40af; font-size: 14px; font-weight: 600;">
+                    📹 Tu cita es por videoconferencia
+                  </p>
+                  <a href="{{linkVideo}}" style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 6px;">
+                    Unirse a la Videoconferencia
+                  </a>
+                </div>
+                {{/if}}
+                
+                <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+                  <h3 style="margin: 0 0 8px 0; color: #92400e; font-size: 16px; font-weight: 600;">
+                    💡 Recomendaciones:
+                  </h3>
+                  <ul style="margin: 0; padding-left: 20px; color: #78350f; font-size: 14px; line-height: 1.8;">
+                    <li>Conéctate 5 minutos antes de la hora programada</li>
+                    <li>Ten a la mano tu documento de identidad</li>
+                    <li>Prepara una lista de síntomas o preguntas</li>
+                    <li>Busca un lugar tranquilo y bien iluminado</li>
+                  </ul>
+                </div>
+                
+                <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                  ¿Necesitas reprogramar o cancelar? Por favor, hazlo con al menos 24 horas de anticipación.
+                </p>
+              </td>
+            </tr>
+            
+            <!-- Footer -->
+            <tr>
+              <td style="background-color: #f9fafb; padding: 24px 30px; border-radius: 0 0 8px 8px; text-align: center;">
+                <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">
+                  ¿Tienes preguntas? Responde a este correo o contacta a nuestra clínica
+                </p>
+                <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                  © 2026 Galeno. Todos los derechos reservados.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

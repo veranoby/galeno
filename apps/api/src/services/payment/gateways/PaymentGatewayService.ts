@@ -27,7 +27,7 @@ export class PaymentGatewayService {
     this.initialized = true;
   }
 
-  private async getGateway(provider: string): Promise<PaymentGateway> {
+  public async getGateway(provider: string): Promise<PaymentGateway> {
     await this.initialize();
     const instance = this.gateways.get(provider);
     if (!instance) {

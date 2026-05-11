@@ -1,0 +1,59 @@
+// apps/web/src/assets/styles/breakpoints.scss
+// Vuetify 3 Breakpoints
+$grid-breakpoints: (
+  'xs': 0,
+  'sm': 600px,
+  'md': 960px,
+  'lg': 1280px,
+  'xl': 1920px,
+  'xxl': 2560px
+) !default;
+
+// Device-specific breakpoints
+$mobile-max: 599px;
+$tablet-min: 600px;
+$tablet-max: 959px;
+$desktop-min: 960px;
+$desktop-max: 1279px;
+$wide-min: 1280px;
+
+// Mixins for media queries
+@mixin mobile {
+  @media (max-width: $mobile-max) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $tablet-min) and (max-width: $tablet-max) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $desktop-min) {
+    @content;
+  }
+}
+
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+@mixin not-touch-device {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+// Export for JavaScript usage
+:export {
+  mobileMax: $mobile-max;
+  tabletMin: $tablet-min;
+  tabletMax: $tablet-max;
+  desktopMin: $desktop-min;
+  desktopMax: $desktop-max;
+  wideMin: $wide-min;
+}

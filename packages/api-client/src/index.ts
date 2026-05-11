@@ -39,14 +39,11 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(this.accessToken ? { 'Authorization': `Bearer ${this.accessToken}` } : {}),
+      ...(options.headers as Record<string, string> || {}),
     };
-
-    if (this.accessToken) {
-      headers['Authorization'] = `Bearer ${this.accessToken}`;
-    }
 
     const response = await fetch(url, {
       ...options,
@@ -58,11 +55,7 @@ class ApiClient {
     if (!response.ok) {
       return {
         success: false,
-        error: {
-          code: data.code || 'HTTP_ERROR',
-          message: data.message || response.statusText,
-          details: data.details,
-        },
+        error: data.message || response.statusText,
       };
     }
 
@@ -79,6 +72,13 @@ class ApiClient {
   async post<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  async put<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      method: 'PUT',
       body: JSON.stringify(body),
     });
   }

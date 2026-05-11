@@ -241,7 +241,8 @@ const passwordCertificado = ref('');
 const mostrarPassword = ref(false);
 
 // Methods
-const onArchivoSeleccionado = (archivo: File | null) => {
+const onArchivoSeleccionado = (files: File | File[] | null) => {
+  const archivo = Array.isArray(files) ? files[0] : files;
   if (archivo) {
     // Limpiar password anterior
     passwordCertificado.value = '';

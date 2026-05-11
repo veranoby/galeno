@@ -1,18 +1,27 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.cache/tsbuild.txt",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
     "baseUrl": ".",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "paths": {
       "@/*": ["./src/*"],
-      "@galeno/shared-types": ["../../packages/shared-types/src"]
+      "@galeno/shared-types": ["../../packages/shared-types/src"],
+      "@galeno/ui-components": ["../../packages/ui-components/src"],
+      "@galeno/api-client": ["../../packages/api-client/src"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "env.d.ts"],
-  "references": [
-    { "path": "../../packages/shared-types" }
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/env.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

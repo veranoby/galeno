@@ -40,7 +40,7 @@ export class PushNotificationChannel {
         }
       });
 
-      return result.success;
+      return result;
     } catch (error) {
       logger.error({ error, userId }, '[PushNotificationChannel] Failed to send push notification');
       return false;

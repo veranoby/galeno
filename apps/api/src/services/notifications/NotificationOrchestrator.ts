@@ -50,7 +50,7 @@ export class NotificationOrchestrator {
     private notificationRepo: INotificationRepository
   ) {
     this.pushChannel = new PushNotificationChannel(prisma);
-    this.sseChannel = new SSENotificationChannel(prisma);
+    this.sseChannel = new SSENotificationChannel();
     this.whatsappChannel = new WhatsAppNotificationChannel(prisma, notificationRepo);
     this.toastChannel = new ToastNotificationChannel();
   }
@@ -137,8 +137,8 @@ export class NotificationOrchestrator {
       default:
         // Si no se especifica método, intentar push y SSE
         const [pushResult, sseResult] = await Promise.all([
-          this.pushChannel.send(userId, { ...payload, method: NotificationMethod.PUSH }),
-          this.sseChannel.send(userId, { ...payload, method: NotificationMethod.SSE })
+          this.pushChannel.send(userId, payload),
+          this.sseChannel.send(userId, payload)
         ]);
         return pushResult || sseResult;
     }

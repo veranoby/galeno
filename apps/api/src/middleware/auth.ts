@@ -1,7 +1,27 @@
+// apps/api/src/middleware/auth.ts
+/**
+ * Auth Middleware - Valida JWT y carga contexto de usuario
+ *
+ * Responsabilidades:
+ * - Validar tokens JWT de acceso
+ * - Delegar carga de usuario a UserContextService
+ * - Proporcionar helpers para control de acceso
+ *
+ * Patrones aplicados:
+ * - Middleware Pattern: Pipeline de request/response
+ * - Separation of Concerns: Lógica de DB en servicio separado
+ * - Single Responsibility: Solo autenticación/autorización
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 import prisma from '../config/database.js';
 import { verifyAccessToken, type JWTPayload } from '../services/auth.service.js';
+import { UserContextService, getUserContextService } from '../services/auth/UserContextService.js';
+import type { UserContext } from '../services/auth/UserContextService.js';
+import { Rol } from '@prisma/client';
+
+// ============= TYPES =============
 
 /**
  * Extended Request with user context
@@ -10,25 +30,24 @@ export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    rol: 'DOCTOR' | 'ADMIN' | 'ASISTENTE' | 'ENFERMERA';
+    rol: 'DOCTOR' | 'ADMIN' | 'ASISTENTE' | 'ENFERMERA' | 'PACIENTE' | 'FARMACIA';
     cuentaId?: string; // Para usuarios vinculados
   };
 }
 
+// ============= MIDDLEWARE =============
+
 /**
- * Auth Middleware - Sets RLS context and validates JWT
+ * Auth Middleware - Valida JWT y carga contexto de usuario
  *
- * This middleware:
- * 1. Validates JWT from Authorization header using jsonwebtoken
- * 2. Sets PostgreSQL RLS context (request.user.id)
- * 3. Attaches user info to request object
- *
- * USAGE:
- * app.use(authMiddleware);
+ * Flujo:
+ * 1. Valida token JWT
+ * 2. Delega a UserContextService para cargar usuario
+ * 3. Establece req.user con datos del usuario
+ * 4. UserContextService configura RLS automáticamente
  */
 export async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    // Extract token from Authorization header
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith('Bearer ')) {
@@ -38,11 +57,10 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       });
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer '
+    const token = authHeader.substring(7);
 
-    // Verify JWT using jsonwebtoken
+    // 1. Validar JWT
     let payload: JWTPayload;
-
     try {
       payload = verifyAccessToken(token);
     } catch (error) {
@@ -53,63 +71,24 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       });
     }
 
-    // Verify user exists in database
-    const cuenta = await prisma.cuenta.findUnique({
-      where: { id: payload.sub },
-      select: { id: true, email: true, rol: true }
-    });
+    // 2. Cargar contexto de usuario (con RLS)
+    const userContextService = getUserContextService(prisma);
+    const result = await userContextService.loadUserContext(payload.sub, payload.cuentaId);
 
-    if (!cuenta) {
-      // Check if it's a linked user
-      const usuarioVinculado = await prisma.usuarioVinculado.findUnique({
-        where: { id: payload.sub },
-        select: {
-          id: true,
-          email: true,
-          rol: true,
-          cuentaId: true,
-          doctorAsignadoId: true,
-          activo: true
-        }
+    if (!result.success || !result.user) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: result.error || 'User not found or inactive'
       });
-
-      if (!usuarioVinculado || !usuarioVinculado.activo) {
-        return res.status(401).json({
-          error: 'Unauthorized',
-          message: 'User not found or inactive'
-        });
-      }
-
-      // Attach linked user to request
-      req.user = {
-        id: usuarioVinculado.id,
-        email: usuarioVinculado.email,
-        rol: usuarioVinculado.rol,
-        cuentaId: usuarioVinculado.doctorAsignadoId
-      };
-    } else {
-      // Attach account user to request
-      req.user = {
-        id: cuenta.id,
-        email: cuenta.email,
-        rol: cuenta.rol as 'DOCTOR' | 'ADMIN',
-        cuentaId: payload.cuentaId
-      };
     }
 
-    // Set PostgreSQL RLS context
-    // This enables Row Level Security policies to filter results
-    await prisma.$executeRaw`SET LOCAL request.jwt.claim.user_id = ${req.user.id}`;
-    await prisma.$executeRaw`SET LOCAL request.user.id = ${req.user.id}`;
-
-    // Log for debugging (remove in production)
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug({
-        id: req.user.id,
-        email: req.user.email,
-        rol: req.user.rol
-      }, 'User authenticated');
-    }
+    // 3. Establecer req.user
+    req.user = {
+      id: result.user.id,
+      email: result.user.email,
+      rol: result.user.rol,
+      cuentaId: result.user.cuentaId
+    };
 
     next();
   } catch (error) {
@@ -122,71 +101,58 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
 }
 
 /**
- * Optional Auth Middleware - Doesn't fail if no token
+ * Optional Auth Middleware - No falla si no hay token
  *
- * Use this for endpoints that work both authenticated and anonymously
+ * Útil para endpoints públicos que pueden tener contexto opcional
  */
 export async function optionalAuthMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return next();
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      // No token, continue without user context
-      return next();
-    }
-
-    // Try to authenticate, but don't fail if it doesn't work
     const token = authHeader.substring(7);
-
     try {
       const payload = verifyAccessToken(token);
+      const userContextService = getUserContextService(prisma);
+      const result = await userContextService.loadUserContext(payload.sub, payload.cuentaId);
 
-      // Verify user exists
-      const cuenta = await prisma.cuenta.findUnique({
-        where: { id: payload.sub },
-        select: { id: true, email: true, rol: true }
-      });
-
-      if (cuenta) {
+      if (result.success && result.user) {
         req.user = {
-          id: cuenta.id,
-          email: cuenta.email,
-          rol: cuenta.rol as 'DOCTOR' | 'ADMIN',
-          cuentaId: payload.cuentaId
+          id: result.user.id,
+          email: result.user.email,
+          rol: result.user.rol,
+          cuentaId: result.user.cuentaId
         };
-
-        await prisma.$executeRaw`SET LOCAL request.jwt.claim.user_id = ${req.user.id}`;
-        await prisma.$executeRaw`SET LOCAL request.user.id = ${req.user.id}`;
       }
-    } catch {
-      // Ignore errors, continue without auth
-    }
-
+    } catch { /* ignore */ }
     next();
   } catch (error) {
-    // Always continue on optional auth
     next();
   }
 }
 
+// ============= ROLE-BASED ACCESS CONTROL =============
+
 /**
- * Role-based Access Control Middleware
+ * Factory para middleware que requiere roles específicos
  *
- * Use after authMiddleware to restrict access to specific roles
+ * @param allowedRoles - Roles permitidos
+ * @returns Middleware de Express
+ *
+ * @example
+ * router.get('/admin', requireRole('ADMIN'), handler);
+ * router.get('/medical', requireRole('DOCTOR', 'ASISTENTE'), handler);
  */
-export function requireRole(...allowedRoles: Array<'DOCTOR' | 'ADMIN' | 'ASISTENTE' | 'ENFERMERA'>) {
+export function requireRole(...allowedRoles: string[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Authentication required'
-      });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     if (!allowedRoles.includes(req.user.rol)) {
       return res.status(403).json({
         error: 'Forbidden',
-        message: `Role ${req.user.rol} not allowed. Allowed: ${allowedRoles.join(', ')}`
+        message: `Role ${req.user.rol} not allowed`
       });
     }
 
@@ -194,61 +160,76 @@ export function requireRole(...allowedRoles: Array<'DOCTOR' | 'ADMIN' | 'ASISTEN
   };
 }
 
-/**
- * Require Admin Role
- */
+// Middlewares pre-configurados para roles comunes
 export const requireAdmin = requireRole('ADMIN');
-
-/**
- * Require Doctor Role
- */
 export const requireDoctor = requireRole('DOCTOR', 'ADMIN');
-
-/**
- * Require Medical Role (Doctor, Nurse, Assistant)
- */
 export const requireMedical = requireRole('DOCTOR', 'ASISTENTE', 'ENFERMERA', 'ADMIN');
+export const requireDoctorOrPaciente = requireRole('DOCTOR', 'PACIENTE', 'ADMIN');
+
+// ============= RESOURCE-BASED ACCESS CONTROL =============
 
 /**
- * Check if user owns a resource or is admin
+ * Verifica si un usuario puede acceder a un paciente específico
  *
- * Use this in route handlers after authMiddleware
- */
-export function checkOwnership(req: AuthRequest, resourceOwnerId: string): boolean {
-  if (!req.user) return false;
-  if (req.user.rol === 'ADMIN') return true;
-  return req.user.id === resourceOwnerId;
-}
-
-/**
- * Check if user can access a patient (either owns it or is assigned)
+ * Reglas de acceso:
+ * - ADMIN: Acceso total
+ * - PACIENTE: Solo a sus propios datos
+ * - DOCTOR: A sus pacientes o los con consentimiento activo
+ *
+ * @deprecated Usar EnhancedPermissionService.canAccessResource en su lugar
+ * @param req - Request Express con usuario autenticado
+ * @param pacienteId - ID del paciente a verificar
+ * @returns true si tiene acceso, false otherwise
  */
 export async function canAccessPatient(req: AuthRequest, pacienteId: string): Promise<boolean> {
   if (!req.user) return false;
   if (req.user.rol === 'ADMIN') return true;
 
-  // Check if patient belongs to user's account
+  // Patient can access their own data
+  if (req.user.rol === 'PACIENTE') {
+    const paciente = await prisma.paciente.findUnique({
+      where: { id: pacienteId },
+      select: { cuentaId: true }
+    });
+    return paciente?.cuentaId === req.user.id;
+  }
+
+  // Doctor can access if they own the patient or have consent
   if (req.user.rol === 'DOCTOR') {
     const paciente = await prisma.paciente.findUnique({
       where: { id: pacienteId },
       select: { cuentaId: true }
     });
 
-    return paciente?.cuentaId === req.user.id;
-  }
+    if (paciente?.cuentaId === req.user.id) return true;
 
-  // For ASISTENTE/ENFERMERA, check if patient belongs to assigned doctor
-  if (req.user.rol === 'ASISTENTE' || req.user.rol === 'ENFERMERA') {
-    const paciente = await prisma.paciente.findUnique({
-      where: { id: pacienteId },
-      select: { cuentaId: true }
+    // Check for explicit consent
+    const consent = await prisma.conexionPaciente.findFirst({
+      where: {
+        pacienteId,
+        doctorId: req.user.id,
+        estado: 'activa'
+      }
     });
-
-    return paciente?.cuentaId === req.user.cuentaId;
+    return !!consent;
   }
 
   return false;
 }
+
+/**
+ * Helper para verificar acceso en route handlers
+ *
+ * @example
+ * if (!await canAccessPatient(req, pacienteId)) {
+ *   return res.status(403).json({ error: 'Forbidden' });
+ * }
+ */
+export function checkPatientAccess(req: AuthRequest, pacienteId: string) {
+  return canAccessPatient(req, pacienteId);
+}
+
+// ============= EXPORTS =============
 
 export default {
   authMiddleware,
@@ -257,6 +238,7 @@ export default {
   requireAdmin,
   requireDoctor,
   requireMedical,
-  checkOwnership,
-  canAccessPatient
+  requireDoctorOrPaciente,
+  canAccessPatient,
+  checkPatientAccess
 };

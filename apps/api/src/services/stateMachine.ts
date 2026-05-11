@@ -15,16 +15,6 @@ const VALID_TRANSITIONS: Record<EstadoConsulta, EstadoConsulta[]> = {
   interconsulta: ['pendiente', 'finalizada']
 };
 
-// Mapa inverso: hacia -> desde permitidos (para validación)
-const REVERSE_TRANSITIONS: Record<EstadoConsulta, EstadoConsulta[]> = {
-  borrador: [],
-  triaje: ['borrador'],
-  pendiente: ['triaje', 'interconsulta'],
-  en_atencion: ['pendiente'],
-  finalizada: ['borrador', 'en_atencion', 'interconsulta'],
-  interconsulta: ['en_atencion']
-};
-
 /**
  * Verifica si una transición entre estados es válida
  * @param from Estado actual

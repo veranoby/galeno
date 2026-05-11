@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
+import { specialtySeedData } from '../src/services/specialty/seed-data.js';
 
 const prisma = new PrismaClient();
 
@@ -8,81 +9,57 @@ const prisma = new PrismaClient();
  *
  * Basado en CREDENTIALS.md
  * Usuarios de prueba para desarrollo local
+ * 
+ * FASE 0: Setup Base de Datos Local & Seed SuperAdmin
+ * - Usuario SUPER_ADMIN con rol ADMIN
+ * - Planes base (FREE, PREMIUM, CLINICA_SME)
+ * - Doctores de prueba para PayPhone (EC) y PayPal (España)
  */
 
 async function main() {
   console.log('🌱 Seeding database...');
 
   // ============= ESPECIALIDADES =============
-  const especialidades = await Promise.all([
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'medicina-general' },
-      update: {},
-      create: {
-        nombre: 'Medicina General',
-        nombreCorto: 'medicina-general',
-        herramientas: ['estetoscopio', 'tensiómetro', 'termómetro']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'pediatria' },
-      update: {},
-      create: {
-        nombre: 'Pediatría',
-        nombreCorto: 'pediatria',
-        herramientas: ['curvas-crecimiento', 'vacunacion']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'odontologia' },
-      update: {},
-      create: {
-        nombre: 'Odontología',
-        nombreCorto: 'odontologia',
-        herramientas: ['odontograma', 'radiografia-dental']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'cardiologia' },
-      update: {},
-      create: {
-        nombre: 'Cardiología',
-        nombreCorto: 'cardiologia',
-        herramientas: ['ecg', 'ecocardiograma']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'oftalmologia' },
-      update: {},
-      create: {
-        nombre: 'Oftalmología',
-        nombreCorto: 'oftalmologia',
-        herramientas: ['retina-atlas', 'tabla-optotipos']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'dermatologia' },
-      update: {},
-      create: {
-        nombre: 'Dermatología',
-        nombreCorto: 'dermatologia',
-        herramientas: ['dermatoscopio', 'atlas-lesiones']
-      }
-    }),
-    prisma.especialidad.upsert({
-      where: { nombreCorto: 'traumatologia' },
-      update: {},
-      create: {
-        nombre: 'Traumatología',
-        nombreCorto: 'traumatologia',
-        herramientas: ['rayos-x', 'artroscopio']
-      }
-    })
-  ]);
+  // Use structured seed data with full tool configurations
+  const especialidades = await Promise.all(
+    specialtySeedData.map((specialty) =>
+      prisma.especialidad.upsert({
+        where: { nombreCorto: specialty.nombreCorto },
+        update: {
+          herramientas: specialty.herramientas as unknown as import('@prisma/client').Prisma.InputJsonValue,
+          activo: true
+        },
+        create: {
+          nombre: specialty.nombre,
+          nombreCorto: specialty.nombreCorto,
+          herramientas: specialty.herramientas as unknown as import('@prisma/client').Prisma.InputJsonValue,
+          activo: true
+        }
+      })
+    )
+  );
 
   console.log(`✅ Created ${especialidades.length} especialidades`);
+  console.log('   Specialties:', especialidades.map(e => e.nombre).join(', '));
 
   // ============= USUARIOS DE PRUEBA (CREDENTIALS.md) =============
+
+  // 0. SUPER_ADMIN (FASE 0 - Nuevo)
+  const superAdmin = await prisma.cuenta.upsert({
+    where: { email: 'superadmin@galeno.com' },
+    update: {},
+    create: {
+      email: 'superadmin@galeno.com',
+      passwordHash: await bcrypt.hash('GalenoAdmin2026!', 10),
+      nombre: 'Super Administrador',
+      rol: 'ADMIN',
+      plan: 'CLINICA_SME',
+      maxDoctores: 100,
+      maxAsistentes: 50
+    }
+  });
+
+  console.log(`✅ Created SUPER_ADMIN: ${superAdmin.email}`);
 
   // 1. Doctor FREE
   const doctorFree = await prisma.cuenta.upsert({
@@ -142,7 +119,7 @@ async function main() {
 
   console.log(`✅ Created Doctor PREMIUM: ${doctorPremium.email}`);
 
-  // 3. Admin Sistema
+  // 3. Admin Sistema (legacy - mantener por compatibilidad)
   const admin = await prisma.cuenta.upsert({
     where: { email: 'admin@galeno.dev' },
     update: {},
@@ -151,13 +128,76 @@ async function main() {
       passwordHash: await bcrypt.hash('AdminGaleno123', 10),
       nombre: 'Admin Sistema',
       rol: 'ADMIN',
-      plan: 'ENTERPRISE'
+      plan: 'CLINICA_SME',
+      maxDoctores: 50,
+      maxAsistentes: 20
     }
   });
 
   console.log(`✅ Created Admin: ${admin.email}`);
 
-  // 4. Enfermera Test (vinculada al doctor premium)
+  // 4. Dr. Andrade (Ecuador - PayPhone) - FASE 0
+  const drAndrade = await prisma.cuenta.upsert({
+    where: { email: 'dr.andrade@galeno.com' },
+    update: {},
+    create: {
+      email: 'dr.andrade@galeno.com',
+      passwordHash: await bcrypt.hash('DrAndrade2026!', 10),
+      nombre: 'Dr. Carlos Andrade',
+      rol: 'DOCTOR',
+      plan: 'PREMIUM',
+      maxDoctores: 5,
+      maxAsistentes: 2,
+      cedula: '1712345678',
+      numeroTitulo: 'UTPL-2015-001234',
+      codigoUniversidad: 'UTPL'
+    }
+  });
+
+  await prisma.doctorEspecialidad.upsert({
+    where: { id: 'dr-andrade-especialidad' },
+    update: {},
+    create: {
+      id: 'dr-andrade-especialidad',
+      doctorId: drAndrade.id,
+      especialidadId: especialidades[0].id, // Medicina General
+      principal: true,
+      senescytValidada: false
+    }
+  });
+
+  console.log(`✅ Created Dr. Andrade (EC - PayPhone): ${drAndrade.email}`);
+
+  // 5. Dr. Smith (España - PayPal) - FASE 0
+  const drSmith = await prisma.cuenta.upsert({
+    where: { email: 'dr.smith@galeno.com' },
+    update: {},
+    create: {
+      email: 'dr.smith@galeno.com',
+      passwordHash: await bcrypt.hash('DrSmith2026!', 10),
+      nombre: 'Dr. John Smith',
+      rol: 'DOCTOR',
+      plan: 'PREMIUM',
+      maxDoctores: 5,
+      maxAsistentes: 2
+    }
+  });
+
+  await prisma.doctorEspecialidad.upsert({
+    where: { id: 'dr-smith-especialidad' },
+    update: {},
+    create: {
+      id: 'dr-smith-especialidad',
+      doctorId: drSmith.id,
+      especialidadId: especialidades[3].id, // Cardiología
+      principal: true,
+      senescytValidada: false
+    }
+  });
+
+  console.log(`✅ Created Dr. Smith (ES - PayPal): ${drSmith.email}`);
+
+  // 6. Enfermera Test (vinculada al doctor premium)
   const enfermera = await prisma.usuarioVinculado.upsert({
     where: { email: 'enfermera@test.dev' },
     update: {},
@@ -173,6 +213,37 @@ async function main() {
   });
 
   console.log(`✅ Created Enfermera: ${enfermera.email}`);
+
+  // 7. Clínica CLINICA_SME
+  const clinica = await prisma.cuenta.upsert({
+    where: { email: 'clinica@sme.dev' },
+    update: {},
+    create: {
+      email: 'clinica@sme.dev',
+      passwordHash: await bcrypt.hash('ClinicaSme123', 10),
+      nombre: 'Clínica Salud Integral',
+      ruc: '1791234567001',
+      rol: 'DOCTOR',
+      plan: 'CLINICA_SME',
+      maxDoctores: 10,
+      maxAsistentes: 5,
+      especialidad: 'Medicina General'
+    }
+  });
+
+  await prisma.doctorEspecialidad.upsert({
+    where: { id: 'clinica-sme-especialidad' },
+    update: {},
+    create: {
+      id: 'clinica-sme-especialidad',
+      doctorId: clinica.id,
+      especialidadId: especialidades[2].id, // Medicina General
+      principal: true,
+      senescytValidada: false
+    }
+  });
+
+  console.log(`✅ Created Clínica CLINICA_SME: ${clinica.email}`);
 
   // ============= PACIENTES DE PRUEBA =============
 
@@ -296,6 +367,11 @@ async function main() {
   console.log('');
   console.log('📧 Usuarios de prueba:');
   console.log('');
+  console.log('  SUPER_ADMIN (FASE 0):');
+  console.log('    Email:    superadmin@galeno.com');
+  console.log('    Password: GalenoAdmin2026!');
+  console.log('    Plan:     CLINICA_SME (100 doctores, 50 asistentes)');
+  console.log('');
   console.log('  Doctor FREE:');
   console.log('    Email:    doctor@free.dev');
   console.log('    Password: DoctorFree123');
@@ -306,14 +382,31 @@ async function main() {
   console.log('    Password: DoctorPrem123');
   console.log('    Plan:     PREMIUM (5 doctores, 2 asistentes)');
   console.log('');
+  console.log('  Dr. Andrade (EC - PayPhone) (FASE 0):');
+  console.log('    Email:    dr.andrade@galeno.com');
+  console.log('    Password: DrAndrade2026!');
+  console.log('    Plan:     PREMIUM (5 doctores, 2 asistentes)');
+  console.log('    Cédula:   1712345678');
+  console.log('');
+  console.log('  Dr. Smith (ES - PayPal) (FASE 0):');
+  console.log('    Email:    dr.smith@galeno.com');
+  console.log('    Password: DrSmith2026!');
+  console.log('    Plan:     PREMIUM (5 doctores, 2 asistentes)');
+  console.log('');
   console.log('  Admin Sistema:');
   console.log('    Email:    admin@galeno.dev');
   console.log('    Password: AdminGaleno123');
+  console.log('    Plan:     CLINICA_SME (50 doctores, 20 asistentes)');
   console.log('');
   console.log('  Enfermera:');
   console.log('    Email:    enfermera@test.dev');
   console.log('    Password: Enfermera123');
   console.log('    Asignada a: doctor@premium.dev');
+  console.log('');
+  console.log('  Clínica CLINICA_SME:');
+  console.log('    Email:    clinica@sme.dev');
+  console.log('    Password: ClinicaSme123');
+  console.log('    Plan:     CLINICA_SME (10 doctores, 5 asistentes)');
   console.log('');
   console.log('═════════════════════════════════════════════════════════');
 }
