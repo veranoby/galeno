@@ -59,12 +59,19 @@ class ConsultaStateManagerClass {
   // Handlers para cleanup de event listeners (OPTIMIZACIÓN)
   private onlineHandler: () => void;
   private offlineHandler: () => void;
+  private boundHandleSSEUpdate: EventListener;
 
   constructor() {
     this._consultas = ref(new Map());
     this._consultaActiva = ref(null);
     this._isLoading = ref(false);
     this._error = ref(null);
+    this.boundHandleSSEUpdate = this.handleSSEUpdate.bind(this) as EventListener;
+
+    // Initialise SSE listener
+    if (typeof window !== 'undefined') {
+      window.addEventListener('sse-ConsultationStatusChanged', this.boundHandleSSEUpdate);
+    }
 
     // Watch para persistir cambios (con debouncing para OPTIMIZACIÓN)
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -314,6 +321,7 @@ class ConsultaStateManagerClass {
     // Remover event listeners (previene memory leaks)
     window.removeEventListener('online', this.onlineHandler);
     window.removeEventListener('offline', this.offlineHandler);
+    window.removeEventListener('sse-ConsultationStatusChanged', this.boundHandleSSEUpdate);
 
     // Limpiar suscriptores
     this.subscribers.clear();
@@ -323,6 +331,26 @@ class ConsultaStateManagerClass {
   }
 
   // ============= PRIVATE METHODS =============
+
+  private handleSSEUpdate(event: CustomEvent): void {
+    const data = event.detail?.data;
+    if (data && data.consultationId) {
+      const consultaId = data.consultationId;
+      const newStatus = data.newStatus;
+
+      const consulta = this._consultas.value.get(consultaId);
+      if (consulta && consulta.estado !== newStatus) {
+        // Muta directamente el estado local para evitar storm de broadcast al servidor
+        // si llamaramos a this.updateConsulta(), generaría un PUT redundante.
+        const updatedConsulta = { ...consulta, estado: newStatus, updatedAt: new Date() };
+        this._consultas.value.set(consultaId, updatedConsulta);
+        if (this._consultaActiva.value?.id === consultaId) {
+          this._consultaActiva.value = updatedConsulta;
+        }
+        this.notifySubscribers();
+      }
+    }
+  }
 
   private async syncConsulta(consulta: ConsultaState): Promise<void> {
     try {

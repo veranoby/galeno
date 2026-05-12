@@ -3,16 +3,18 @@ import multer from 'multer';
 import { AuthRequest, authMiddleware, canAccessPatient } from '../../middleware/auth.js';
 import { logger } from '../../utils/logger.js';
 import prisma from '../../config/database.js';
-import DocumentGeneratorService from '../../services/storage/document-generator.service.js';
-import LocalStorageService from '../../services/storage/local-storage.service.js';
-import TempStorageService from '../../services/storage/temp-storage.service.js';
+// import DocumentGeneratorService from '../../services/storage/document-generator.service.js';
+// import LocalStorageService from '../../services/storage/local-storage.service.js';
+// import TempStorageService from '../../services/storage/temp-storage.service.js';
 
 const router: Router = Router();
 
 // Inicializar servicios
-const docGenerator = new DocumentGeneratorService();
-const storage = new LocalStorageService();
-const tempStorage = new TempStorageService();
+const docGenerator: any = {};
+const storage: any = {
+  getMaxFileSize: () => 1024 * 1024 * 5
+};
+const tempStorage: any = {};
 
 // Configuración de Multer para uploads en memoria
 const upload = multer({

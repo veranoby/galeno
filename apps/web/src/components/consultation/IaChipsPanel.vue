@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { apiClient } from '@/services/api';
-import IaChip from '@galeno/ui-components/src/IaChip.vue';
+import IaChip from '@galeno/ui-components/IaChip.vue';
 import {
   ChipTipo,
   CHIP_COLORS,

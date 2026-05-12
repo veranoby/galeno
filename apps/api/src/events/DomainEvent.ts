@@ -292,7 +292,20 @@ export type GalenoDomainEvent =
   | DocumentGeneratedEvent
   | DocumentSignedEvent
   | SystemErrorEvent
-  | SystemMetricEvent;
+  | SystemMetricEvent
+  | ConsultationStatusChangedEvent;
+
+export interface ConsultationStatusChangedEvent extends DomainEvent {
+  eventType: 'ConsultationStatusChanged';
+  data: {
+    consultationId: string;
+    previousStatus: string;
+    newStatus: string;
+    patientName?: string;
+    doctorId: string;
+    timestamp: Date;
+  };
+}
 
 // ============= HELPER FUNCTIONS =============
 

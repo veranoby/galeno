@@ -94,4 +94,3 @@ const createCita = () => {
   showCitaForm.value = true;
 };
 </script>
-</template>
