@@ -1,4 +1,4 @@
-import { ref, Ref, onUnmounted, watch } from 'vue';
+import { ref, type Ref, onUnmounted, watch } from 'vue';
 
 export interface PiPOptions {
   width?: number;

@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { api } from '@/api';
+import { apiClient as api } from '@/services/api';
 
 const route = useRoute();
 const router = useRouter();

@@ -153,10 +153,7 @@ defineExpose({
 </script>
 
 <style>
-@import '@fullcalendar/core/main.css';
-@import '@fullcalendar/daygrid/main.css';
-@import '@fullcalendar/timegrid/main.css';
-@import '@fullcalendar/list/main.css';
+/* Fullcalendar no longer requires explicitly importing css */
 
 .fullcalendar-container {
   height: 100%;

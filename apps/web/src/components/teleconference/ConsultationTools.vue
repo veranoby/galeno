@@ -81,7 +81,7 @@
             counter
             maxlength="5000"
             :hint="`${localNotas.length}/5000 caracteres`"
-            persistent-hint"
+            persistent-hint
             @update:model-value="handleNotesChange"
           >
             <template v-slot:prepend>

@@ -18,6 +18,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@galeno/shared-types": ["../../packages/shared-types/src"],
+      "@galeno/ui-components/*": ["../../packages/ui-components/src/*"],
       "@galeno/ui-components": ["../../packages/ui-components/src"],
       "@galeno/api-client": ["../../packages/api-client/src"]
     }

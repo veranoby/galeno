@@ -11,6 +11,7 @@ import {
 } from '../../services/stateMachine.js';
 import { consultaSignatureService, FirmaConsultaError } from '../../services/consultation/signature.js';
 import consultationAuditService from '../../services/consultation/consultation-audit.service.js';
+import getDIContainer from '../../di-container.js';
 
 const router: Router = Router();
 
@@ -387,7 +388,10 @@ router.put('/:id', authMiddleware, requireMedical, async (req: AuthRequest, res:
 
     // Get existing consulta
     const existingConsulta = await prisma.consulta.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        paciente: true
+      }
     });
 
     if (!existingConsulta) {
@@ -422,14 +426,19 @@ router.put('/:id', authMiddleware, requireMedical, async (req: AuthRequest, res:
       });
     }
 
-    // Validate state transition if changing state
+    // Validate state transition if changing state (before DB update)
     if (estado && estado !== existingConsulta.estado) {
       try {
-        validateTransition(existingConsulta.estado, estado);
-      } catch (error) {
-        return res.status(400).json({
+        const di = getDIContainer();
+        (di.cradle as any).consultationTransitionService.validateTransition(
+          existingConsulta.estado,
+          estado,
+          req.user!.rol
+        );
+      } catch (error: any) {
+        return res.status(error.status || 400).json({
           error: 'Bad Request',
-          message: error instanceof Error ? error.message : 'Invalid state transition'
+          message: error.message || 'Invalid state transition'
         });
       }
     }
@@ -514,7 +523,10 @@ router.delete('/:id', authMiddleware, requireMedical, async (req: AuthRequest, r
 
     // Get existing consulta
     const existingConsulta = await prisma.consulta.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        paciente: true
+      }
     });
 
     if (!existingConsulta) {
@@ -615,11 +627,16 @@ router.patch('/:id/estado', authMiddleware, requireMedical, async (req: AuthRequ
 
     // Validate state transition using state machine
     try {
-      validateTransition(existingConsulta.estado, estado);
-    } catch (error) {
-      return res.status(400).json({
+      const di = getDIContainer();
+      (di.cradle as any).consultationTransitionService.validateTransition(
+        existingConsulta.estado,
+        estado,
+        req.user!.rol
+      );
+    } catch (error: any) {
+      return res.status(error.status || 400).json({
         error: 'Bad Request',
-        message: error instanceof Error ? error.message : 'Invalid state transition'
+        message: error.message || 'Invalid state transition'
       });
     }
 
@@ -645,8 +662,17 @@ router.patch('/:id/estado', authMiddleware, requireMedical, async (req: AuthRequ
       }
     });
 
-    // Log state transition to audit trail
+    // Emit event and Log state transition to audit trail
     try {
+      const di = getDIContainer();
+      await (di.cradle as any).consultationTransitionService.transitionState(
+        existingConsulta.id,
+        existingConsulta.estado,
+        estado,
+        req.user!.rol,
+        existingConsulta.doctorId,
+        (existingConsulta as any).paciente?.nombre
+      );
       await consultationAuditService.logStateTransition({
         consultaId: consulta.id,
         pacienteId: existingConsulta.pacienteId,

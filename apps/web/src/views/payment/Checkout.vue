@@ -112,7 +112,7 @@
                   <li><v-icon icon="mdi-check" size="small" color="success" /> 10 Doctores</li>
                   <li><v-icon icon="mdi-check" size="small" color="success" /> 5 Asistentes</li>
                   <li><v-icon icon="mdi-check" size="small" color="success" /> Multi-sede</li>
-                  <li><v-icon icon="mdi-check" size="small" color="success" }} Soporte prioritario</li>
+                  <li><v-icon icon="mdi-check" size="small" color="success" /> Soporte prioritario</li>
                 </ul>
               </v-card-text>
             </v-card>
@@ -225,13 +225,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useSnackbar } from 'vue-snackbar';
-import { api } from '@/api';
+import { useToast } from 'vue-toastification';
+import { apiClient as api } from '@/services/api';
 
 type PlanType = 'FREE' | 'PREMIUM' | 'CLINICA_SME';
 
 const router = useRouter();
-const snackbar = useSnackbar();
+const snackbar = useToast();
 
 // Estado
 const loadingGeo = ref(true);

@@ -29,7 +29,7 @@
     />
 
     <!-- Símbolo del diente (simplificado) -->
-    <g class="diente-symbol" :fill="#fff">
+    <g class="diente-symbol" fill="#ffffff">
       <!-- Corona -->
       <path
         :d="coronaPath"

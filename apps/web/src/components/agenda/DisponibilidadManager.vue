@@ -338,4 +338,3 @@ onMounted(() => {
   loadDisponibilidad();
 });
 </script>
-</template>

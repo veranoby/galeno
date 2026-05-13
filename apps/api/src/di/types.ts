@@ -37,6 +37,7 @@ export interface DIContainer extends AwilixContainer {
 
   notificationOrchestrator: import('../services/notifications/NotificationOrchestrator.js').NotificationOrchestrator;
   paymentOrchestrator: import('../services/payment/PaymentOrchestrator.js').PaymentOrchestrator;
+  consultationTransitionService: import('../services/consultation/ConsultationTransitionService.js').ConsultationTransitionService;
 }
 
 /**

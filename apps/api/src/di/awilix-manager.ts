@@ -36,6 +36,8 @@ import {
   ToastNotificationChannel
 } from '../services/notifications/channels/index.js';
 
+import { ConsultationTransitionService } from '../services/consultation/ConsultationTransitionService.js';
+
 import {
   PaymentGatewayService,
   SubscriptionService,
@@ -210,6 +212,10 @@ class AwilixManagerClass {
           c.prisma,
           c.pagoRepository
         ),
+        lifetime: 'singleton' as const
+      },
+      consultationTransitionService: {
+        factory: () => new ConsultationTransitionService(),
         lifetime: 'singleton' as const
       }
     };
