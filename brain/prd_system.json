@@ -3,16 +3,16 @@
   "lastModified": "2026-03-14",
   "checksum": "galeno-prd-v4.0-via-profunda-completada",
   "projectName": "Galeno (Ecuador-Health 360)",
-  "tagline": "La Oficina en la Mochila del M\u00e9dico Ecuatoriano",
-  "description": "Plataforma SaaS B2B/B2C revolucionaria que digitaliza la pr\u00e1ctica m\u00e9dica en Ecuador combinando tecnolog\u00eda de vanguardia (IA, blockchain-like security, offline-first) con integraci\u00f3n legal nativa ecuatoriana (SRI, firma electr\u00f3nica)",
+  "tagline": "La Oficina en la Mochila del Médico Ecuatoriano",
+  "description": "Plataforma SaaS B2B/B2C revolucionaria que digitaliza la práctica médica en Ecuador combinando tecnología de vanguardia (IA, blockchain-like security, offline-first) con integración legal nativa ecuatoriana (SRI, firma electrónica)",
   "currentStatus": {
-    "phase": "V\u00cdA PROFUNDA COMPLETADA",
+    "phase": "VÍA PROFUNDA COMPLETADA",
     "completionDate": "2026-03-14",
     "progress": {
       "architecturalRefactoring": "100%",
-      "codeLinesImplemented": "~12,500 l\u00edneas",
+      "codeLinesImplemented": "~12,500 líneas",
       "phasesCompleted": "6/6",
-      "nextPhase": "V\u00cdA R\u00c1PIDA (Estabilizaci\u00f3n del Build) o Platform Features"
+      "nextPhase": "VÍA RÁPIDA (Estabilización del Build) o Platform Features"
     },
     "completedPhases": [
       {
@@ -21,7 +21,7 @@
         "deliverables": [
           "5 interfaces de repositorio creadas",
           "5 implementaciones Prisma creadas",
-          "Abstracci\u00f3n de acceso a datos completa"
+          "Abstracción de acceso a datos completa"
         ]
       },
       {
@@ -40,14 +40,14 @@
           "EventBus con Redis Pub/Sub implementado",
           "21 tipos de DomainEvents definidos",
           "3 handlers implementados (Notification, Audit, Analytics)",
-          "Ejecuci\u00f3n paralela de handlers con Promise.allSettled"
+          "Ejecución paralela de handlers con Promise.allSettled"
         ]
       },
       {
         "phase": "FASE 4: Middleware Refactor",
         "status": "COMPLETADA",
         "deliverables": [
-          "UserContextService extra\u00eddo del middleware auth",
+          "UserContextService extraído del middleware auth",
           "Middleware solo valida JWT",
           "UserContextService maneja DB calls y RLS",
           "Cache de 5 minutos para contexto de usuario"
@@ -57,11 +57,11 @@
         "phase": "FASE 5: Frontend State Managers",
         "status": "COMPLETADA",
         "deliverables": [
-          "AuthStateManager creado (370 l\u00edneas)",
-          "NotificationStateManager creado (424 l\u00edneas)",
-          "ConsultaStateManager creado (449 l\u00edneas)",
+          "AuthStateManager creado (370 líneas)",
+          "NotificationStateManager creado (424 líneas)",
+          "ConsultaStateManager creado (449 líneas)",
           "Debouncing de 500ms para localStorage",
-          "M\u00e9todos destroy() para cleanup de memory leaks"
+          "Métodos destroy() para cleanup de memory leaks"
         ]
       },
       {
@@ -85,18 +85,18 @@
     ],
     "metrics": {
       "testability": "+70% (con interfaces y mockeo)",
-      "developmentSpeed": "+50% (servicios m\u00e1s enfocados)",
+      "developmentSpeed": "+50% (servicios más enfocados)",
       "coupling": "-40% (event-driven communication)",
       "maintainability": "+80% (cambios localizados)",
       "memoryLeaks": "Eliminados en state managers",
-      "codeReuse": "Identificados 600+ l\u00edneas duplicadas para consolidaci\u00f3n futura"
+      "codeReuse": "Identificados 600+ líneas duplicadas para consolidación futura"
     }
   },
   "nextSteps": {
     "prioridad1": {
-      "nombre": "V\u00cdA R\u00c1PIDA - Estabilizaci\u00f3n del Build",
+      "nombre": "VÍA RÁPIDA - Estabilización del Build",
       "duracion": "1-2 semanas",
-      "objetivo": "Resolver problemas de compilaci\u00f3n que bloquean el desarrollo",
+      "objetivo": "Resolver problemas de compilación que bloquean el desarrollo",
       "tareas": [
         "Instalar vue-snackbar (dependencia faltante)",
         "Corregir crypto.ts (Promise no awaitada)",
@@ -109,51 +109,51 @@
       "taskId": "TASK-FRONTEND-001"
     },
     "prioridad2": {
-      "nombre": "Optimizaci\u00f3n de C\u00f3digo - Consolidaci\u00f3n de Patrones",
+      "nombre": "Optimización de Código - Consolidación de Patrones",
       "duracion": "2-3 semanas",
-      "objetivo": "Eliminar duplicaci\u00f3n de c\u00f3digo identificada en simplify",
+      "objetivo": "Eliminar duplicación de código identificada en simplify",
       "tareas": [
-        "Crear BaseStateManager (consolidar 260+ l\u00edneas de singleton)",
-        "Crear BaseNotificationChannel (consolidar 160+ l\u00edneas de canales)",
-        "Crear SingletonFactory (patr\u00f3n unificado)",
-        "Consolidar state managers (85% duplicaci\u00f3n identificado)",
+        "Crear BaseStateManager (consolidar 260+ líneas de singleton)",
+        "Crear BaseNotificationChannel (consolidar 160+ líneas de canales)",
+        "Crear SingletonFactory (patrón unificado)",
+        "Consolidar state managers (85% duplicación identificado)",
         "Eliminar 'as any' en 90 archivos identificados"
       ],
       "taskId": "TASK-OPTIM-001"
     },
     "prioridad3": {
-      "nombre": "Caracter\u00edsticas de Plataforma Pendientes",
+      "nombre": "Características de Plataforma Pendientes",
       "duracion": "8-12 semanas",
       "objetivo": "Completar features del MVP definido en PRD",
       "features": [
         {
           "nombre": "WebRTC Pro",
-          "descripcion": "Grabaci\u00f3n de teleconsultas con branding personalizado",
+          "descripcion": "Grabación de teleconsultas con branding personalizado",
           "taskId": "TASK-040"
         },
         {
-          "nombre": "Env\u00edo WhatsApp",
-          "descripcion": "M\u00f3dulo de notificaciones WhatsApp Business API",
+          "nombre": "Envío WhatsApp",
+          "descripcion": "Módulo de notificaciones WhatsApp Business API",
           "taskId": "TASK-041"
         },
         {
           "nombre": "Galeno Hub",
-          "descripcion": "LinkedIn M\u00e9dico - Comunidad y art\u00edculos",
+          "descripcion": "LinkedIn Médico - Comunidad y artículos",
           "taskId": "TASK-042"
         },
         {
-          "nombre": "M\u00f3dulo Migraci\u00f3n Pro",
-          "descripcion": "Importaci\u00f3n masiva con asistencia IA",
+          "nombre": "Módulo Migración Pro",
+          "descripcion": "Importación masiva con asistencia IA",
           "taskId": "TASK-043"
         },
         {
-          "nombre": "M\u00f3dulos de Especialidad",
-          "descripcion": "Odontolog\u00eda, Oftalmolog\u00eda, Pediatr\u00eda, Traumatolog\u00eda, Cardiolog\u00eda, Dermatolog\u00eda",
+          "nombre": "Módulos de Especialidad",
+          "descripcion": "Odontología, Oftalmología, Pediatría, Traumatología, Cardiología, Dermatología",
           "taskId": "TASK-044"
         },
         {
-          "nombre": "Buscador M\u00e9dico con Mapa",
-          "descripcion": "Integraci\u00f3n Google Maps API con filtros y GPS",
+          "nombre": "Buscador Médico con Mapa",
+          "descripcion": "Integración Google Maps API con filtros y GPS",
           "taskId": "TASK-045"
         },
         {
@@ -163,27 +163,27 @@
         },
         {
           "nombre": "Sistema de Documentos con Caducidad",
-          "descripcion": "Cron job para caducidad autom\u00e1tica de recetas/ex\u00e1menes",
+          "descripcion": "Cron job para caducidad automática de recetas/exámenes",
           "taskId": "TASK-047"
         },
         {
           "nombre": "Triaje Colaborativo",
-          "descripcion": "Flujo enfermera \u2192 doctor con SSE",
+          "descripcion": "Flujo enfermera → doctor con SSE",
           "taskId": "TASK-048"
         },
         {
-          "nombre": "Multi-oficina GPS Din\u00e1mico",
-          "descripcion": "Detecci\u00f3n autom\u00e1tica de ubicaci\u00f3n por d\u00eda",
+          "nombre": "Multi-oficina GPS Dinámico",
+          "descripcion": "Detección automática de ubicación por día",
           "taskId": "TASK-049"
         },
         {
-          "nombre": "Facturaci\u00f3n SRI Cliente",
-          "descripcion": "Generaci\u00f3n XML SRI 100% desde cliente",
+          "nombre": "Facturación SRI Cliente",
+          "descripcion": "Generación XML SRI 100% desde cliente",
           "taskId": "TASK-050"
         },
         {
-          "nombre": "Validaci\u00f3n Senescyt",
-          "descripcion": "API integrada para t\u00edtulos m\u00e9dicos",
+          "nombre": "Validación Senescyt",
+          "descripcion": "API integrada para títulos médicos",
           "taskId": "TASK-051"
         },
         {
@@ -240,28 +240,42 @@
   },
   "domains": {
     "consultation": {
-      "description": "Gesti\u00f3n completa del flujo de consultas m\u00e9dicas con 6 estados",
+      "description": "Gestión completa del flujo de consultas médicas con 6 estados",
       "states": {
         "borrador": {
           "description": "Consulta inicial creada pero no iniciada",
-          "allowedTransitions": ["triaje", "pendiente"]
+          "allowedTransitions": [
+            "triaje",
+            "pendiente"
+          ]
         },
         "triaje": {
           "description": "Enfermera captura signos vitales y datos preliminares",
-          "allowedTransitions": ["pendiente", "en_atencion"],
-          "permissions": ["enfermera", "asistente"],
+          "allowedTransitions": [
+            "pendiente",
+            "en_atencion"
+          ],
+          "permissions": [
+            "enfermera",
+            "asistente"
+          ],
           "features": {
             "collaborative": true,
-            "notification": "SSE al doctor cuando triaje est\u00e1 completo"
+            "notification": "SSE al doctor cuando triaje está completo"
           }
         },
         "pendiente": {
           "description": "Paciente listo para ser atendido",
-          "allowedTransitions": ["en_atencion"]
+          "allowedTransitions": [
+            "en_atencion"
+          ]
         },
         "en_atencion": {
           "description": "Doctor activamente atendiendo al paciente",
-          "allowedTransitions": ["finalizada", "interconsulta"],
+          "allowedTransitions": [
+            "finalizada",
+            "interconsulta"
+          ],
           "features": {
             "contextPanel": true,
             "aiChips": true,
@@ -271,11 +285,16 @@
         "finalizada": {
           "description": "Consulta completada y firmada",
           "allowedTransitions": [],
-          "requirements": ["diagnosticoCie10", "firmado"]
+          "requirements": [
+            "diagnosticoCie10",
+            "firmado"
+          ]
         },
         "interconsulta": {
           "description": "Derivada a otro especialista",
-          "allowedTransitions": ["finalizada"],
+          "allowedTransitions": [
+            "finalizada"
+          ],
           "features": {
             "bidirectional": true,
             "custodyChain": true
@@ -285,7 +304,7 @@
       "features": {
         "triajeColaborativo": {
           "enabled": true,
-          "workflow": "Enfermera captura signos \u2192 Doctor recibe notificaci\u00f3n SSE \u2192 Transici\u00f3n a en_atenci\u00f3n",
+          "workflow": "Enfermera captura signos → Doctor recibe notificación SSE → Transición a en_atención",
           "dataCapture": [
             "signosVitales",
             "motivoConsulta",
@@ -295,14 +314,14 @@
         "panelLateralContexto": {
           "enabled": true,
           "components": {
-            "ultimaConsulta": "Muestra \u00faltima consulta con fecha y diagn\u00f3stico principal",
-            "antecedentesFiltrados": "Antecedentes relevantes seg\u00fan especialidad",
+            "ultimaConsulta": "Muestra última consulta con fecha y diagnóstico principal",
+            "antecedentesFiltrados": "Antecedentes relevantes según especialidad",
             "alertas": "Alergias, contraindicaciones, medicamentos activos",
-            "historialResumido": "\u00daltimas 5 consultas en timeline"
+            "historialResumido": "Últimas 5 consultas en timeline"
           }
         },
         "interconsultas": {
-          "tipo": "1-a-1 bidireccional sin l\u00edmite",
+          "tipo": "1-a-1 bidireccional sin límite",
           "features": {
             "custodia": "Mantiene cadena de custodia del paciente",
             "cierreManual": "Solo doctor destino puede cerrar",
@@ -313,50 +332,74 @@
       }
     },
     "agenda": {
-      "description": "Sistema de agendamiento h\u00edbrido inteligente con GPS multi-oficina",
+      "description": "Sistema de agendamiento híbrido inteligente con GPS multi-oficina",
       "features": {
         "slotsConfigurables": {
-          "description": "Doctor define bloques de tiempo por d\u00eda",
-          "example": "Lunes 14:00-18:00, Mi\u00e9rcoles 09:00-12:00",
-          "duraciones": [15, 20, 30, 45, 60],
-          "recurrencia": ["semanal", "quincenal", "mensual"]
+          "description": "Doctor define bloques de tiempo por día",
+          "example": "Lunes 14:00-18:00, Miércoles 09:00-12:00",
+          "duraciones": [
+            15,
+            20,
+            30,
+            45,
+            60
+          ],
+          "recurrencia": [
+            "semanal",
+            "quincenal",
+            "mensual"
+          ]
         },
         "multiOficinaGPS": {
           "enabled": true,
           "workflow": [
-            "Doctor registra m\u00faltiples consultorios",
-            "Sistema detecta ubicaci\u00f3n activa por d\u00eda",
+            "Doctor registra múltiples consultorios",
+            "Sistema detecta ubicación activa por día",
             "Paciente guiado a sede correcta con Waze/Google Maps",
-            "Notificaci\u00f3n push de confirmaci\u00f3n con ubicaci\u00f3n"
+            "Notificación push de confirmación con ubicación"
           ],
           "tecnologia": "Google Maps API + Geocoding"
         },
         "teleconsultas": {
           "FREE": {
             "description": "Doctor ingresa link externo (Zoom, Meet, etc.)",
-            "features": ["linkExterno", "notificacionPaciente"]
+            "features": [
+              "linkExterno",
+              "notificacionPaciente"
+            ]
           },
           "PREMIUM": {
-            "description": "Sala Jitsi Meet autom\u00e1tica",
-            "features": ["salaAutomatica", "pipMode", "grabacionOpcional"]
+            "description": "Sala Jitsi Meet automática",
+            "features": [
+              "salaAutomatica",
+              "pipMode",
+              "grabacionOpcional"
+            ]
           }
         },
         "confirmaciones": {
           "automaticas": true,
-          "canales": ["email", "push", "whatsapp"],
+          "canales": [
+            "email",
+            "push",
+            "whatsapp"
+          ],
           "timing": "24 horas antes + 2 horas antes"
         }
       }
     },
     "billing": {
-      "description": "Facturaci\u00f3n electr\u00f3nica SRI 100% nativa desde cliente",
+      "description": "Facturación electrónica SRI 100% nativa desde cliente",
       "features": {
         "sriIntegration": {
           "enabled": true,
-          "standards": ["XAdES-BES", "SRI XML"],
+          "standards": [
+            "XAdES-BES",
+            "SRI XML"
+          ],
           "clientSide": true,
-          "privateKeyHandling": "Memoria vol\u00e1til, nunca viaja al servidor",
-          "validation": "RUC autom\u00e1tico en tiempo real"
+          "privateKeyHandling": "Memoria volátil, nunca viaja al servidor",
+          "validation": "RUC automático en tiempo real"
         },
         "planes": {
           "FREE": {
@@ -413,12 +456,18 @@
           },
           "webrtcPro": {
             "precio": "+$1/mes",
-            "features": ["grabacionTeleconsultas", "brandingPersonalizado"],
+            "features": [
+              "grabacionTeleconsultas",
+              "brandingPersonalizado"
+            ],
             "takeRate": "15%"
           },
           "migracionPro": {
             "precio": "+$1/mes (temporal)",
-            "features": ["importacionMasiva", "asistenciaIA"],
+            "features": [
+              "importacionMasiva",
+              "asistenciaIA"
+            ],
             "takeRate": "30% (1 mes)"
           }
         },
@@ -444,38 +493,50 @@
         "geminiFlash": "$0.38 por 1M tokens",
         "costoPorConsulta": "< $0.005",
         "costoMensualDoctor": "< $0.03",
-        "comparacion": "8x m\u00e1s barato que Kimi, 33x que GPT-4"
+        "comparacion": "8x más barato que Kimi, 33x que GPT-4"
       },
       "etapas": {
         "etapa1_diagnostico": {
-          "trigger": "Doctor escribe en campo evoluci\u00f3n",
+          "trigger": "Doctor escribe en campo evolución",
           "debounce": "3-5 segundos",
           "output": {
             "chipsAZULES": {
               "color": "#2196F3",
-              "contenido": "C\u00f3digos CIE-10 con descripciones",
+              "contenido": "Códigos CIE-10 con descripciones",
               "ejemplo": "{\"code\": \"J01\", \"description\": \"Sinusitis aguda\"}",
-              "accion": "Un clic \u2192 A\u00f1ade diagn\u00f3stico preciso"
+              "accion": "Un clic → Añade diagnóstico preciso"
             }
           }
         },
         "etapa2_tratamiento": {
-          "trigger": "Tras seleccionar diagn\u00f3stico",
+          "trigger": "Tras seleccionar diagnóstico",
           "output": {
             "chipsVERDES": {
               "color": "#4CAF50",
-              "contenido": "Medicaci\u00f3n personalizada",
-              "metadata": ["dosis", "frecuencia", "duracion"]
+              "contenido": "Medicación personalizada",
+              "metadata": [
+                "dosis",
+                "frecuencia",
+                "duracion"
+              ]
             },
             "chipsAMARILLOS": {
               "color": "#FFC107",
-              "contenido": "Ex\u00e1menes sugeridos",
-              "metadata": ["tipo", "urgencia", "preparacion"]
+              "contenido": "Exámenes sugeridos",
+              "metadata": [
+                "tipo",
+                "urgencia",
+                "preparacion"
+              ]
             },
             "chipsROJOS": {
               "color": "#F44336",
               "contenido": "Alertas de seguridad",
-              "tipos": ["alergias", "contraindicaciones", "interacciones"],
+              "tipos": [
+                "alergias",
+                "contraindicaciones",
+                "interacciones"
+              ],
               "requiereConfirmacion": true
             }
           }
@@ -491,7 +552,7 @@
         },
         "features": {
           "sinImpactoDB": true,
-          "mejoraContinua": "Cada vez m\u00e1s sugerencias acertadas",
+          "mejoraContinua": "Cada vez más sugerencias acertadas",
           "fallback": "Funciona sin IA Brain (nice-to-have)"
         }
       },
@@ -500,7 +561,7 @@
         "siempreActivo": true,
         "noHistorialCompleto": "NO enviar historial completo del paciente a la IA",
         "rateLimiting": "Por doctor",
-        "systemPrompt": "Debe especificar rol m\u00e9dico"
+        "systemPrompt": "Debe especificar rol médico"
       }
     },
     "healthWallet": {
@@ -518,22 +579,26 @@
           "perpetuidad": "Aunque cambie de plataforma"
         },
         "autorizacionLOPDP": {
-          "metodo": "Notificaci\u00f3n push",
+          "metodo": "Notificación push",
           "requiereConfirmacion": true,
           "auditTrail": "Completo de autorizaciones, accesos, revocaciones",
-          "tipos": ["autorizadoPor", "fechaAutorizacion", "revocadaEn"]
+          "tipos": [
+            "autorizadoPor",
+            "fechaAutorizacion",
+            "revocadaEn"
+          ]
         },
         "qrValidacion": {
           "enabled": true,
           "uso": "Farmacias validan recetas",
-          "caducidad": "Recetas 30 d\u00edas, Ex\u00e1menes 90 d\u00edas",
-          "estadoCaducado": "Marca de agua, legible pero NO v\u00e1lido"
+          "caducidad": "Recetas 30 días, Exámenes 90 días",
+          "estadoCaducado": "Marca de agua, legible pero NO válido"
         },
         "compartir": {
           "enabled": true,
           "control": "Total por parte del paciente",
           "destino": "Cualquier doctor",
-          "temporal": "Acceso tempor\u00e1neo para teleconsultas"
+          "temporal": "Acceso temporáneo para teleconsultas"
         }
       },
       "compliance": {
@@ -543,16 +608,16 @@
           "autorizacionExplicita": true
         },
         "senescyt": {
-          "validacionTitulos": "API integrada para perfil p\u00fablico"
+          "validacionTitulos": "API integrada para perfil público"
         }
       }
     },
     "documents": {
-      "description": "Sistema de documentos m\u00e9dicos con caducidad autom\u00e1tica",
+      "description": "Sistema de documentos médicos con caducidad automática",
       "tipos": {
         "receta": {
           "caducidad": 30,
-          "caducadoComportamiento": "Marca de agua, NO v\u00e1lido en farmacia",
+          "caducadoComportamiento": "Marca de agua, NO válido en farmacia",
           "firma": "XAdES-BES obligatoria"
         },
         "examen": {
@@ -572,18 +637,18 @@
       "cronJob": {
         "frecuencia": "Diario",
         "accion": "Actualiza estados de documentos caducados",
-        "ui": "Marca de agua autom\u00e1tica"
+        "ui": "Marca de agua automática"
       },
       "firma": {
         "estandar": "XAdES-BES (.p12)",
         "procesamiento": "100% en cliente (WebCrypto API)",
-        "clavePrivada": "Memoria vol\u00e1til, nunca viaja al servidor",
+        "clavePrivada": "Memoria volátil, nunca viaja al servidor",
         "gratis": true,
         "ilimitado": true
       }
     },
     "specialty": {
-      "description": "M\u00f3dulos de especialidad GRATIS incluidos en todos los planes",
+      "description": "Módulos de especialidad GRATIS incluidos en todos los planes",
       "filosofia": "Sin herramientas de especialidad, el doctor no puede trabajar",
       "modulos": {
         "odontologia": {
@@ -592,14 +657,17 @@
             "Periodontograma",
             "Plan tratamiento"
           ],
-          "componentes": ["Odontogram.vue", "Periodontogram.vue"]
+          "componentes": [
+            "Odontogram.vue",
+            "Periodontogram.vue"
+          ]
         },
         "oftalmologia": {
           "herramientas": [
             "Atlas retina",
             "Test Snellen",
             "Campos visuales",
-            "Topograf\u00eda corneal"
+            "Topografía corneal"
           ],
           "componentes": [
             "RetinaAtlas.vue",
@@ -610,7 +678,7 @@
         "pediatria": {
           "herramientas": [
             "Curvas crecimiento OMS",
-            "Calendario vacunaci\u00f3n",
+            "Calendario vacunación",
             "Percentiles"
           ],
           "componentes": [
@@ -637,11 +705,14 @@
             "Calculadoras riesgo",
             "Escala Framingham"
           ],
-          "componentes": ["ECGViewer.vue", "RiskCalculators.vue"]
+          "componentes": [
+            "ECGViewer.vue",
+            "RiskCalculators.vue"
+          ]
         },
         "dermatologia": {
           "herramientas": [
-            "Atlas lesiones cut\u00e1neas",
+            "Atlas lesiones cutáneas",
             "Body mapping",
             "Fotos comparativas"
           ],
@@ -656,7 +727,7 @@
       "componentPattern": "[especialidad]/[Component].vue"
     },
     "discovery": {
-      "description": "Buscador m\u00e9dico con mapa tipo DocDirect",
+      "description": "Buscador médico con mapa tipo DocDirect",
       "features": {
         "mapa": {
           "tecnologia": "Google Maps API",
@@ -666,13 +737,13 @@
             "Subrol",
             "Especialidad",
             "Zona",
-            "Valoraci\u00f3n",
+            "Valoración",
             "Disponibilidad"
           ]
         },
         "gps": {
-          "paciente": "Detecta ubicaci\u00f3n para ordenar por cercan\u00eda",
-          "doctor": "Multi-oficina din\u00e1mico"
+          "paciente": "Detecta ubicación para ordenar por cercanía",
+          "doctor": "Multi-oficina dinámico"
         },
         "perfilPublico": {
           "contenido": [
@@ -681,37 +752,50 @@
             "Ubicaciones",
             "Horarios"
           ],
-          "excluye": ["Datos sensibles", "Informaci\u00f3n privada"]
+          "excluye": [
+            "Datos sensibles",
+            "Información privada"
+          ]
         },
         "comoLlegar": {
-          "integracion": ["Waze", "Google Maps"],
-          "ubicacionDinamica": "Sede correcta seg\u00fan d\u00eda"
+          "integracion": [
+            "Waze",
+            "Google Maps"
+          ],
+          "ubicacionDinamica": "Sede correcta según día"
         },
         "busquedaVoz": {
           "enabled": true,
           "ejemplos": [
-            "Busca cardi\u00f3logo cerca de m\u00ed",
+            "Busca cardiólogo cerca de mí",
             "Dentistas en el norte"
           ]
         }
       }
     },
     "community": {
-      "description": "Galeno Hub - LinkedIn M\u00e9dico (FASE 2)",
+      "description": "Galeno Hub - LinkedIn Médico (FASE 2)",
       "features": {
         "articulos": {
           "workflow": [
-            "Doctor escribe art\u00edculo \u2192 Estado 'Pendiente Revisi\u00f3n'",
-            "Admin de plataforma review \u2192 Aprueba/Rechaza",
-            "Aprobado \u2192 Publicado en secci\u00f3n 'Comunidad'",
+            "Doctor escribe artículo → Estado 'Pendiente Revisión'",
+            "Admin de plataforma review → Aprueba/Rechaza",
+            "Aprobado → Publicado en sección 'Comunidad'",
             "Admin puede destacar en portada"
           ],
-          "estados": ["pendiente", "aprobado", "rechazado"]
+          "estados": [
+            "pendiente",
+            "aprobado",
+            "rechazado"
+          ]
         },
         "monetizacion": {
           "articulosPatrocinados": {
             "enabled": true,
-            "clientes": ["laboratorios", "instituciones"]
+            "clientes": [
+              "laboratorios",
+              "instituciones"
+            ]
           },
           "destacadoPortada": {
             "precio": "$X/semana",
@@ -719,7 +803,11 @@
           },
           "bannersPublicitarios": {
             "enabled": true,
-            "locations": ["Sidebar", "Interstitial", "Footer"]
+            "locations": [
+              "Sidebar",
+              "Interstitial",
+              "Footer"
+            ]
           }
         }
       },
@@ -732,21 +820,24 @@
           "uso": "App cerrada",
           "ejemplos": [
             "Tienes 3 pacientes esperando",
-            "Nueva confirmaci\u00f3n de cita"
+            "Nueva confirmación de cita"
           ],
           "tecnologia": "PWA Push Notifications"
         },
         "sse": {
           "uso": "App abierta",
           "ejemplos": [
-            "Paciente entr\u00f3 en triaje",
-            "Nueva actualizaci\u00f3n en tiempo real"
+            "Paciente entró en triaje",
+            "Nueva actualización en tiempo real"
           ],
           "tecnologia": "Server-Sent Events"
         },
         "toast": {
           "uso": "Feedback inmediato",
-          "ejemplos": ["Receta firmada correctamente", "Paciente guardado"],
+          "ejemplos": [
+            "Receta firmada correctamente",
+            "Paciente guardado"
+          ],
           "tecnologia": "In-App Toast"
         }
       }
@@ -756,22 +847,22 @@
       "devices": {
         "desktop": {
           "experiencia": "Completa",
-          "features": "Todas las herramientas, m\u00f3dulo especialidad completo"
+          "features": "Todas las herramientas, módulo especialidad completo"
         },
         "tablet": {
           "experiencia": "Completa (responsive)",
-          "features": "Touch optimizado, adaptable a orientaci\u00f3n"
+          "features": "Touch optimizado, adaptable a orientación"
         },
         "celular": {
-          "experiencia": "Limitada (estrat\u00e9gico)",
+          "experiencia": "Limitada (estratégico)",
           "features": [
             "Agenda",
-            "Pacientes b\u00e1sico",
+            "Pacientes básico",
             "IA chips",
             "Notificaciones",
             "Historial"
           ],
-          "filosofia": "Nadie quiere pintar dientes en celular. Pero s\u00ed necesita agenda y notificaciones."
+          "filosofia": "Nadie quiere pintar dientes en celular. Pero sí necesita agenda y notificaciones."
         }
       },
       "instalable": true,
@@ -800,7 +891,7 @@
       },
       "SRI": {
         "enabled": true,
-        "validacionRUC": "Integraci\u00f3n nativa",
+        "validacionRUC": "Integración nativa",
         "facturacionXML": "Desde cliente"
       },
       "SENESCYT": {
@@ -811,22 +902,27 @@
     "encryption": {
       "atRest": "AES-256",
       "inTransit": "TLS 1.3",
-      "clavePrivada": "Memoria vol\u00e1til, nunca viaja al servidor"
+      "clavePrivada": "Memoria volátil, nunca viaja al servidor"
     },
     "accessControl": {
       "rowLevelSecurity": true,
-      "roles": ["DOCTOR", "ASISTENTE", "ENFERMERA", "ADMIN"],
+      "roles": [
+        "DOCTOR",
+        "ASISTENTE",
+        "ENFERMERA",
+        "ADMIN"
+      ],
       "permisos": "Granulares por recurso"
     }
   },
   "market": {
     "ecuador": {
-      "tam": "$48M USD/a\u00f1o",
-      "tamCalculo": "~40,000 doctores \u00d7 $10/mes \u00d7 12 meses",
-      "sam": "$12M USD/a\u00f1o",
-      "samCalculo": "Doctores j\u00f3venes + nativos digitales (~25% del TAM)",
-      "som": "$2.4M USD/a\u00f1o",
-      "somCalculo": "5% de SAM en primeros 3 a\u00f1os (1,000 doctores)",
+      "tam": "$48M USD/año",
+      "tamCalculo": "~40,000 doctores × $10/mes × 12 meses",
+      "sam": "$12M USD/año",
+      "samCalculo": "Doctores jóvenes + nativos digitales (~25% del TAM)",
+      "som": "$2.4M USD/año",
+      "somCalculo": "5% de SAM en primeros 3 años (1,000 doctores)",
       "doctoresTotales": "~40,000",
       "nativosDigitales": "~15,000 (37.5%)",
       "recienGraduadosAno": "~2,000",
@@ -836,17 +932,17 @@
       "firmap12Cliente": {
         "nosotros": true,
         "competencia": false,
-        "moat": "T\u00e9cnico + Legal"
+        "moat": "Técnico + Legal"
       },
       "facturacionXMLSRI": {
         "nosotros": true,
         "competencia": false,
-        "moat": "Integraci\u00f3n"
+        "moat": "Integración"
       },
       "iaCosto": {
         "nosotros": "< $0.005/consulta",
         "competencia": "$50-200/mes",
-        "moat": "Econ\u00f3mico"
+        "moat": "Económico"
       },
       "offlineFirstTransparente": {
         "nosotros": true,
@@ -861,43 +957,43 @@
       "gpsMultiOficinaDinamico": {
         "nosotros": true,
         "competencia": false,
-        "moat": "T\u00e9cnico"
+        "moat": "Técnico"
       }
     },
     "benchmarking": [
       {
         "competidor": "DocDirect",
         "fortaleza": "Perfiles profesionales",
-        "debilidad": "Lentitud, no tiene pr\u00e1ctica m\u00e9dica",
-        "nuestraSolucion": "SPA ultraveloz <150ms + gesti\u00f3n consultas completa",
+        "debilidad": "Lentitud, no tiene práctica médica",
+        "nuestraSolucion": "SPA ultraveloz <150ms + gestión consultas completa",
         "whyWeWin": "Experiencia superior"
       },
       {
         "competidor": "Doctreat",
         "fortaleza": "Marketplace recetas",
-        "debilidad": "Sin localizaci\u00f3n legal ecuatoriana",
+        "debilidad": "Sin localización legal ecuatoriana",
         "nuestraSolucion": "Firma .p12 nativa + SRI",
         "whyWeWin": "Legalmente insuperable"
       },
       {
         "competidor": "Listeo",
         "fortaleza": "Buscador con mapas",
-        "debilidad": "Ubicaciones est\u00e1ticas",
-        "nuestraSolucion": "GPS din\u00e1mico multi-oficina",
-        "whyWeWin": "Tecnol\u00f3gicamente superior"
+        "debilidad": "Ubicaciones estáticas",
+        "nuestraSolucion": "GPS dinámico multi-oficina",
+        "whyWeWin": "Tecnológicamente superior"
       },
       {
         "competidor": "Doctorio.ai",
         "fortaleza": "Asistencia IA",
         "debilidad": "Chat intrusivo, caro",
         "nuestraSolucion": "IA por etapas no intrusiva + < $0.005/consulta",
-        "whyWeWin": "M\u00e1s barato y UX mejor"
+        "whyWeWin": "Más barato y UX mejor"
       }
     ]
   },
   "unitEconomics": {
     "premium": {
-      "arpu": 10.0,
+      "arpu": 10,
       "modulos": 0.4,
       "revenueTotal": 10.4,
       "cac": 15,
@@ -937,12 +1033,12 @@
     },
     {
       "periodo": "Q2",
-      "objetivo": "Lanzamiento p\u00fablico",
+      "objetivo": "Lanzamiento público",
       "kpi": "200 doctores"
     },
     {
       "periodo": "Q3",
-      "objetivo": "Marketplace m\u00f3dulos",
+      "objetivo": "Marketplace módulos",
       "kpi": "40% take rate"
     },
     {
@@ -951,8 +1047,8 @@
       "kpi": "500 doctores"
     },
     {
-      "periodo": "A\u00f1o 2",
-      "objetivo": "Expansi\u00f3n Colombia",
+      "periodo": "Año 2",
+      "objetivo": "Expansión Colombia",
       "kpi": "1,000 doctores Ecuador"
     }
   ],
@@ -960,12 +1056,12 @@
     "adquisicion": [
       {
         "canal": "SEO/Content",
-        "tactica": "Blog m\u00e9dico + Gu\u00edas SRI/firma",
+        "tactica": "Blog médico + Guías SRI/firma",
         "costoEstimado": "$500/mes"
       },
       {
         "canal": "Social Media",
-        "tactica": "Instagram/TikTok m\u00e9dicos",
+        "tactica": "Instagram/TikTok médicos",
         "costoEstimado": "$300/mes"
       },
       {
@@ -980,7 +1076,7 @@
       },
       {
         "canal": "Ads",
-        "tactica": "Google Ads (intenci\u00f3n alta)",
+        "tactica": "Google Ads (intención alta)",
         "costoEstimado": "$2,000/mes"
       }
     ],
@@ -1028,12 +1124,12 @@
       "estado": "En progreso - Arquitectura completada",
       "features": {
         "core": [
-          "Autenticaci\u00f3n y Onboarding (< 5 min)",
-          "Gesti\u00f3n consultas completa (6 estados)",
-          "Agendamiento H\u00edbrido (Slots + GPS)",
-          "Teleconsulta B\u00e1sica (Jitsi Meet)",
-          "Firma Electr\u00f3nica XAdES-BES (FREE ilimitada)",
-          "Facturaci\u00f3n SRI (PREMIUM)"
+          "Autenticación y Onboarding (< 5 min)",
+          "Gestión consultas completa (6 estados)",
+          "Agendamiento Híbrido (Slots + GPS)",
+          "Teleconsulta Básica (Jitsi Meet)",
+          "Firma Electrónica XAdES-BES (FREE ilimitada)",
+          "Facturación SRI (PREMIUM)"
         ],
         "iaInnovacion": [
           "IA Copilot por etapas (siempre activo)",
@@ -1043,10 +1139,10 @@
         ],
         "gestion": [
           "Antecedentes del paciente",
-          "M\u00f3dulo Especialidad (FREE - todas)",
+          "Módulo Especialidad (FREE - todas)",
           "Interconsultas 1-a-1",
           "Documentos con caducidad",
-          "Buscador m\u00e9dico con mapa"
+          "Buscador médico con mapa"
         ],
         "uxPerformance": [
           "PWA responsive (Desktop/Tablet/Mobile)",
@@ -1059,170 +1155,184 @@
     "fase2": {
       "nombre": "Q3 2025",
       "features": [
-        "WebRTC Pro (m\u00f3dulo grabaci\u00f3n)",
-        "Galeno Hub (LinkedIn M\u00e9dico)",
-        "Env\u00edo WhatsApp (m\u00f3dulo)",
-        "M\u00f3dulo Migraci\u00f3n Pro"
+        "WebRTC Pro (módulo grabación)",
+        "Galeno Hub (LinkedIn Médico)",
+        "Envío WhatsApp (módulo)",
+        "Módulo Migración Pro"
       ]
     }
   },
   "constraints": [
-    "LOPDP compliant - Paciente due\u00f1o de su dato m\u00e9dico",
+    "LOPDP compliant - Paciente dueño de su dato médico",
     "Firma XAdES-BES procesada 100% en cliente (WebCrypto API)",
-    "Clave privada nunca viaja al servidor (memoria vol\u00e1til)",
+    "Clave privada nunca viaja al servidor (memoria volátil)",
     "Latencia percibida < 150ms",
     "IA cost target: < $0.005 por consulta",
     "Offline-first transparente (Last Write Wins por timestamp)",
     "Onboarding < 5 minutos",
-    "Firma electr\u00f3nica FREE ilimitada",
-    "Facturaci\u00f3n SRI solo para plan PREMIUM+"
+    "Firma electrónica FREE ilimitada",
+    "Facturación SRI solo para plan PREMIUM+"
   ],
   "successHighlights": [
     "Mercado masivo addressable: $48M TAM en Ecuador solo",
     "Ventajas competitivas insalvables: Firma .p12 + SRI nativo = moat legal",
     "Unit economics excelentes: LTV:CAC 16.6x, payback 1.5 meses",
     "IA costeable: < $0.005/consulta vs $50-200 competencia",
-    "M\u00faltiples revenue streams: Suscripci\u00f3n + m\u00f3dulos + marketplace + ads",
-    "Escalable regionalmente: Colombia, Per\u00fa, Bolivia (mismos est\u00e1ndares)",
-    "Retenci\u00f3n natural: Health Wallet = perpetuidad del dato paciente",
+    "Múltiples revenue streams: Suscripción + módulos + marketplace + ads",
+    "Escalable regionalmente: Colombia, Perú, Bolivia (mismos estándares)",
+    "Retención natural: Health Wallet = perpetuidad del dato paciente",
     "Time-to-market: MVP 3 meses, first revenue Q1 2025",
-    "Arquitectura empresarial: V\u00cdA PROFUNDA completada con Clean Architecture"
+    "Arquitectura empresarial: VÍA PROFUNDA completada con Clean Architecture"
   ],
   "implementation_audit": {
     "known_features": {
       "agendamiento": {
         "Slots configurables": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 568
         },
-        "GPS Multi-Oficina Din\u00e1mico": {
+        "GPS Multi-Oficina Dinámico": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 708
         },
         "Sala de espera virtual": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 296
         },
         "Estados de consulta": {
           "pct": "100%",
-          "note": "Implementaci\u00f3n incipiente o solo modelos.",
+          "note": "Implementación incipiente o solo modelos.",
           "matches": 4
         }
       },
       "consulta": {
-        "Historia cl\u00ednica electr\u00f3nica": {
+        "Historia clínica electrónica": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 204
         },
         "IA Copilot": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 131
         },
-        "M\u00f3dulo de especialidad din\u00e1mico": {
+        "Módulo de especialidad dinámico": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 679
         },
         "Antecedentes": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 703
         }
       },
       "documentos": {
-        "Receta m\u00e9dica electr\u00f3nica": {
+        "Receta médica electrónica": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 157
         },
         "Firma XAdES-BES en cliente": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 507
         },
-        "Facturaci\u00f3n SRI": {
+        "Facturación SRI": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 744
         },
         "Certificados con caducidad": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 486
         }
       },
       "paciente": {
         "Health Wallet": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 311
         },
-        "Aprobaci\u00f3n de acceso a historia": {
+        "Aprobación de acceso a historia": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 278
         },
-        "Buscador m\u00e9dico con mapa": {
+        "Buscador médico con mapa": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 1216
         }
       },
       "comunicacion": {
         "Teleconsulta integrada (WebRTC)": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 707
         },
         "Chat interno/Notificaciones SSE": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 2522
         },
-        "Integraci\u00f3n WhatsApp": {
+        "Integración WhatsApp": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 913
         }
       },
       "social": {
         "Galeno Hub": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 147
         },
         "Interconsultas 1-a-1": {
           "pct": "100%",
-          "note": "Extensa evidencia de implementaci\u00f3n en c\u00f3digo.",
+          "note": "Extensa evidencia de implementación en código.",
           "matches": 431
         }
       }
     },
     "hidden_features_found": {
-      "Integraci\u00f3n de Farmacia (Recetas Electr\u00f3nicas Avanzadas)": {
+      "Integración de Farmacia (Recetas Electrónicas Avanzadas)": {
         "pct": "50%",
-        "note": "\u2713 Vale la pena - Expande el servicio al paciente y permite un loop cerrado de prescripci\u00f3n-compra."
+        "note": "✓ Vale la pena - Expande el servicio al paciente y permite un loop cerrado de prescripción-compra."
       },
-      "M\u00f3dulo de Enfermer\u00eda (Toma de signos vitales, preparaci\u00f3n)": {
-        "pct": "80%",
-        "note": "\u2713 Vale la pena - Indispensable para el workflow real de cl\u00ednicas con asistentes/enfermeras antes de ver al m\u00e9dico."
+      "Módulo de Enfermería (Toma de signos vitales, preparación)": {
+        "pct": "85%",
+        "note": "Signos vitales conectados al estado triaje mediante PATCH /api/v1/consultas/:id/estado en el frontend. Lógica separada en captureTriage backend. Los mocks en las pruebas del backend fallan en entornos ESM, impidiendo wiring completo.",
+        "wiring_status": "partially_wired",
+        "verified_by": "apps/web/src/views/nurse/TriageDashboard.vue:152 and apps/api/src/services/triage/triage.service.ts:56"
       },
       "Triage Automatizado / IA": {
         "pct": "60%",
-        "note": "? Requiere decisi\u00f3n - \u00datil para pre-evaluar pacientes y optimizar tiempos, pero tiene implicaciones de responsabilidad m\u00e9dica."
+        "note": "? Requiere decisión - Útil para pre-evaluar pacientes y optimizar tiempos, pero tiene implicaciones de responsabilidad médica."
       },
-      "M\u00f3dulos de Especialidad Ultra-Espec\u00edficos (Odontograma, Retina, Crecimiento)": {
+      "Módulos de Especialidad Ultra-Específicos (Odontograma, Retina, Crecimiento)": {
         "pct": "90%",
-        "note": "\u2713 Vale la pena - Crea un 'moat' enorme contra software gen\u00e9rico; retiene especialistas de nicho."
+        "note": "✓ Vale la pena - Crea un 'moat' enorme contra software genérico; retiene especialistas de nicho."
       },
       "Pasarela de Pagos de Consultas (Cobro a pacientes)": {
         "pct": "75%",
-        "note": "\u2713 Vale la pena - Permite monetizaci\u00f3n v\u00eda take-rate por transacci\u00f3n, m\u00e1s all\u00e1 de la suscripci\u00f3n mensual SaaS."
+        "note": "✓ Vale la pena - Permite monetización vía take-rate por transacción, más allá de la suscripción mensual SaaS."
+      },
+      "Módulos de Especialidad (Odontología, Pediatría)": {
+        "pct": "95%",
+        "wiring_status": "partially_wired",
+        "verified_by": "apps/web/src/views/consultation/Workspace.vue:240",
+        "note": "Módulo asíncrono cargado mediante defineAsyncComponent basado en AuthStateManager.user?.specialty_id en Workspace.vue. Falta validar posibles dependencias en el backend."
+      },
+      "Pasarela de Pagos (Stripe/PayPhone)": {
+        "pct": "80%",
+        "wiring_status": "partially_wired",
+        "verified_by": "apps/web/src/state/managers/ConsultaStateManager.ts:233 and apps/web/src/views/consultation/Workspace.vue:245",
+        "note": "Evento 'payment-required' despachado en ConsultaStateManager cuando el estado es 'finalizada' y tiene un cargo asociado, interceptado en Workspace.vue para redirigir a /payment/checkout."
       }
     }
   }

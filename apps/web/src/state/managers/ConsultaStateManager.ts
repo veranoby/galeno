@@ -230,6 +230,14 @@ class ConsultaStateManagerClass {
    */
   async updateConsulta(id: string, updates: Partial<ConsultaState>): Promise<void> {
     const consulta = this._consultas.value.get(id);
+    if (!consulta) throw new Error(`Consulta ${id} no encontrada`);
+
+    // Wire Payment Gateway: Emit payment-required event if consultation finishes and has charge
+    // Note: check if consultation has an associated charge
+    const tieneCargo = consulta.requierePago || (consulta.costo && consulta.costo > 0);
+    if (updates.estado === 'finalizada' && tieneCargo && typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('payment-required', { detail: { consultaId: id } }));
+    }
     if (!consulta) {
       throw new Error(`Consulta ${id} no encontrada`);
     }
