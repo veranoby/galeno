@@ -218,6 +218,12 @@
           </v-window-item>
 
           <!-- Tab: Receta -->
+          <!-- Módulo de Especialidad Dinámico -->
+          <v-window-item value="especialidad">
+            <component :is="SpecialtyModuleComponent" v-if="SpecialtyModuleComponent" :consulta="consulta" />
+            <v-alert v-else type="info">Configurando especialidad...</v-alert>
+          </v-window-item>
+
           <v-window-item value="receta">
             <v-card>
               <v-card-text>
@@ -282,15 +288,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+
+import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue';
 import type { Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { AuthStateManager } from '@/state/managers/AuthStateManager';
 import { apiClient } from '@/services/api';
 import { useIADebounce, type CodigoCIE10 } from '@/composables/useIADebounce';
 import WorkspaceLayout from '@/components/consultation/WorkspaceLayout.vue';
 import ContextSidebar from '@/components/consultation/ContextSidebar.vue';
 import ToolsPanel from '@/components/consultation/ToolsPanel.vue';
 import IaChipsPanel from '@/components/consultation/IaChipsPanel.vue';
+
+// Specialty Module Lazy Loading
+const SpecialtyModuleComponent = computed(() => {
+  const specialtyId = AuthStateManager.user?.specialty_id;
+  if (!specialtyId) return null;
+  // Dynamic import based on specialty_id
+  return defineAsyncComponent(() => import(`@/components/specialties/${specialtyId}Module.vue`).catch(() => import('@/components/specialties/DefaultModule.vue')));
+});
+
 
 // Router
 const route = useRoute();
@@ -568,6 +585,11 @@ const cie10Options = computed(() => {
 // Lifecycle
 onMounted(() => {
   cargarConsulta();
+  window.addEventListener('payment-required', (e: any) => {
+    if (e.detail?.consultaId === route.params.id) {
+      router.push('/payment/checkout?consulta=' + route.params.id);
+    }
+  });
 });
 </script>
 
